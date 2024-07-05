@@ -1,0 +1,27 @@
+.menu-item{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 14px 22px;
+    float: left;
+    text-decoration: none;
+    font-size: 13px;
+    background: #414956;
+    white-space: nowrap;
+    position: relative;
+    overflow: hidden;
+}
+.menu-item:hover{
+    background: #3b424d;
+}
+.icon{
+    color: #f0f0f0;
+}
+.title{
+    color: #f0f0f0;
+    margin-left: 10px;
+    font-size: 1.6rem;
+}
+.active{
+    background: #3b424d;
+}
