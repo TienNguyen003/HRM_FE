@@ -1,0 +1,10 @@
+.app{
+    margin: 60px 0 0 280px;
+    transition: margin .3s ease-in-out;
+    z-index: -1;
+}
+
+.header-clicked{
+    margin-left: 80px;
+    transition: margin .3s ease-in-out;
+}

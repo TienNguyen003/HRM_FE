@@ -10,31 +10,37 @@ import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 const cx = classNames.bind(styles);
 
 function Login() {
-    const login = () => {
-        const username = document.querySelector(`.${cx('username')}`);
-        const password = document.querySelector(`.${cx('password')}`);
-        const alert = document.querySelector(`.${cx('text-danger')}`);
-        if (username.value == '') alert.textContent = 'Tên đăng nhập không được để trống!';
-        else if (password.value == '') alert.textContent = 'Mật khẩu không được để trống!';
-        else {
-            fetch('http://localhost:8083/api/auth/token', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    username: username.value,
-                    password: password.value,
-                }),
-            })
-                .then((res) => res.json())
-                .then((data) => {
-                    if(data.code == 303) {
-                        localStorage.setItem("authorizationData", data.result.token);
-                        window.location.href = "/";
-                    }
-                });
+    const vietnameseRegex = /^[^\u0300\u0301\u0303\u0309\u0323\u0302\u0306\u031B\u030A\u0301\u1EA0-\u1EF9]+$/;
+
+    async function checkLogin(username, password) {
+        const response = await fetch('http://localhost:8083/api/auth/token', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password,
+            }),
+        });
+
+        const data = await response.json();
+        if (data.code == 303) {
+            localStorage.setItem('authorizationData', data.result.token);
+            window.location.href = '/';
+        } else {
+            const message = document.querySelector(`.${cx('text-danger')}`);
+            message.textContent = data.message;
         }
+    }
+
+    const login = () => {
+        const alert = document.querySelector(`.${cx('text-danger')}`);
+        const username = document.querySelector(`.${cx('username')}`).value;
+        const password = document.querySelector(`.${cx('password')}`).value;
+        if (username == '') alert.textContent = 'Tên đăng nhập không được để trống!';
+        else if (password == '') alert.textContent = 'Mật khẩu không được để trống!';
+        else checkLogin(username, password)
     };
 
     return (
@@ -51,16 +57,20 @@ function Login() {
                         <form>
                             <div className={cx('input-group', 'mb-3')}>
                                 <select id="language" className={cx('form-control')}>
-                                    <option defaultValue="vi" selected="" data-href="https://demo.hrm.one/language/vi">
+                                    <option
+                                        defaultValue="vi"
+                                        selected=""
+                                        data-href="https://demo.hrm.one/img/ensign_vi.png"
+                                    >
                                         Tiếng Việt
                                     </option>
-                                    <option defaultValue="en" data-href="https://demo.hrm.one/language/en">
+                                    <option defaultValue="en" data-href="https://demo.hrm.one/img/ensign_en.png">
                                         English
                                     </option>
                                 </select>
                                 <div className={cx('input-group-append')}>
                                     <div className={cx('input-group-text')}>
-                                        <img src="/img/ensign_vi.png" className={cx('mr-2')} />
+                                        <img src="https://demo.hrm.one/img/ensign_vi.png" className={cx('mr-2')} />
                                     </div>
                                 </div>
                             </div>

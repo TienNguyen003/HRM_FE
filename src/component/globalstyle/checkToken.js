@@ -16,7 +16,6 @@ export const isCheck = async function checkToken() {
         });
 
         const data = await response.json();
-
         if (data.code == 303 && data.result.valid === false) {
             redirectLogin();
         }

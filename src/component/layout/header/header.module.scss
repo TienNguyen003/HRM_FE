@@ -43,6 +43,7 @@ body {
     font-family: 'Open Sans', sans-serif;
     box-sizing: border-box;
     outline: 0;
+    z-index: 999;
 }
 .jquery-accordion-menu {
     transition: width .3s ease-in-out;    
@@ -51,6 +52,12 @@ body {
     top: 0;
     bottom: 0;
     position: fixed;
+    background-color: #414956;
+
+    overflow-y: auto;
+    &::-webkit-scrollbar {
+        width: 0;
+    }
 }
 .jquery-accordion-menu .jquery-accordion-menu-footer,
 .jquery-accordion-menu .jquery-accordion-menu-header {
@@ -127,15 +134,15 @@ body {
 .jquery-accordion-menu ul ul.submenu li a {
     width: 100%;
     float: left;
-    font-size: 11px;
-    background: #383838;
+    font-size: 1.4rem;
+    background: #414956e8;
     border-top: none;
     position: relative;
     border-left: solid 6px transparent;
     transition: border 0.2s linear;
 }
 .jquery-accordion-menu ul ul.submenu li:hover > a {
-    border-left-color: #414956;
+    color: #c7dcf2;
 }
 .jquery-accordion-menu ul ul.submenu > li > a {
     padding-left: 30px;
@@ -267,6 +274,20 @@ body {
 .black.jquery-accordion-menu ul li a {
     background: #292929;
 }
+.jquery-accordion-menu{
+    &:hover{
+        width: 260px;
+
+        .submenu li a{
+            visibility: visible;
+        }
+
+        ul li a p{
+            visibility: visible;
+            transition: visibility .3s ease-in-out;
+        }
+    }    
+}
 .black.jquery-accordion-menu > ul > li.active > a,
 .black.jquery-accordion-menu > ul > li:hover > a {
     background: #222;
@@ -277,6 +298,12 @@ body {
 .black.jquery-accordion-menu ul ul.submenu li:hover > a {
     border-left-color: #222;
 }
+.jquery-accordion-menu ul li a{
+    cursor: pointer;
+}
+.jquery-accordion-menu ul li p{
+    font-size: 1.5rem;
+}
 
 .nav-wrapper {
     position: fixed;
@@ -286,8 +313,9 @@ body {
     display: flex;
     justify-content: space-between;
     height: 50px;
-    background-color: #cecccc45;
+    background-color: #fff;
     transition: left .3s ease-in-out;
+    z-index: 999;
 }
 
 .nav-icon {
@@ -338,6 +366,9 @@ body {
 
 .show {
     display: flex !important;
+}
+.showBlock {
+    display: block !important;
 }
 
 .user-menu {
@@ -413,9 +444,13 @@ body {
     transition: width .3s ease-in-out;
     width: 60px;
 
-    p{
+    p, .submenu li a{
         transition: visibility .3s ease-in-out;
         visibility: hidden;
+    }
+
+    .submenu li{
+        background-color: #414956e8;
     }
 
     .jquery-accordion-menu-header{
@@ -426,4 +461,34 @@ body {
 .nav-click{
     transition: left .3s ease-in-out;
     left: 60px;
+}
+
+.drop-menu a{
+    display: flex;
+    justify-content: space-between;
+
+    .nav-link{
+        display: flex;
+        align-items: center;
+    }
+}
+
+.iconLeft{
+    transition: rotate .3s ease-in-out;
+}
+.icon-rotate{
+    rotate: -90deg;
+    transition: rotate .3s ease-in-out;
+}
+.change-bg{
+    background: #2e3b47 !important;
+}
+
+@media (max-width: 740px) {
+    .jquery-accordion-menu{
+        display: none;
+    }
+    .nav-wrapper{
+        left: 0;
+    }
 }
