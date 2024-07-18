@@ -5,6 +5,7 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 
 import styles from './user.module.scss';
 import routes from '../../../config/routes';
+import { urlPattern } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { getRoles, getStructures } from './PasswordUtils';
 
@@ -36,7 +37,7 @@ function User() {
 
         try {
             const response = await fetch(
-                `http://localhost:8083/api/users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
+                `${urlPattern}users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
                 {
                     method: 'GET',
                     headers: {
@@ -78,7 +79,7 @@ function User() {
     // xóa người dùng
     async function handleClickDelete(name) {
         try {
-            const response = await fetch(`http://localhost:8083/api/users?userId=${name}`, {
+            const response = await fetch(`${urlPattern}users?userId=${name}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

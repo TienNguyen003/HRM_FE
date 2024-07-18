@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import styles from './create.module.scss';
 import routes from '../../../../config/routes';
+import { urlPattern } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { changePassword, clickAutoPassword, getRoles, getStructures } from '../PasswordUtils';
 
@@ -21,7 +22,7 @@ function Role() {
     async function getUsers() {
         if (path.includes('/user')) return '';
         try {
-            const response = await fetch(`http://localhost:8083/api/users/user?userId=${path}`, {
+            const response = await fetch(`${urlPattern}users/user?userId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -86,7 +87,7 @@ function Role() {
     //save user
     async function saveUser(employeeId, username, password, role) {
         try {
-            const response = await fetch(`http://localhost:8083/api/users`, {
+            const response = await fetch(`${urlPattern}users`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -122,7 +123,7 @@ function Role() {
         departmentId,
         username,
     ) {
-        const response = await fetch(`http://localhost:8083/api/employee?username=${username}`, {
+        const response = await fetch(`${urlPattern}employee?username=${username}`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

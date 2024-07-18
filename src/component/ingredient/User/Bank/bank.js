@@ -5,6 +5,7 @@ import { faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../user.module.scss';
 import routes from '../../../../config/routes';
+import { urlPattern } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 
 const cx = classNames.bind(styles);
@@ -34,7 +35,7 @@ function Bank() {
 
         try {
             const response = await fetch(
-                `http://localhost:8083/api/bank_accounts?pageNumber=${searchParam}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}`,
+                `${urlPattern}bank_accounts?pageNumber=${searchParam}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}`,
                 {
                     method: 'GET',
                     headers: {
@@ -74,7 +75,7 @@ function Bank() {
     // xóa người dùng
     async function handleClickDelete(id) {
         try {
-            const response = await fetch(`http://localhost:8083/api/bank_accounts?id=${id}`, {
+            const response = await fetch(`${urlPattern}bank_accounts?id=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

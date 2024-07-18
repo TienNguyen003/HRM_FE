@@ -2,6 +2,7 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
 import styles from '../Create/create.module.scss';
+import { urlPattern } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { changePassword, clickAutoPassword } from '../PasswordUtils';
 
@@ -17,7 +18,7 @@ function RsPass() {
 
     async function getUsers() {
         try {
-            const response = await fetch(`http://localhost:8083/api/users/user?userId=${path}`, {
+            const response = await fetch(`${urlPattern}users/user?userId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

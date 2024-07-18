@@ -1,5 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './Create/create.module.scss';
+import { urlPattern } from '../../../config/config';
 
 const cx = classNames.bind(styles);
 
@@ -114,7 +115,7 @@ export const clickAutoPassword = () => {
 // lấy phòng làm việc
 export async function getStructures(token) {
     try {
-        const response = await fetch(`http://localhost:8083/api/structures`, {
+        const response = await fetch(`${urlPattern}structures`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -136,7 +137,7 @@ export async function getStructures(token) {
 // lấy role
 export async function getRoles(token) {
     try {
-        const response = await fetch(`http://localhost:8083/api/roles/get`, {
+        const response = await fetch(`${urlPattern}roles/get`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

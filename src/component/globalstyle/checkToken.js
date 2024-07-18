@@ -1,3 +1,5 @@
+import {urlPattern} from '../../config/config'
+
 function redirectLogin() {
     return window.location.href = '/login';
 }
@@ -5,7 +7,7 @@ function redirectLogin() {
 export const isCheck = async function checkToken() {
     const token = localStorage.getItem('authorizationData') ? localStorage.getItem('authorizationData') : '';
     if (token != '') {
-        const response = await fetch('http://localhost:8083/api/auth/introspect', {
+        const response = await fetch(`${urlPattern}auth/introspect`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

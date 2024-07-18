@@ -23,7 +23,7 @@ function Bank() {
     // lấy user
     async function getAllUser() {
         try {
-            const response = await fetch(`http://localhost:8083/api/users/getAll`, {
+            const response = await fetch(`${urlPattern}users/getAll`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -46,7 +46,7 @@ function Bank() {
     async function getBank() {
         if (path.includes('/users/bank_account')) return '';
         try {
-            const response = await fetch(`http://localhost:8083/api/bank_accounts/bank?id=${path}`, {
+            const response = await fetch(`${urlPattern}bank_accounts/bank?id=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -114,7 +114,7 @@ function Bank() {
 
     const handleSaveUser = async (nameBank, owner, numberBank, nameUser, prioritize) => {
         try {
-            const response = await fetch(`http://localhost:8083/api/bank_accounts`, {
+            const response = await fetch(`${urlPattern}bank_accounts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

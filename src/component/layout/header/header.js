@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
     faDashboard,
@@ -17,7 +18,7 @@ import {
 
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
-import { useEffect } from 'react';
+import {urlPattern} from '../../../config/config';
 
 const cx = classNames.bind(styles);
 
@@ -40,7 +41,7 @@ function Header({ onClick }) {
 
     async function getDataUser() {
         if (token != '') {
-            const response = await fetch('http://localhost:8083/api/users/myInfo', {
+            const response = await fetch(`${urlPattern}users/myInfo`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -59,7 +60,7 @@ function Header({ onClick }) {
     }
 
     async function logout() {
-        const response = await fetch('http://localhost:8083/api/auth/logout', {
+        const response = await fetch(`${urlPattern}auth/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

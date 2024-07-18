@@ -5,14 +5,14 @@ import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import ButtonCustom from '../../component/globalstyle/Button/button';
 import styles from './login.module.scss';
+import {urlPattern} from '../../config/config';
 
 const cx = classNames.bind(styles);
 
 function Login() {
-    const vietnameseRegex = /^[^\u0300\u0301\u0303\u0309\u0323\u0302\u0306\u031B\u030A\u0301\u1EA0-\u1EF9]+$/;
 
     async function checkLogin(username, password) {
-        const response = await fetch('http://localhost:8083/api/auth/token', {
+        const response = await fetch(`${urlPattern}auth/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
