@@ -6,6 +6,7 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 import styles from './user.module.scss';
 import routes from '../../../config/routes';
 import { isCheck } from '../../globalstyle/checkToken';
+import { getRoles, getStructures } from './PasswordUtils';
 
 const cx = classNames.bind(styles);
 
@@ -14,55 +15,67 @@ function User() {
         await isCheck();
     })();
 
+    const [structures, setStructures] = useState([]);
+    const [roles, setRoles] = useState([]);
     const [user, setUsers] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
 
-    useEffect(() => {
-        async function fetchData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchParam = urlParams.get('search') || 1;
-            const name = urlParams.get('name') || '';
-            const department = urlParams.get('department') || '';
-            const username = urlParams.get('username') || '';
-            const role = urlParams.get('role').toUpperCase() || '';
+    //lấy thông tin user
+    async function fetchData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search') || 1;
+        const name = urlParams.get('name') || '';
+        const department = urlParams.get('department') || '';
+        const username = urlParams.get('username') || '';
+        const role = urlParams.get('role') || '';
 
-            document.querySelector('#name').value = name;
-            document.querySelector('#department').value = department;
-            document.querySelector('#username').value = username;
-            document.querySelector('#role').value = role;
+        document.querySelector('#name').value = name;
+        document.querySelector('#username').value = username;
+        document.querySelector('#role_id').querySelector('option[value="' + role + '"]').selected = true;
+        document.querySelector('#structure_id').querySelector('option[value="' + department + '"]').selected = true;
 
-            try {
-                const response = await fetch(
-                    `http://localhost:8083/api/users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role}`,
-                    {
-                        method: 'GET',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            Authorization: `Bearer ${token}`,
-                        },
+        try {
+            const response = await fetch(
+                `http://localhost:8083/api/users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
                     },
-                );
+                },
+            );
 
-                if (!response.ok) {
-                    throw new Error('Failed to fetch roles');
-                }
-
-                const data = await response.json();
-                setUsers(data.result);
-            } catch (error) {
-                console.error('Error fetching roles:', error.message);
+            if (!response.ok) {
+                throw new Error('Failed to fetch roles');
             }
+
+            const data = await response.json();
+            setUsers(data.result);
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
         }
+    }
 
-        fetchData();
-    }, [token]);
+    useEffect(() => {
+        (async function () {
+            await getStructures(token).then((result) => setStructures(result));
+            await getRoles(token).then((result) => setRoles(result));
 
+            await new Promise((resolve) => setTimeout(resolve, 1));
+
+            await fetchData();
+        })();
+    }, []);
+
+    // sự kiện xóa người dùng
     const clickDelete = async (event, name) => {
         event.preventDefault();
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
         if (result) handleClickDelete(name);
     };
 
+    // xóa người dùng
     async function handleClickDelete(name) {
         try {
             const response = await fetch(`http://localhost:8083/api/users?userId=${name}`, {
@@ -80,7 +93,7 @@ function User() {
             const data = await response.json();
 
             if (data.code === 303) {
-                console.log(window.location.reload());
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -110,7 +123,7 @@ function User() {
                                                             <div className={cx('pc-3', 'post-form')}>
                                                                 <input
                                                                     type="text"
-                                                                    id='name'
+                                                                    id="name"
                                                                     className={cx('form-control', 'form-control-sm')}
                                                                     placeholder="Họ tên"
                                                                     name="name"
@@ -119,29 +132,39 @@ function User() {
                                                             <div className={cx('pc-3', 'post-form')}>
                                                                 <input
                                                                     type="text"
-                                                                    id='username'
+                                                                    id="username"
                                                                     className={cx('form-control', 'form-control-sm')}
                                                                     placeholder="Tên đăng nhập"
                                                                     name="username"
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'post-form')}>
-                                                                <input
-                                                                    type="text"
-                                                                    id='department'
-                                                                    className={cx('form-control', 'form-control-sm')}
-                                                                    placeholder="Phòng ban"
+                                                                <select
+                                                                    id="structure_id"
                                                                     name="department"
-                                                                />
+                                                                    className={cx('form-control', 'select')}
+                                                                >
+                                                                    <option value="">-- Phòng ban --</option>
+                                                                    {structures.map((item, index) => (
+                                                                        <option key={index} value={item.name}>
+                                                                            {item.name} - {item.officeI.name}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
                                                             </div>
                                                             <div className={cx('pc-3', 'post-form')}>
-                                                                <input
-                                                                    type="text"
-                                                                    id='role'
-                                                                    className={cx('form-control', 'form-control-sm')}
-                                                                    placeholder="Phân quyền"
+                                                                <select
+                                                                    id="role_id"
                                                                     name="role"
-                                                                />
+                                                                    className={cx('form-control', 'select')}
+                                                                >
+                                                                    <option value="">-- Phân quyền --</option>
+                                                                    {roles.map((item) => (
+                                                                        <option key={item.name} value={item.name}>
+                                                                            {item.name}
+                                                                        </option>
+                                                                    ))}
+                                                                </select>
                                                             </div>
                                                             <div className={cx('pc-7')}>
                                                                 <button type="submit" className={cx('btn')}>
@@ -198,7 +221,7 @@ function User() {
                                                         <td className={cx('text-center')}>1</td>
                                                         <td className={cx('text-center')}>
                                                             <a
-                                                                className={cx('delete-record')}
+                                                                className={cx('edit-record')}
                                                                 href={routes.userEdit.replace(':name', item.id)}
                                                             >
                                                                 <FontAwesomeIcon icon={faEdit} />

@@ -7,7 +7,9 @@ import role from '../component/ingredient/Role/role';
 import roleCreate from '../component/ingredient/Role/Create/create';
 import user from '../component/ingredient/User/user';
 import userCreate from '../component/ingredient/User/Create/create';
+import userRsPass from '../component/ingredient/User/RsPasss/rs-pass';
 import userBank from '../component/ingredient/User/Bank/bank';
+import userBankCreate from '../component/ingredient/User/Bank/bank_create';
 import userContracts from '../component/ingredient/User/Contract/contract';
 import leave from '../component/ingredient/Leave/leave';
 import leaveCreate from '../component/ingredient/Leave/Create/create';
@@ -44,7 +46,10 @@ const publicRoutes = [
     { path: routesConfig.user, component: user },
     { path: routesConfig.userCreate, component: userCreate },
     { path: routesConfig.userEdit, component: userCreate },
+    { path: routesConfig.userRsPass, component: userRsPass },
     { path: routesConfig.userBank, component: userBank },
+    { path: routesConfig.userBankCreate, component: userBankCreate },
+    { path: routesConfig.userBankEdit, component: userBankCreate },
     { path: routesConfig.userContracts, component: userContracts },
 
     { path: routesConfig.leave, component: leave },

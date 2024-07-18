@@ -11,6 +11,8 @@ const routes = {
     userEdit: '/users/edit/:name',
     userRsPass: '/users/reset-password/:name',
     userBank: '/users/bank_account',
+    userBankCreate: '/users/bank_account/create',
+    userBankEdit: '/users/bank_account/edit/:name',
     userContracts: '/users/contracts',
 
     leave: '/day_off_letters',

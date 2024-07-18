@@ -109,7 +109,13 @@
 }
 .text-center {
     text-align: center;
-}
-.delete-record{
-    cursor: pointer;
+
+    .delete-record{
+        cursor: pointer;
+        color: #dc3545!important;
+    }
+
+    .edit-record{
+        color: #28a745ad!important;
+    }
 }

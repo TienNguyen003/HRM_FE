@@ -1,11 +1,10 @@
 /* eslint-disable eqeqeq */
 import classNames from 'classnames/bind';
-import { Link } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import ButtonCustom from '../../component/globalstyle/Button/button';
 import styles from './login.module.scss';
-import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 const cx = classNames.bind(styles);
 
@@ -59,7 +58,6 @@ function Login() {
                                 <select id="language" className={cx('form-control')}>
                                     <option
                                         defaultValue="vi"
-                                        selected=""
                                         data-href="https://demo.hrm.one/img/ensign_vi.png"
                                     >
                                         Tiếng Việt

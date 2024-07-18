@@ -71,9 +71,7 @@ function Header({ onClick }) {
 
         localStorage.setItem('authorizationData', '');
         redirectLogin();
-    }
-
-    getDataUser();
+    }    
 
     const clickLanguage = () => {
         const language = document.querySelector(`.${cx('language')}`);
@@ -114,6 +112,8 @@ function Header({ onClick }) {
                 changeClass(dropMenu);
             });
         });
+
+        getDataUser();
     }, []);
 
     return (
@@ -125,15 +125,15 @@ function Header({ onClick }) {
 
                 <ul className={cx('list-group')}>
                     <li className={cx('nav-item')}>
-                        <a class="nav-link" href="#" onClick={clickLanguage}>
+                        <a className="nav-link" href="#" onClick={clickLanguage}>
                             <img src="https://demo.hrm.one/img/ensign_vi.png" alt="" />
                         </a>
                         <div className={cx('dropdown-menu', 'language')}>
                             <a href="#" className={cx('dropdown-item')}>
-                                <img src="https://demo.hrm.one/img/ensign_vi.png" alt="" class="mr-2" /> Tiếng Việt
+                                <img src="https://demo.hrm.one/img/ensign_vi.png" alt="" /> Tiếng Việt
                             </a>
                             <a href="#" className={cx('dropdown-item')}>
-                                <img src="https://demo.hrm.one/img/ensign_en.png" alt="" class="mr-2" /> English
+                                <img src="https://demo.hrm.one/img/ensign_en.png" alt="" /> English
                             </a>
                         </div>
                     </li>
@@ -150,7 +150,7 @@ function Header({ onClick }) {
                                 className={cx('user-image')}
                                 alt="User Image"
                             />
-                            <span className={cx('hidden-xs')}>Nguyễn Cao Tú</span>
+                            <span className={cx('hidden-xs')}></span>
                         </a>
                         <ul className={cx('dropdown-menu', 'user')}>
                             <li className={cx('user-header')}>

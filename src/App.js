@@ -18,6 +18,8 @@ function App() {
         setHeaderClicked((prevHeaderClicked) => !prevHeaderClicked);
     };
 
+    console.log("nhân viên phần thêm và edit mật khẩu");
+
     return (
         <>
             <BrowserRouter>

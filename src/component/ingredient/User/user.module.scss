@@ -110,11 +110,27 @@
 }
 .text-center {
     text-align: center;
-}
-.delete-record{
-    cursor: pointer;
+
+    a{
+        color: #007bff !important;
+    }
+
+    .delete-record{
+        cursor: pointer;
+        color: #dc3545!important;
+    }
+
+    .edit-record{
+        color: #28a745ad!important;
+    }
 }
 
 .post-form{
     margin-right: 10px;
+}
+
+.select{
+    padding: 0;
+    height: 31.6px;
+    text-align: center;
 }

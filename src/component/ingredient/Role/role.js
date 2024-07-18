@@ -159,7 +159,7 @@ function Role() {
                                                         <td>{item.des}</td>
                                                         <td className={cx('text-center')}>
                                                             <a
-                                                                className={cx('delete-record')}
+                                                                className={cx('edit-record')}
                                                                 href={routes.roleEdit.replace(':name', item.name)}
                                                             >
                                                                 <FontAwesomeIcon icon={faEdit} />

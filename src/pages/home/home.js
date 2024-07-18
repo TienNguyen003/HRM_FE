@@ -11,7 +11,9 @@ import { isCheck } from '../../component/globalstyle/checkToken';
 const cx = classNames.bind(styles);
 
 function Home() {
-    isCheck();
+    (async function () {
+        await isCheck();
+    })();
 
     return (
         <>
