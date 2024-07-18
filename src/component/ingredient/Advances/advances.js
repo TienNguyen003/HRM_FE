@@ -1,5 +1,5 @@
-function advances() {
-    return <></> 
-}
+import React from 'react';
 
-export default advances;
+export default function Advances() {
+    return <div></div>;
+}
