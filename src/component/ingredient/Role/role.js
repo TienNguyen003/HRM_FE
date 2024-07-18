@@ -19,47 +19,45 @@ function Role() {
     const [nameParam, setNameParam] = useState('');
     const token = localStorage.getItem('authorizationData') || '';
 
-    useEffect(() => {
-        async function fetchData() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const searchParam = urlParams.get('search') || 1;
-            const name = (urlParams.get('name') || '').toUpperCase();
+    // lấy role
+    async function fetchData() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchParam = urlParams.get('search') || 1;
+        const name = (urlParams.get('name') || '').toUpperCase();
 
-            setNameParam(name);
+        setNameParam(name);
+        try {
+            const response = await fetch(`${urlPattern}roles?pageNumber=${searchParam}&name=${name}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
 
-            if (token !== '') {
-                try {
-                    const response = await fetch(
-                        `${urlPattern}roles?pageNumber=${searchParam}&name=${name}`,
-                        {
-                            method: 'GET',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                Authorization: `Bearer ${token}`,
-                            },
-                        },
-                    );
-
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch roles');
-                    }
-
-                    const data = await response.json();
-                    setRoles(data.result);
-                } catch (error) {
-                    console.error('Error fetching roles:', error.message);
-                    // Xử lý lỗi tại đây (ví dụ: hiển thị thông báo cho người dùng)
-                }
+            if (!response.ok) {
+                throw new Error('Failed to fetch roles');
             }
-        }
 
-        fetchData();
+            const data = await response.json();
+            setRoles(data.result);
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+            // Xử lý lỗi tại đây (ví dụ: hiển thị thông báo cho người dùng)
+        }
+    }
+
+    useEffect(() => {
+        (async function () {
+            await fetchData();
+        })();
+        
     }, [token]);
 
     const clickDelete = async (event, name) => {
         event.preventDefault();
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
-        if(result) handleClickDelete(name);        
+        if (result) handleClickDelete(name);
     };
 
     async function handleClickDelete(name) {

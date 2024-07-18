@@ -120,9 +120,9 @@ function Role() {
     }
 
     useEffect(() => { 
-        ((async function(){
+        (async function(){
             await getRole();
-        }))
+        })()
     }, []);
 
     const clickUpdate = () => {

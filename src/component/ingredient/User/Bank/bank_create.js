@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import styles from '../Create/create.module.scss';
 import routes from '../../../../config/routes';
+import { urlPattern } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 
 const cx = classNames.bind(styles);
