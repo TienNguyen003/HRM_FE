@@ -1,11 +1,10 @@
 import classNames from 'classnames/bind';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { useState } from 'react';
 
 import { publicRoutes } from '../src/routes/routes';
 import styles from './App.module.scss';
 import Header from '../src/component/layout/header/header';
-import Home from './pages/home/home';
-import { useEffect, useState } from 'react';
 
 const cx = classNames.bind(styles);
 
@@ -18,7 +17,7 @@ function App() {
         setHeaderClicked((prevHeaderClicked) => !prevHeaderClicked);
     };
 
-    console.log("nhân viên phần thêm và edit mật khẩu");
+    console.log('nhân viên phần update, đổi mật khẩu và edit mật khẩu');
 
     return (
         <>

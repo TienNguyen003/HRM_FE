@@ -33,7 +33,7 @@ const checkValid = (password) => {
     } else return -1;
 };
 
-// check mật khẩu
+// check mật khẩu de css
 const evaluatePasswordStrength = (password) => {
     const isValid = checkValid(password);
     if (password.length == 0) evaluatePasswordColor(0, '', '', '');
@@ -81,7 +81,7 @@ const evaluatePasswordColor = (length, className, classText, value) => {
     }
 };
 
-// input hay đổi giá trị
+// input thay đổi giá trị
 export const changePassword = (e) => {
     let password = e.target.value;
     if (password.includes(' ')) password = password.replace(/ /g, '');
@@ -153,5 +153,27 @@ export async function getRoles(token) {
         return data.result;
     } catch (error) {
         console.error('Error fetching offices:', error.message);
+    }
+}
+
+// lấy user
+export async function getAllUser(token) {
+    try {
+        const response = await fetch(`${urlPattern}users/getAll`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch roles');
+        }
+
+        const data = await response.json();
+        return data.result;
+    } catch (error) {
+        console.error('Error fetching roles:', error.message);
     }
 }

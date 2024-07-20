@@ -1,11 +1,11 @@
-import {urlPattern} from '../../config/config'
+import { urlPattern } from '../../config/config';
 
 function redirectLogin() {
-    return window.location.href = '/login';
+    return (window.location.href = '/login');
 }
 
 export const isCheck = async function checkToken() {
-    const token = localStorage.getItem('authorizationData') ? localStorage.getItem('authorizationData') : '';
+    const token = localStorage.getItem('authorizationData') || '';
     if (token != '') {
         const response = await fetch(`${urlPattern}auth/introspect`, {
             method: 'POST',
@@ -24,4 +24,4 @@ export const isCheck = async function checkToken() {
     } else {
         redirectLogin();
     }
-}
+};

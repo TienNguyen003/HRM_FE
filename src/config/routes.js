@@ -14,6 +14,8 @@ const routes = {
     userBankCreate: '/users/bank_account/create',
     userBankEdit: '/users/bank_account/edit/:name',
     userContracts: '/users/contracts',
+    userContractsCreate: '/users/contracts/create',
+    userContractsEdit: '/users/contracts/edit/:name',
 
     leave: '/day_off_letters',
     leaveCreate: '/day_off_letters/create',

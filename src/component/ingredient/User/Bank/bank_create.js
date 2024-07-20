@@ -5,6 +5,7 @@ import styles from '../Create/create.module.scss';
 import routes from '../../../../config/routes';
 import { urlPattern } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
+import { getAllUser } from '../PasswordUtils';
 
 const cx = classNames.bind(styles);
 
@@ -20,28 +21,6 @@ function Bank() {
     //regex
     const numberRegex = /[0-9]/;
     const specialRegex = /^[a-zA-Z0-9\s]*$/;
-
-    // lấy user
-    async function getAllUser() {
-        try {
-            const response = await fetch(`${urlPattern}users/getAll`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
-            }
-
-            const data = await response.json();
-            setUser(data.result);
-        } catch (error) {
-            console.error('Error fetching roles:', error.message);
-        }
-    }
 
     // lấy bank
     async function getBank() {
@@ -75,7 +54,7 @@ function Bank() {
 
     useEffect(() => {
         (async function () {
-            await getAllUser();
+            await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getBank();
         })();
@@ -92,7 +71,7 @@ function Bank() {
         alertCt.textContent = content;
     };
 
-    const saveBank = async () => {
+    const saveBank = () => {
         const nameBank = document.querySelector('#bank_name').value;
         const owner = document
             .querySelector('#bank_account')
@@ -110,13 +89,28 @@ function Bank() {
             handleAlert('alert-danger', 'Tên chủ tài khoản không được bỏ trống, không chứa số hoặc kí tự đặc biệt');
         else if (numberBank === '' || !numberRegex.test(numberBank) || numberBank.includes(' '))
             handleAlert('alert-danger', 'Số tài khoản chỉ chấp nhận chữ số và không cho phép khoảng trắng');
-        else handleSaveUser(nameBank, owner, numberBank, nameUser, prioritize);
+        else {
+            if (path.includes('/users/bank_account')) {
+                handleSaveUpdateUser('POST', '', nameBank, owner, numberBank, nameUser, prioritize, 'Thêm thành công');
+            } else {
+                handleSaveUpdateUser(
+                    'PUT',
+                    `?id=${path}`,
+                    nameBank,
+                    owner,
+                    numberBank,
+                    nameUser,
+                    prioritize,
+                    'Cập nhật thành công',
+                );
+            }
+        }
     };
 
-    const handleSaveUser = async (nameBank, owner, numberBank, nameUser, prioritize) => {
+    const handleSaveUpdateUser = async (method, query, nameBank, owner, numberBank, nameUser, prioritize, message) => {
         try {
-            const response = await fetch(`${urlPattern}bank_accounts`, {
-                method: 'POST',
+            const response = await fetch(`${urlPattern}bank_accounts${query}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -131,7 +125,7 @@ function Bank() {
             });
 
             const data = await response.json();
-            if (data.code === 303) handleAlert('alert-success', 'Thêm dữ liệu thành công');
+            if (data.code === 303) handleAlert('alert-success', message);
             else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -266,7 +260,7 @@ function Bank() {
                                                     <button
                                                         name="redirect"
                                                         className={cx('btn', 'btn-info')}
-                                                        // onClick={clickUpdate}
+                                                        onClick={saveBank}
                                                     >
                                                         Lưu lại
                                                     </button>

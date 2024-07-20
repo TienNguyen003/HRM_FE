@@ -11,6 +11,7 @@ import userRsPass from '../component/ingredient/User/RsPasss/rs-pass';
 import userBank from '../component/ingredient/User/Bank/bank';
 import userBankCreate from '../component/ingredient/User/Bank/bank_create';
 import userContracts from '../component/ingredient/User/Contract/contract';
+import userContractsCreate from '../component/ingredient/User/Contract/create';
 import leave from '../component/ingredient/Leave/leave';
 import leaveCreate from '../component/ingredient/Leave/Create/create';
 import leaveApprovals from '../component/ingredient/Leave/Approve/leave';
@@ -51,6 +52,8 @@ const publicRoutes = [
     { path: routesConfig.userBankCreate, component: userBankCreate },
     { path: routesConfig.userBankEdit, component: userBankCreate },
     { path: routesConfig.userContracts, component: userContracts },
+    { path: routesConfig.userContractsCreate, component: userContractsCreate },
+    { path: routesConfig.userContractsEdit, component: userContractsCreate },
 
     { path: routesConfig.leave, component: leave },
     { path: routesConfig.leaveCreate, component: leaveCreate },
