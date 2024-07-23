@@ -161,13 +161,13 @@ function Leave() {
                                                         </td>
                                                         <td className={cx('text-center')}>{item.startTime}</td>
                                                         <td className={cx('text-center')}>{item.endTime}</td>
-                                                        <td className={cx('text-center')}>{item.totalTime}</td>
+                                                        <td className={cx('text-center')}>{item.totalTime}h</td>
                                                         <td className={cx('text-center')}>{item.approved}</td>
                                                         <td className={cx('text-center')}>
                                                             <Status status={item.status} />
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a href={routes.leaveCreate}>
+                                                            <a href={routes.leaveEdit.replace(':name', item.id)}>
                                                                 <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>

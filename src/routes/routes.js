@@ -57,6 +57,7 @@ const publicRoutes = [
 
     { path: routesConfig.leave, component: leave },
     { path: routesConfig.leaveCreate, component: leaveCreate },
+    { path: routesConfig.leaveEdit, component: leaveCreate },
     { path: routesConfig.leaveApprovals, component: leaveApprovals },
     { path: routesConfig.leaveHs, component: leaveHs },
 

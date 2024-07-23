@@ -2,6 +2,8 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
+import routes from '../../../../config/routes';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getAllUser, handleAlert } from '../../ingredient';
 
@@ -12,41 +14,140 @@ function Role() {
         await isCheck();
     })();
 
+    const [isStatus, setIsStatus] = useState(0);
     const [user, setUser] = useState([]);
     const [dayOff, setDayOff] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const path = window.location.pathname.replace('/day_off_letters/edit/', '');
+
+    const getLeave = async () => {
+        if (path.includes('/day_off_letters/create')) return;
+        try {
+            const response = await fetch(`${BASE_URL}day_off_letter/leave?leaveId=${path}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch roles');
+            }
+
+            const data = await response.json();
+            if (data.code === 303) {
+                const dataRs = data.result;
+                setIsStatus(dataRs.status);
+
+                document
+                    .querySelector('#user_id')
+                    .querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
+                document
+                    .querySelector('#day_off_category_id')
+                    .querySelector('option[value="' + dataRs.dayOffCategories.id + '"]').selected = true;
+                document.querySelector('#start').value = dataRs.startTime.split(' ')[0];
+                document.querySelector('#time_start').value = dataRs.startTime.split(' ')[1];
+                document.querySelector('#end').value = dataRs.endTime.split(' ')[0];
+                document.querySelector('#time_end').value = dataRs.endTime.split(' ')[1];
+                document.querySelector(`.${cx('message')}`).value = dataRs.reason;
+            }
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
 
     useEffect(() => {
         (async function () {
-            await getAllUser(token).then((result) => setUser(result));
             await getDayOffCate(token).then((result) => setDayOff(result));
+            await getAllUser(token).then((result) => setUser(result));
+            await new Promise((resolve) => setTimeout(resolve, 1));
+            await getLeave();
         })();
     }, []);
 
+    const saveLeave = async (dayOff, startTime, endTime, totalTime, approved, reason, employeeId) => {
+        try {
+            const response = await fetch(`${BASE_URL}day_off_letter`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    dayOff,
+                    startTime,
+                    endTime,
+                    totalTime,
+                    approved,
+                    reason,
+                    employeeId,
+                }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch roles');
+            }
+
+            const data = await response.json();
+            if (data.code === 303) handleAlert('alert-success', 'Thêm thành công');
+            else handleAlert('alert-danger', 'Thêm thất bại');
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
+
     const handleCheck = () => {
         const user = document.querySelector('#user_id');
+        const day_off = document.querySelector('#day_off_category_id').value;
         const selectedOption = user.options[user.selectedIndex];
-        const selectedValue = selectedOption.value;
         const selectedVacationHours = selectedOption.getAttribute('data-vacationhours');
         const start = document.querySelector('#start');
         const end = document.querySelector('#end');
         const timeStart = document.querySelector('#time_start');
         const timeEnd = document.querySelector('#time_end');
+        const message = document.querySelector(`.${cx('message')}`).value;
+
+        const startDay = new Date(start.value + ' ' + (timeStart.value + ':00'));
+        const endDay = new Date(end.value + ' ' + (timeEnd.value + ':00'));
+        const total = (endDay - startDay) / (1000 * 3600);
 
         if (start.value === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
         else if (end.value === '') handleAlert('alert-danger', 'Ngày kết thúc không được để trống');
-        else if (end.value < start.value) handleAlert('alert-danger', 'Ngày kết thúc không nhỏ hơn ngày bắt đầu');
+        else if (end.value < start.value) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else if (timeStart.value === '') handleAlert('alert-danger', 'Thời gian bắt đầu không được để trống');
         else if (timeEnd.value === '') handleAlert('alert-danger', 'Thời gian kết thúc không được để trống');
-        else if (end.value == start.value) {
-            if (timeEnd.value <= timeStart.value)
-                handleAlert('alert-danger', 'Thời gian kết thúc không được nhỏ hơn thời gian bắt đầu');
-        } else return true;
-        return false;
+        else if (end.value == start.value && timeEnd.value <= timeStart.value)
+            handleAlert('alert-danger', 'Thời gian kết thúc phải lớn hơn thời gian bắt đầu');
+        else if (total > +selectedVacationHours)
+            handleAlert(
+                'alert-danger',
+                'Bạn đã hết thời gian nghỉ phép. Bạn còn ' + selectedVacationHours + 'h nghỉ phép',
+            );
+        else
+            saveLeave(
+                day_off,
+                start.value + ' ' + (timeStart.value + ':00'),
+                end.value + ' ' + (timeEnd.value + ':00'),
+                Math.floor(total),
+                '',
+                message,
+                user.value,
+            );
     };
 
     const clickAddLeave = async () => {
-        console.log(handleCheck);
+        handleCheck();
+    };
+
+    //đóng alert
+    const clickClose = () => {
+        const alert = document.querySelector(`.${cx('alert')}`);
+        alert.classList.add(`${cx('hidden')}`);
+    };
+
+    const updateLeave = () => {
+        handleCheck();
     };
 
     const handleSubmitForm = (e) => {
@@ -76,6 +177,12 @@ function Role() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
+                                                <label className={cx('pc-12')}>
+                                                    {isStatus != 0 ? `Chỉ đơn chưa duyệt mới được phép chỉnh sửa` : ''}
+                                                </label>
+                                            </div>
+
+                                            <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
@@ -85,7 +192,7 @@ function Role() {
                                                             <option
                                                                 data-vacationhours={item.employee.vacationHours}
                                                                 key={item.id}
-                                                                value={item.id}
+                                                                value={item.employee.id}
                                                             >
                                                                 {item.employee.name}
                                                             </option>
@@ -178,27 +285,38 @@ function Role() {
                                                 <ul className={cx('pc-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
-                                                <button type="button" className={cx('close')}>
+                                                <button type="button" className={cx('close')} onClick={clickClose}>
                                                     ×
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={clickAddLeave}
-                                                >
-                                                    Thêm mới
-                                                </button>
-                                                &nbsp;
+                                                {path.includes('/day_off_letters/create') ? (
+                                                    <button
+                                                        type="submit"
+                                                        className={cx('btn', 'btn-success')}
+                                                        onClick={clickAddLeave}
+                                                    >
+                                                        Thêm mới
+                                                    </button>
+                                                ) : (
+                                                    <button
+                                                        type="submit"
+                                                        className={cx('btn', 'btn-success')}
+                                                        disabled={isStatus != 0}
+                                                        onClick={updateLeave}
+                                                    >
+                                                        Lưu
+                                                    </button>
+                                                )}
                                                 <button type="reset" className={cx('btn', 'btn-default')}>
                                                     Nhập lại
                                                 </button>
-                                                &nbsp;
-                                                <button type="button" className={cx('btn', 'btn-danger')}>
-                                                    Thoát
-                                                </button>
-                                                &nbsp;
+
+                                                <a href={routes.leave}>
+                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                        Thoát
+                                                    </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </form>

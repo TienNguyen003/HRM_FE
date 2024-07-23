@@ -19,6 +19,7 @@ const routes = {
 
     leave: '/day_off_letters',
     leaveCreate: '/day_off_letters/create',
+    leaveEdit: '/day_off_letters/edit/:name',
     leaveApprovals: '/day_off_letters/approvals',
     leaveHs: '/day_off_letters/sabbatical_leave_logs',
 

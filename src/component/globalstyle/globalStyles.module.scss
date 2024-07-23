@@ -59,6 +59,9 @@ a[href] {
     color: var(--text-color);
     text-decoration: none;
 }
+textarea{
+    outline: none;
+}
 
 // Custom tippy tooltip
 body {
