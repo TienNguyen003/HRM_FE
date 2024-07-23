@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 
 import styles from './create.module.scss';
 import routes from '../../../../config/routes';
-import { urlPattern } from '../../../../config/config';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 
 const cx = classNames.bind(styles);
@@ -57,7 +57,7 @@ function Role() {
         const alertCt = document.querySelector(`.${cx('alert-content')}`);
 
         if (nameRole.value !== '') {
-            const response = await fetch(`${urlPattern}roles`, {
+            const response = await fetch(`${BASE_URL}roles`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -94,7 +94,7 @@ function Role() {
 
         nameRole.setAttribute('readonly', true);
 
-        const response = await fetch(`${urlPattern}roles/role?name=${path}`, {
+        const response = await fetch(`${BASE_URL}roles/role?name=${path}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -107,7 +107,7 @@ function Role() {
             nameRole.value = dataFill.name;
 
             const checkboxes = document.querySelectorAll('input[name="authorizations[]"]');
-            if (dataFill.permissions[0] && dataFill.permissions[0].name == 'ALL') handleClickRole(true);
+            if (dataFill.permissions[0] && dataFill.permissions[0].name === 'ALL') handleClickRole(true);
             else {
                 const permissionNames = dataFill.permissions.map((item) => item.name);
                 checkboxes.forEach((checkbox) => {
@@ -135,7 +135,7 @@ function Role() {
         const alert = document.querySelector(`.${cx('alert')}`);
         const alertCt = document.querySelector(`.${cx('alert-content')}`);
 
-        const response = await fetch(`${urlPattern}roles?name=${nameRole.value}`, {
+        const response = await fetch(`${BASE_URL}roles?name=${nameRole.value}`, {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',

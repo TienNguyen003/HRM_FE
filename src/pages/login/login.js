@@ -3,16 +3,14 @@ import classNames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
-import ButtonCustom from '../../component/globalstyle/Button/button';
 import styles from './login.module.scss';
-import {urlPattern} from '../../config/config';
+import { BASE_URL } from '../../config/config';
 
 const cx = classNames.bind(styles);
 
 function Login() {
-
     async function checkLogin(username, password) {
-        const response = await fetch(`${urlPattern}auth/token`, {
+        const response = await fetch(`${BASE_URL}auth/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -24,7 +22,7 @@ function Login() {
         });
 
         const data = await response.json();
-        if (data.code == 303) {
+        if (data.code === 303) {
             localStorage.setItem('authorizationData', data.result.token);
             window.location.href = '/';
         } else {
@@ -37,9 +35,9 @@ function Login() {
         const alert = document.querySelector(`.${cx('text-danger')}`);
         const username = document.querySelector(`.${cx('username')}`).value;
         const password = document.querySelector(`.${cx('password')}`).value;
-        if (username == '') alert.textContent = 'Tên đăng nhập không được để trống!';
-        else if (password == '') alert.textContent = 'Mật khẩu không được để trống!';
-        else checkLogin(username, password)
+        if (username === '') alert.textContent = 'Tên đăng nhập không được để trống!';
+        else if (password === '') alert.textContent = 'Mật khẩu không được để trống!';
+        else checkLogin(username, password);
     };
 
     return (
@@ -56,10 +54,7 @@ function Login() {
                         <form>
                             <div className={cx('input-group', 'mb-3')}>
                                 <select id="language" className={cx('form-control')}>
-                                    <option
-                                        defaultValue="vi"
-                                        data-href="https://demo.hrm.one/img/ensign_vi.png"
-                                    >
+                                    <option defaultValue="vi" data-href="https://demo.hrm.one/img/ensign_vi.png">
                                         Tiếng Việt
                                     </option>
                                     <option defaultValue="en" data-href="https://demo.hrm.one/img/ensign_en.png">
@@ -104,9 +99,9 @@ function Login() {
                                     </div>
                                 </div>
                                 <div className={cx('col-6')}>
-                                    <ButtonCustom type="button" onClick={login} className={cx('button')}>
+                                    <button type="button" onClick={login} className={cx('button', 'button-login')}>
                                         Đăng nhập
-                                    </ButtonCustom>
+                                    </button>
                                 </div>
                             </div>
                         </form>

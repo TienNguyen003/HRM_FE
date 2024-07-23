@@ -1,9 +1,9 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
-import styles from '../user.module.scss';
+import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
-import { urlPattern } from '../../../../config/config';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 
 const cx = classNames.bind(styles);
@@ -29,7 +29,7 @@ function Contract() {
 
         try {
             const response = await fetch(
-                `${urlPattern}contracts?pageNumber=${searchParam}&name=${name}&status=${status}`,
+                `${BASE_URL}contracts?pageNumber=${searchParam}&name=${name}&status=${status}`,
                 {
                     method: 'GET',
                     headers: {
@@ -69,7 +69,7 @@ function Contract() {
     // xóa hop dong
     async function handleClickDelete(id) {
         try {
-            const response = await fetch(`${urlPattern}contracts?id=${id}`, {
+            const response = await fetch(`${BASE_URL}contracts?id=${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

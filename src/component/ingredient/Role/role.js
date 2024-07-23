@@ -5,7 +5,7 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 
 import styles from './role.module.scss';
 import routes from '../../../config/routes';
-import { urlPattern } from '../../../config/config';
+import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 
 const cx = classNames.bind(styles);
@@ -27,7 +27,7 @@ function Role() {
 
         setNameParam(name);
         try {
-            const response = await fetch(`${urlPattern}roles?pageNumber=${searchParam}&name=${name}`, {
+            const response = await fetch(`${BASE_URL}roles?pageNumber=${searchParam}&name=${name}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -62,7 +62,7 @@ function Role() {
 
     async function handleClickDelete(name) {
         try {
-            const response = await fetch(`${urlPattern}roles?name=${name}`, {
+            const response = await fetch(`${BASE_URL}roles?name=${name}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',

@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
 
-import styles from '../Create/create.module.scss';
-import ReactDatePicker from '../../../globalstyle/DatePicker/DatePicker';
+import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
-import { urlPattern } from '../../../../config/config';
-import { getAllUser } from '../PasswordUtils';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
+import { getAllUser, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -25,8 +24,9 @@ export default function Create() {
         const start = document.querySelector('#start');
         const end = document.querySelector('#end');
 
+        if (path.includes('/users/contracts')) return '';
         try {
-            const response = await fetch(`${urlPattern}contracts/contracts?contractsId=${path}`, {
+            const response = await fetch(`${BASE_URL}contracts/contracts?contractsId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -37,22 +37,11 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 const dataRs = data.result;
-                let dismissal_date;
-                if (dataRs.employee.dismissal_date) {
-                    dismissal_date = new Date(dataRs.employee.dismissal_date);
-                    end.querySelector('.react-date-picker__inputGroup__day').value = dismissal_date.getDate();
-                    end.querySelector('.react-date-picker__inputGroup__year').value = dismissal_date.getFullYear();
-                    end.querySelector('.react-date-picker__inputGroup__month').value = dismissal_date.getMonth() + 1;
-                    end.querySelector('input[name="date"]').value = dataRs.employee.dismissal_date;
-                }
-                const hire_date = new Date(dataRs.employee.hire_date);
 
                 fileName.textContent = dataRs.urlFile ? dataRs.urlFile : 'Choose File';
                 user_id.querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
-                start.querySelector('.react-date-picker__inputGroup__day').value = hire_date.getDate();
-                start.querySelector('.react-date-picker__inputGroup__month').value = hire_date.getMonth() + 1;
-                start.querySelector('.react-date-picker__inputGroup__year').value = hire_date.getFullYear();
-                start.querySelector('input[name="date"]').value = dataRs.employee.hire_date;
+                start.value = dataRs.employee.hire_date;
+                end.value = dataRs.employee.dismissal_date;
             }
         } catch (error) {
             console.log(error);
@@ -64,23 +53,12 @@ export default function Create() {
             await getAllUser(token).then((result) => setUser(result));
             await getContract();
         })();
-    }, []);
-
-    // css alert
-    const handleAlert = (css, content) => {
-        const alert = document.querySelector(`.${cx('alert')}`);
-        const alertCt = document.querySelector(`.${cx('alert-content')}`);
-
-        alert.setAttribute('class', `${cx('alert')}`);
-        alert.classList.remove(`${cx('hidden')}`);
-        alert.classList.add(`${cx(css)}`);
-        alertCt.textContent = content;
-    };
+    }, []);    
 
     // api them
     async function saveContract(employeeId, urlFile) {
         try {
-            const response = await fetch(`${urlPattern}contracts`, {
+            const response = await fetch(`${BASE_URL}contracts`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -101,7 +79,7 @@ export default function Create() {
     }
     async function saveDismissal(start, end, id) {
         try {
-            const response = await fetch(`${urlPattern}employee/dismissal?id=${id}`, {
+            const response = await fetch(`${BASE_URL}employee/dismissal?id=${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -118,7 +96,7 @@ export default function Create() {
     }
     async function updateContract(employeeId, urlFile) {
         try {
-            const response = await fetch(`${urlPattern}contracts?contractsId=${path}`, {
+            const response = await fetch(`${BASE_URL}contracts?contractsId=${path}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -142,16 +120,17 @@ export default function Create() {
     const clickAdd = () => {
         const user_id = document.querySelector('#user_id').value;
         const file = document.getElementById('attach').files[0];
-        const start = document.querySelector('#start').querySelector('input[name="date"]').value;
-        const end = document.querySelector('#end').querySelector('input[name="date"]').value;
+        const start = document.querySelector('#start');
+        const end = document.querySelector('#end');
         let nameFile;
         if (file) {
             nameFile = file.name;
         }
-        if (start === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
-        else if (end !== '' && end <= start) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
+        if (start.value === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
+        else if (end.value !== '' && end <= start)
+            handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else {
-            saveDismissal(start, end, user_id);
+            saveDismissal(start.value, end.value, user_id);
             saveContract(user_id, nameFile);
         }
     };
@@ -160,16 +139,16 @@ export default function Create() {
     const clickUpdate = () => {
         const user_id = document.querySelector('#user_id').value;
         const file = document.getElementById('attach').files[0];
-        const start = document.querySelector('#start').querySelector('input[name="date"]').value;
-        const end = document.querySelector('#end').querySelector('input[name="date"]').value;
+        const start = document.querySelector('#start');
+        const end = document.querySelector('#end');
         let nameFile;
         if (file) {
             nameFile = file.name;
         }
-        if (start === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
-        else if (end !== '' && end <= start) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
+        if (start.value === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
+        else if (end.value !== '' && end <= start) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else {
-            saveDismissal(start, end, user_id);
+            saveDismissal(start.value, end.value, user_id);
             updateContract(user_id, nameFile);
         }
     };
@@ -240,10 +219,11 @@ export default function Create() {
                                                 </label>
                                                 <div className={cx('pc-8')}>
                                                     <div className={cx('input-group')}>
-                                                        <ReactDatePicker
-                                                            className={cx('input-calender')}
-                                                            id={'start'}
-                                                        ></ReactDatePicker>
+                                                        <input
+                                                            type="date"
+                                                            className={cx('form-control')}
+                                                            id="start"
+                                                        ></input>
                                                     </div>
                                                 </div>
                                             </div>
@@ -251,10 +231,11 @@ export default function Create() {
                                                 <label className={cx('pc-2')}>Kết thúc</label>
                                                 <div className={cx('pc-8')}>
                                                     <div className={cx('input-group')}>
-                                                        <ReactDatePicker
-                                                            className={cx('input-calender')}
-                                                            id={'end'}
-                                                        ></ReactDatePicker>
+                                                        <input
+                                                            type="date"
+                                                            className={cx('form-control')}
+                                                            id="end"
+                                                        ></input>
                                                     </div>
                                                 </div>
                                             </div>
@@ -291,7 +272,7 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                {path.includes('/users/contracts/edit/') ? (
+                                                {path.includes('/users/contracts/create') ? (
                                                     <button
                                                         type="submit"
                                                         className={cx('btn', 'btn-success')}

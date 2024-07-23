@@ -18,7 +18,7 @@ import {
 
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
-import {urlPattern} from '../../../config/config';
+import {BASE_URL} from '../../../config/config';
 
 const cx = classNames.bind(styles);
 
@@ -41,7 +41,7 @@ function Header({ onClick }) {
 
     async function getDataUser() {
         if (token != '') {
-            const response = await fetch(`${urlPattern}users/myInfo`, {
+            const response = await fetch(`${BASE_URL}users/myInfo`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ function Header({ onClick }) {
     }
 
     async function logout() {
-        const response = await fetch(`${urlPattern}auth/logout`, {
+        const response = await fetch(`${BASE_URL}auth/logout`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -99,7 +99,7 @@ function Header({ onClick }) {
         const dropMenus = document.querySelectorAll(`.${cx('drop-menu')}`);
         dropMenus.forEach((dropMenu) => {
             dropMenu.classList.remove(`${cx('active')}`);
-            if (location == '/' && dropMenu.getAttribute('data-href') == '/') {
+            if (location === '/' && dropMenu.getAttribute('data-href') === '/') {
                 dropMenu.classList.add(`${cx('active')}`);
             } else if (
                 location.includes(dropMenu.getAttribute('data-href')) &&

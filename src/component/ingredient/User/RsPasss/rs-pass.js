@@ -1,10 +1,10 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
-import styles from '../Create/create.module.scss';
-import { urlPattern } from '../../../../config/config';
+import styles from '../../create.module.scss';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
-import { changePassword, clickAutoPassword } from '../PasswordUtils';
+import { changePassword, clickAutoPassword } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -18,7 +18,7 @@ function RsPass() {
 
     async function getUsers() {
         try {
-            const response = await fetch(`${urlPattern}users/user?userId=${path}`, {
+            const response = await fetch(`${BASE_URL}users/user?userId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',

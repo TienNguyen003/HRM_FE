@@ -1,11 +1,11 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
-import styles from '../Create/create.module.scss';
+import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
-import { urlPattern } from '../../../../config/config';
+import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
-import { getAllUser } from '../PasswordUtils';
+import { getAllUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -26,7 +26,7 @@ function Bank() {
     async function getBank() {
         if (path.includes('/users/bank_account')) return '';
         try {
-            const response = await fetch(`${urlPattern}bank_accounts/bank?id=${path}`, {
+            const response = await fetch(`${BASE_URL}bank_accounts/bank?id=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -109,7 +109,7 @@ function Bank() {
 
     const handleSaveUpdateUser = async (method, query, nameBank, owner, numberBank, nameUser, prioritize, message) => {
         try {
-            const response = await fetch(`${urlPattern}bank_accounts${query}`, {
+            const response = await fetch(`${BASE_URL}bank_accounts${query}`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',

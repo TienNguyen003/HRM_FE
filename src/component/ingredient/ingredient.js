@@ -1,10 +1,21 @@
 import classNames from 'classnames/bind';
-import styles from './Create/create.module.scss';
-import { urlPattern } from '../../../config/config';
+import styles from './create.module.scss';
+import { BASE_URL } from '../../config/config';
 
 const cx = classNames.bind(styles);
 
-// check mật khẩu
+// css alert
+export const handleAlert = (css, content) => {
+    const alert = document.querySelector(`.${cx('alert')}`);
+    const alertCt = document.querySelector(`.${cx('alert-content')}`);
+
+    alert.setAttribute('class', `${cx('alert')}`);
+    alert.classList.remove(`${cx('hidden')}`);
+    alert.classList.add(`${cx(css)}`);
+    alertCt.textContent = content;
+};
+
+// check mạnh yếu mật khẩu
 const checkValid = (password) => {
     const hasLowercase = /[a-z]/.test(password);
     const hasUppercase = /[A-Z]/.test(password);
@@ -36,7 +47,7 @@ const checkValid = (password) => {
 // check mật khẩu de css
 const evaluatePasswordStrength = (password) => {
     const isValid = checkValid(password);
-    if (password.length == 0) evaluatePasswordColor(0, '', '', '');
+    if (password.length === 0) evaluatePasswordColor(0, '', '', '');
     else if (password.length <= 4) {
         if (isValid >= 3 && isValid <= 4) evaluatePasswordColor(2, 'box4', 'text-orange', 'yếu');
         else evaluatePasswordColor(1, 'box5', 'text-red', 'rất yếu');
@@ -115,7 +126,7 @@ export const clickAutoPassword = () => {
 // lấy phòng làm việc
 export async function getStructures(token) {
     try {
-        const response = await fetch(`${urlPattern}structures`, {
+        const response = await fetch(`${BASE_URL}structures`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -128,7 +139,7 @@ export async function getStructures(token) {
         }
 
         const data = await response.json();
-        return data.result;
+        if (data.code === 303) return data.result;
     } catch (error) {
         console.error('Error fetching offices:', error.message);
     }
@@ -137,7 +148,7 @@ export async function getStructures(token) {
 // lấy role
 export async function getRoles(token) {
     try {
-        const response = await fetch(`${urlPattern}roles/get`, {
+        const response = await fetch(`${BASE_URL}roles/get`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -150,7 +161,7 @@ export async function getRoles(token) {
         }
 
         const data = await response.json();
-        return data.result;
+        if (data.code === 303) return data.result;
     } catch (error) {
         console.error('Error fetching offices:', error.message);
     }
@@ -159,7 +170,7 @@ export async function getRoles(token) {
 // lấy user
 export async function getAllUser(token) {
     try {
-        const response = await fetch(`${urlPattern}users/getAll`, {
+        const response = await fetch(`${BASE_URL}users/getAll`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -172,8 +183,26 @@ export async function getAllUser(token) {
         }
 
         const data = await response.json();
-        return data.result;
+        if (data.code === 303) return data.result;
     } catch (error) {
         console.error('Error fetching roles:', error.message);
     }
 }
+
+// danh sach ngay nghi
+export const getDayOffCate = async (token) => {
+    try {
+        const response = await fetch(`${BASE_URL}day_off_categories`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        if (data.code === 303) return data.result;
+    } catch (error) {
+        console.log(error);
+    }
+};

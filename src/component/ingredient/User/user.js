@@ -3,11 +3,11 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-import styles from './user.module.scss';
+import styles from '../list.module.scss';
 import routes from '../../../config/routes';
-import { urlPattern } from '../../../config/config';
+import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
-import { getRoles, getStructures } from './PasswordUtils';
+import { getRoles, getStructures } from '../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -37,7 +37,7 @@ function User() {
 
         try {
             const response = await fetch(
-                `${urlPattern}users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
+                `${BASE_URL}users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
                 {
                     method: 'GET',
                     headers: {
@@ -79,7 +79,7 @@ function User() {
     // xóa người dùng
     async function handleClickDelete(name) {
         try {
-            const response = await fetch(`${urlPattern}users?userId=${name}`, {
+            const response = await fetch(`${BASE_URL}users?userId=${name}`, {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
