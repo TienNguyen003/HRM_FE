@@ -50,12 +50,17 @@ function Header({ onClick }) {
             });
             const data = await response.json();
 
-            const emplname = document.querySelector(`.${cx('hidden-xs')}`);
-            const emplimg = document.querySelector(`.${cx('user-image')}`);
-            const emplimgCircle = document.querySelector(`.${cx('img-circle')}`);
+            if(data.code === 303){
+                const emplname = document.querySelector(`.${cx('hidden-xs')}`);
+                const emplimg = document.querySelector(`.${cx('user-image')}`);
+                const emplimgCircle = document.querySelector(`.${cx('img-circle')}`);
+    
+                emplname.textContent = data.result.employee.name;
+                emplimgCircle.src = emplimg.src = data.result.employee.image;
 
-            emplname.textContent = data.result.employee.name;
-            emplimgCircle.src = emplimg.src = data.result.employee.image;
+                localStorage.setItem('employee', JSON.stringify(data.result.employee));
+            }
+
         }
     }
 

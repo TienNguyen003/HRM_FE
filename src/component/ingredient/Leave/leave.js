@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import Status from '../../globalstyle/Status/status';
-import { BASE_URL  } from '../../../config/config';
+import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { getDayOffCate } from '../ingredient';
 
@@ -19,6 +19,7 @@ function Leave() {
     const [dayOff, setDayOff] = useState([]);
     const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const path = window.location.pathname.replace('/day_off_letters/approvals', 'approvals');
 
     // danh sach don xin nghi
     const getLeave = async () => {
@@ -57,7 +58,7 @@ function Leave() {
 
     useEffect(() => {
         (async function () {
-            await getDayOffCate(token).then(result => setDayOff(result));
+            await getDayOffCate(token).then((result) => setDayOff(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getLeave();
         })();
@@ -100,7 +101,9 @@ function Leave() {
                                                                 >
                                                                     <option value="">-- Loại nghỉ --</option>
                                                                     {dayOff.map((item) => (
-                                                                        <option key={item.id} value={item.id}>{item.nameDay}</option>
+                                                                        <option key={item.id} value={item.id}>
+                                                                            {item.nameDay}
+                                                                        </option>
                                                                     ))}
                                                                 </select>
                                                             </div>
@@ -167,9 +170,15 @@ function Leave() {
                                                             <Status status={item.status} />
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a href={routes.leaveEdit.replace(':name', item.id)}>
-                                                                <i className={cx('fas fa-edit')}></i>
-                                                            </a>
+                                                            {path.includes('approvals') ? (
+                                                                <a href={routes.leaveApprovalsEdit.replace(':name', item.id)}>
+                                                                    <i className={cx('fas fa-eye')}></i>
+                                                                </a>
+                                                            ) : (
+                                                                <a href={routes.leaveEdit.replace(':name', item.id)}>
+                                                                    <i className={cx('fas fa-edit')}></i>
+                                                                </a>
+                                                            )}
                                                         </td>
                                                     </tr>
                                                 ))}

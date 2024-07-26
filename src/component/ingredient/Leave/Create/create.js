@@ -66,10 +66,13 @@ function Role() {
         })();
     }, []);
 
-    const saveLeave = async (dayOff, startTime, endTime, totalTime, approved, reason, employeeId) => {
+    const saveLeave = async (dayOff, startTime, endTime, totalTime, approved, reason, employeeId, method) => {
+        let url = `${BASE_URL}day_off_letter`;
+        if (method === 'PUT') url += `?leaveId=${path}`;
+
         try {
-            const response = await fetch(`${BASE_URL}day_off_letter`, {
-                method: 'POST',
+            const response = await fetch(`${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -124,16 +127,30 @@ function Role() {
                 'alert-danger',
                 'Bạn đã hết thời gian nghỉ phép. Bạn còn ' + selectedVacationHours + 'h nghỉ phép',
             );
-        else
-            saveLeave(
-                day_off,
-                start.value + ' ' + (timeStart.value + ':00'),
-                end.value + ' ' + (timeEnd.value + ':00'),
-                Math.floor(total),
-                '',
-                message,
-                user.value,
-            );
+        else {
+            if (path.includes('/day_off_letters/create'))
+                saveLeave(
+                    day_off,
+                    start.value + ' ' + timeStart.value,
+                    end.value + ' ' + timeEnd.value,
+                    Math.floor(total),
+                    '',
+                    message,
+                    user.value,
+                    'POST',
+                );
+            else
+                saveLeave(
+                    day_off,
+                    start.value + ' ' + timeStart.value,
+                    end.value + ' ' + timeEnd.value,
+                    Math.floor(total),
+                    '',
+                    message,
+                    user.value,
+                    'PUT',
+                );
+        }
     };
 
     const clickAddLeave = async () => {
@@ -178,10 +195,9 @@ function Role() {
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-12')}>
-                                                    {isStatus != 0 ? `Chỉ đơn chưa duyệt mới được phép chỉnh sửa` : ''}
+                                                    {isStatus !== 0 ? `Chỉ đơn chưa duyệt mới được phép chỉnh sửa` : ''}
                                                 </label>
                                             </div>
-
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
@@ -302,7 +318,7 @@ function Role() {
                                                     <button
                                                         type="submit"
                                                         className={cx('btn', 'btn-success')}
-                                                        disabled={isStatus != 0}
+                                                        disabled={isStatus !== 0}
                                                         onClick={updateLeave}
                                                     >
                                                         Lưu
