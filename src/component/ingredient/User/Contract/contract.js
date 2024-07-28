@@ -5,6 +5,7 @@ import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
+import { Pagination } from '../../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
@@ -206,18 +207,19 @@ function Contract() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('pc-4')}>
-                                            <div className={cx('float-left')}>
+                                        <div className={cx('pagination', 'pc-12')}>
+                                            <div className={cx('pc-10')}>
                                                 <p>
                                                     Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>
-                                                        {page.totalItemsPerPage < 30
-                                                            ? page.totalItemsPerPage
-                                                            : page.totalItems}
-                                                    </b>
+                                                    <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pagination', 'float-right')}></div>
+                                            <div className={cx('pc-2')}>
+                                                <Pagination
+                                                    currentPage={page.currentPage}
+                                                    totalPages={page.totalPages}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

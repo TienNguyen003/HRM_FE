@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
+import { Pagination } from '../../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
@@ -13,6 +14,7 @@ function Leave() {
     })();
 
     const [logs, setLogs] = useState([]);
+    const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
 
     // lay lich su
@@ -33,7 +35,10 @@ function Leave() {
             });
 
             const data = await response.json();
-            if (data.code === 303) setLogs(data.result);
+            if (data.code === 303) {
+                setLogs(data.result);
+                setPage(data.page);
+            }
         } catch (error) {
             console.log(error);
         }
@@ -70,7 +75,7 @@ function Leave() {
                                                                     type="text"
                                                                     className={cx('form-control')}
                                                                     name="name"
-                                                                    id='name'
+                                                                    id="name"
                                                                     placeholder="Họ tên"
                                                                 />
                                                             </div>
@@ -116,13 +121,19 @@ function Leave() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('pc-4')}>
-                                            <div className={cx('float-left')}>
+                                        <div className={cx('pagination', 'pc-12')}>
+                                            <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>30</b> dòng / tổng <b>61</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
+                                                    <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pagination float-right')}></div>
+                                            <div className={cx('pc-2')}>
+                                                <Pagination
+                                                    currentPage={page.currentPage}
+                                                    totalPages={page.totalPages}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

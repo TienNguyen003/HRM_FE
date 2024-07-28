@@ -8,6 +8,7 @@ import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { getRoles, getStructures } from '../ingredient';
+import { Pagination } from '../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +20,7 @@ function User() {
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
     const [user, setUsers] = useState([]);
+    const [pages, setPages] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
 
     //lấy thông tin user
@@ -52,7 +54,10 @@ function User() {
             }
 
             const data = await response.json();
-            setUsers(data.result);
+            if (data.code === 303) {
+                setPages(data.page);
+                setUsers(data.result);
+            }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
@@ -243,13 +248,19 @@ function User() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('clearfix', 'pc-4')}>
-                                            <div className={cx('float-left')}>
+                                        <div className={cx('pagination', 'pc-12')}>
+                                            <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{user.length}</b> dòng / tổng <b>{user.length}</b>
+                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng{' '}
+                                                    <b>{pages.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pagination pagination-sm float-right')}></div>
+                                            <div className={cx('pc-2')}>
+                                                <Pagination
+                                                    currentPage={pages.currentPage}
+                                                    totalPages={pages.totalPages}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

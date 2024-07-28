@@ -7,6 +7,7 @@ import Status from '../../globalstyle/Status/status';
 import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { getDayOffCate } from '../ingredient';
+import { Pagination } from '../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
@@ -24,7 +25,7 @@ function Leave() {
     // danh sach don xin nghi
     const getLeave = async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search') || 1;
+        const searchParam = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
         const status = urlParams.get('status') || '';
         const dayOff = urlParams.get('dayOff') || '';
@@ -82,7 +83,6 @@ function Leave() {
                                             <div className={cx('pc-10')}>
                                                 <div id="search">
                                                     <form>
-                                                        <input type="hidden" name="search" value="1" />
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'post-form')}>
                                                                 <input
@@ -171,7 +171,12 @@ function Leave() {
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             {path.includes('approvals') ? (
-                                                                <a href={routes.leaveApprovalsEdit.replace(':name', item.id)}>
+                                                                <a
+                                                                    href={routes.leaveApprovalsEdit.replace(
+                                                                        ':name',
+                                                                        item.id,
+                                                                    )}
+                                                                >
                                                                     <i className={cx('fas fa-eye')}></i>
                                                                 </a>
                                                             ) : (
@@ -184,18 +189,19 @@ function Leave() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('clearfix mt-4')}>
-                                            <div className={cx('float-left')}>
+                                        <div className={cx('pagination', 'pc-12')}>
+                                            <div className={cx('pc-10')}>
                                                 <p>
                                                     Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>
-                                                        {page.totalItemsPerPage < 30
-                                                            ? page.totalItemsPerPage
-                                                            : page.totalItems}
-                                                    </b>
+                                                    <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pagination pagination-sm float-right')}></div>
+                                            <div className={cx('pc-2')}>
+                                                <Pagination
+                                                    currentPage={page.currentPage}
+                                                    totalPages={page.totalPages}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

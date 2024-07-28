@@ -3,10 +3,11 @@ import { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
-import styles from './role.module.scss';
+import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
+import { Pagination } from '../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
@@ -16,13 +17,14 @@ function Role() {
     })();
 
     const [roles, setRoles] = useState([]);
+    const [page, setPage] = useState([]);
     const [nameParam, setNameParam] = useState('');
     const token = localStorage.getItem('authorizationData') || '';
 
     // lấy role
     async function fetchData() {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search') || 1;
+        const searchParam = urlParams.get('page') || 1;
         const name = (urlParams.get('name') || '').toUpperCase();
 
         setNameParam(name);
@@ -40,10 +42,12 @@ function Role() {
             }
 
             const data = await response.json();
-            setRoles(data.result);
+            if (data.code === 303) {
+                setRoles(data.result);
+                setPage(data.page);
+            }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
-            // Xử lý lỗi tại đây (ví dụ: hiển thị thông báo cho người dùng)
         }
     }
 
@@ -51,7 +55,6 @@ function Role() {
         (async function () {
             await fetchData();
         })();
-        
     }, [token]);
 
     const clickDelete = async (event, name) => {
@@ -77,7 +80,7 @@ function Role() {
             const data = await response.json();
 
             if (data.code === 303) {
-                console.log(window.location.reload());
+                window.location.reload();
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -102,7 +105,6 @@ function Role() {
                                             <div className={cx('pc-10')}>
                                                 <div id="search">
                                                     <form>
-                                                        <input type="hidden" name="search" value="1" />
                                                         <div className={cx('row', 'no-gutters', 'form-group', 'mb-0')}>
                                                             <div className={cx('pc-3')}>
                                                                 <input
@@ -179,13 +181,19 @@ function Role() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('clearfix', 'pc-4')}>
-                                            <div className={cx('float-left')}>
+                                        <div className={cx('pagination', 'pc-12')}>
+                                            <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{roles.length}</b> dòng / tổng <b>{roles.length}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
+                                                    <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pagination pagination-sm float-right')}></div>
+                                            <div className={cx('pc-2')}>
+                                                <Pagination
+                                                    currentPage={page.currentPage}
+                                                    totalPages={page.totalPages}
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
