@@ -1,4 +1,4 @@
-import { BASE_URL} from '../../config/config';
+import { BASE_URL } from '../../config/config';
 
 function redirectLogin() {
     return (window.location.href = '/login');
@@ -24,4 +24,10 @@ export const isCheck = async function checkToken() {
     } else {
         redirectLogin();
     }
+};
+
+export const reloadAfterDelay = (delay) => {
+    setTimeout(() => {
+        window.location.reload();
+    }, delay);
 };

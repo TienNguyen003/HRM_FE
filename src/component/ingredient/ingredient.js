@@ -4,6 +4,12 @@ import { BASE_URL } from '../../config/config';
 
 const cx = classNames.bind(styles);
 
+// dinh dang tien
+export const formatter = new Intl.NumberFormat('vi-VN', {
+    style: 'currency',
+    currency: 'VND',
+  });
+
 // css alert
 export const handleAlert = (css, content) => {
     const alert = document.querySelector(`.${cx('alert')}`);
@@ -193,6 +199,24 @@ export async function getAllUser(token) {
 export const getDayOffCate = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}day_off_categories`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        if (data.code === 303) return data.result;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// danh sach ngay nghi
+export const getAdvances = async (advancesId, token) => {
+    try {
+        const response = await fetch(`${BASE_URL}advances/advance?advaceId=${advancesId}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

@@ -157,7 +157,7 @@ function Leave() {
                                                 </tr>
                                                 {leave.map((item, index) => (
                                                     <tr key={item.id} className={cx('record-data')}>
-                                                        <td className={cx('text-center')}>{index + 1}</td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td className={cx('text-center')}>
                                                             {item.dayOffCategories.nameDay}

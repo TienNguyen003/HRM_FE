@@ -70,7 +70,9 @@ const publicRoutes = [
 
     { path: routesConfig.advances, component: advances },
     { path: routesConfig.advanceCreate, component: advanceCreate },
-    { path: routesConfig.advanceApprovals, component: advanceApprovals },
+    { path: routesConfig.advanceEdit, component: advanceCreate },
+    { path: routesConfig.advanceApprovals, component: advances },
+    { path: routesConfig.advanceApprovalsEdit, component: advanceApprovals },
 
     { path: routesConfig.salary, component: salary },
     { path: routesConfig.salaryCategories, component: salaryCategories },

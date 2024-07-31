@@ -195,7 +195,7 @@ function Bank() {
                                                 </tr>
                                                 {bank.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
-                                                        <td className={cx('text-center')}>{index + 1}</td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td>{item.nameBank}</td>
                                                         <td className={cx('text-center')}>{item.owner}</td>

@@ -32,7 +32,9 @@ const routes = {
 
     advances: '/advances',
     advanceCreate: '/advances/create',
+    advanceEdit: '/advances/edit/:name',
     advanceApprovals: '/advances/approvals',
+    advanceApprovalsEdit: '/advances/approvals/edit/:name',
 
     salary: '/salary',
     salaryDynamic: '/salary/dynamic_values',

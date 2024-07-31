@@ -1,5 +1,9 @@
-function tables() {
-    return <></>
+function Salary() {
+    return (
+        <>
+            
+        </>
+    );
 }
 
-export default tables;
+export default Salary;

@@ -104,18 +104,16 @@ function Leave() {
                                                 </tr>
                                                 {logs.map((item, index) => (
                                                     <tr key={index} className={cx('record-data')}>
-                                                        <td className={cx('text-center')}>{index + 1}</td>
+                                                        <td className={cx('text-center')}>
+                                                            {(+page.currentPage - 1) * 30 + index + 1}
+                                                        </td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td className={cx('text-center')}>
-                                                            {new Date(item.updateTime)
-                                                                .toISOString()
-                                                                .replace('T', ' ')
-                                                                .slice(0, 16)}
+                                                            {item.updateTime.slice(0, 10)}{' '}
+                                                            {item.updateTime.slice(11, 16)}
                                                         </td>
                                                         <td className={cx('text-center')}>{item.fluctuatesTime} h</td>
-                                                        <td className={cx('text-center')}>
-                                                            {item.employee.vacationHours} h
-                                                        </td>
+                                                        <td className={cx('text-center')}>{item.remaining} h</td>
                                                         <td>{item.content}</td>
                                                     </tr>
                                                 ))}

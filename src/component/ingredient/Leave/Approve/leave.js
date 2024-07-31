@@ -69,7 +69,7 @@ function Leave() {
     };
 
     // them lich su
-    const saveLeaveLogs = async (status, employeeId, fluctuatesTime) => {
+    const saveLeaveLogs = async (status, employeeId, fluctuatesTime, remaining) => {
         const messages = {
             1: ' đã duyệt đơn xin nghỉ',
             2: ' đã từ chối đơn xin nghỉ',
@@ -89,6 +89,7 @@ function Leave() {
                     content,
                     fluctuatesTime,
                     employeeId,
+                    remaining,
                 }),
             });
 
@@ -104,10 +105,12 @@ function Leave() {
     const updateStatusLeave = () => {
         const status = document.querySelector('#status').value;
         const employeeId = document.querySelector('#employeeId').getAttribute('data-employee');
+        let remaining = document.querySelector('#employeeId').getAttribute('data-remaining');
         const time = document.querySelector('#timeTotal').innerHTML.replace(' giờ', '');
         if (status != isStatus) {
             handleUpdateStt(status, employeeId, time);
-            saveLeaveLogs(status, employeeId, time);
+            remaining = status == 1 ? remaining - time : remaining;
+            saveLeaveLogs(status, employeeId, time, remaining);
         }
     };
 
@@ -152,7 +155,11 @@ function Leave() {
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
                                                         <label className={cx('pc-5')}>Họ tên:</label>
                                                         <div className={cx('pc-7')}>
-                                                            <p id="employeeId" data-employee={item.employee.id}>
+                                                            <p
+                                                                id="employeeId"
+                                                                data-employee={item.employee.id}
+                                                                data-remaining={item.employee.vacationHours}
+                                                            >
                                                                 {item.employee.name}
                                                             </p>
                                                         </div>

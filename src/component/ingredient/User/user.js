@@ -191,10 +191,10 @@ function User() {
                                         </div>
                                     </div>
 
-                                    <div className={cx('card-body', 'table-responsive')}>
+                                    <div className={cx('card-body')}>
                                         <table className={cx('table')}>
                                             <tbody>
-                                                <tr className={cx('non-bg')}>
+                                                <tr>
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Tên đăng nhập</th>
                                                     <th className={cx('text-center')}>Họ tên</th>
@@ -206,12 +206,10 @@ function User() {
                                                     <th className={cx('text-center')}>Xóa</th>
                                                 </tr>
                                                 {user.map((item, index) => (
-                                                    <tr
-                                                        key={item.id}
-                                                        className={cx('record-data')}
-                                                        id={`record-${item.id}`}
-                                                    >
-                                                        <td className={cx('text-center')}>{index + 1}</td>
+                                                    <tr key={item.id} id={`record-${item.id}`}>
+                                                        <td className={cx('text-center')}>
+                                                            {(+pages.currentPage - 1) * 30 + index + 1}
+                                                        </td>
                                                         <td className={cx('text-center')}>{item.username}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td className={cx('text-center')}>{item.role.name}</td>
