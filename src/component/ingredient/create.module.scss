@@ -70,7 +70,7 @@
     font-size: 1.4rem;
     cursor: pointer;
 }
-.btn:disabled{
+.btn:disabled {
     cursor: no-drop;
 }
 
@@ -309,7 +309,12 @@
     border: unset;
 }
 
-.message{
+.message {
     resize: vertical;
     height: unset;
+}
+
+.title {
+    margin: 1rem 0;
+    font-size: 2.5rem;
 }

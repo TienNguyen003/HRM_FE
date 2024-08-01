@@ -218,19 +218,12 @@ function Leave() {
                                                 </div>
                                             </div>
                                             <form>
-                                                <div
-                                                    className={cx('row', 'no-gutters')}
-                                                    style={{ justifyContent: 'center' }}
-                                                >
-                                                    <div className={cx('pc-9')}>
-                                                        <div className={cx('form-group')}>
-                                                            <label>Bình luận</label>
-                                                            <textarea
-                                                                className={cx('form-control', 'message')}
-                                                                rows="6"
-                                                            ></textarea>
-                                                        </div>
-                                                    </div>
+                                                <div className={cx('row', 'no-gutters', 'form-group')}>
+                                                    <label className={cx('pc-2')}>Bình luận</label>
+                                                    <textarea
+                                                        className={cx('form-control', 'message', 'pc-8')}
+                                                        rows="6"
+                                                    ></textarea>
                                                 </div>
                                                 <div className={cx('text-center')}>
                                                     <button

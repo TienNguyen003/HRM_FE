@@ -230,3 +230,21 @@ export const getAdvances = async (advancesId, token) => {
         console.log(error);
     }
 };
+
+// danh muc luong theo loai
+export const getSalaryCate = async (type, token) => {
+    try {
+        const response = await fetch(`${BASE_URL}salary_categories/type?type=${type}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        if (data.code === 303) return data.result;
+    } catch (error) {
+        console.log(error);
+    }
+};

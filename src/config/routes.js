@@ -37,6 +37,8 @@ const routes = {
     advanceApprovalsEdit: '/advances/approvals/edit/:name',
 
     salary: '/salary',
+    salaryCreate: '/salary/create',
+    salaryEdit: '/salary/edit/:name',
     salaryDynamic: '/salary/dynamic_values',
     salaryTable: '/salary/table',
     salaryCategories: '/salary/categories',

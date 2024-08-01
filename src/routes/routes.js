@@ -24,10 +24,11 @@ import checkUp from '../component/ingredient/Timekeepting/upload-file';
 import advances from '../component/ingredient/Advances/advances';
 import advanceCreate from '../component/ingredient/Advances/create';
 import advanceApprovals from '../component/ingredient/Advances/approvals';
-import salary from '../component/ingredient/Salary/static_values';
+import salary from '../component/ingredient/Salary/salary_static_value/static_values';
+import salaryCreate from '../component/ingredient/Salary/salary_static_value/create';
 import salaryCategories from '../component/ingredient/Salary/categories';
 import salaryFormulas from '../component/ingredient/Salary/formulas';
-import salaryDynamic from '../component/ingredient/Salary/dynamic_values';
+import salaryDynamic from '../component/ingredient/Salary/salary_dynamic_values/dynamic_values';
 import salaryTable from '../component/ingredient/Salary/tables';
 import holidays from '../component/ingredient/Holidays/holidays';
 import holidayDayOff from '../component/ingredient/Holidays/day_off_cate';
@@ -75,6 +76,8 @@ const publicRoutes = [
     { path: routesConfig.advanceApprovalsEdit, component: advanceApprovals },
 
     { path: routesConfig.salary, component: salary },
+    { path: routesConfig.salaryCreate, component: salaryCreate },
+    { path: routesConfig.salaryEdit, component: salaryCreate },
     { path: routesConfig.salaryCategories, component: salaryCategories },
     { path: routesConfig.salaryDynamic, component: salaryDynamic },
     { path: routesConfig.salaryFormulas, component: salaryFormulas },
