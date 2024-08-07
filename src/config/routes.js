@@ -40,18 +40,22 @@ const routes = {
     salaryCreate: '/salary/create',
     salaryEdit: '/salary/edit/:name',
     salaryDynamic: '/salary/dynamic_values',
+    salaryDynamiCreate: '/salary/dynamic_values/create',
+    salaryDynamiEdit: '/salary/dynamic_values/edit/:name',
     salaryTable: '/salary/table',
     salaryCategories: '/salary/categories',
+    salaryCategoriesCreate: '/salary/categories/create',
+    salaryCategoriesEdit: '/salary/categories/edit/:name',
     salaryFormulas: '/salary/formulas',
 
     holidays: '/holidays',
+    holidaysCreate: '/holidays/create',
+    holidaysEdit: '/holidays/edit/:name',
     holidayDayOff: '/holidays/day_off',
 
     offices: '/offices',
     officeStructures: '/offices/structures',
     officeSetup: '/offices/setup',
-
-    DetailLazMall: '/DetailLazMall/:nickname',
 };
 
 export default routes;

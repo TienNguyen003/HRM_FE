@@ -119,10 +119,10 @@ function Role() {
         }
     }
 
-    useEffect(() => { 
-        (async function(){
+    useEffect(() => {
+        (async function () {
             await getRole();
-        })()
+        })();
     }, []);
 
     const clickUpdate = () => {
@@ -213,7 +213,7 @@ function Role() {
                                                             value="all"
                                                             onClick={(e) => clickRole(e)}
                                                         />
-                                                        &nbsp;Toàn quyền
+                                                        Toàn quyền
                                                     </label>
                                                 </div>
                                             </div>
@@ -226,7 +226,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="sala_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -235,7 +235,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="sala_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -244,7 +244,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="sala_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -253,7 +253,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="sala_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -267,7 +267,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="set_set"
                                                         />
-                                                        &nbsp;cài đặt
+                                                        cài đặt
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -281,7 +281,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="comp_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -290,7 +290,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="comp_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -299,7 +299,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="comp_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -308,7 +308,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="comp_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -322,7 +322,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -331,7 +331,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -340,7 +340,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -349,7 +349,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -358,7 +358,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_upload"
                                                         />
-                                                        &nbsp;uploadFile
+                                                        uploadFile
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -367,7 +367,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_viewTime"
                                                         />
-                                                        &nbsp;Bảng thời gian
+                                                        Bảng thời gian
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -376,7 +376,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="attd_approvals"
                                                         />
-                                                        &nbsp;Duyệt chấm công
+                                                        Duyệt chấm công
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -392,7 +392,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="calc_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -401,7 +401,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="calc_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -410,7 +410,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="calc_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -419,7 +419,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="calc_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -433,7 +433,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="catg_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -442,7 +442,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="catg_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -451,7 +451,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="catg_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -460,7 +460,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="catg_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -474,7 +474,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="leav_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -483,7 +483,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="leav_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -492,7 +492,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="leav_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -501,7 +501,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="leav_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -515,7 +515,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="req_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -524,7 +524,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="req_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -533,7 +533,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="req_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -542,7 +542,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="req_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -551,7 +551,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="req_approvals"
                                                         />
-                                                        &nbsp;Duyệt đơn xin nghỉ
+                                                        Duyệt đơn xin nghỉ
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -565,7 +565,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="cont_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -574,7 +574,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="cont_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -583,7 +583,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="cont_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -592,7 +592,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="cont_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -606,7 +606,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="hist_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -622,7 +622,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="saup_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -631,7 +631,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="saup_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -640,7 +640,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="saup_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -649,7 +649,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="saup_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -663,7 +663,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="safi_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -672,7 +672,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="safi_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -681,7 +681,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="safi_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -690,7 +690,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="safi_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -704,7 +704,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="holi_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -713,7 +713,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="holi_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -722,7 +722,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="holi_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -731,7 +731,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="holi_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -747,7 +747,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="user_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -756,7 +756,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="user_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -765,7 +765,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="user_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -774,7 +774,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="user_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -783,7 +783,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="user_rspw"
                                                         />
-                                                        &nbsp;Reset password
+                                                        Reset password
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -797,7 +797,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="perm_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -806,7 +806,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="perm_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -815,7 +815,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="perm_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -824,7 +824,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="perm_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -840,7 +840,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="bank_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -849,7 +849,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="bank_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -858,7 +858,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="bank_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -867,7 +867,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="bank_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -881,7 +881,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="adv_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -890,7 +890,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="adv_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -899,7 +899,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="adv_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -908,7 +908,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="adv_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -917,7 +917,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="avd_approvals"
                                                         />
-                                                        &nbsp;Duyệt ứng lương
+                                                        Duyệt ứng lương
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -931,7 +931,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="off_view"
                                                         />
-                                                        &nbsp;Danh sách
+                                                        Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -940,7 +940,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="off_add"
                                                         />
-                                                        &nbsp;Thêm mới
+                                                        Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -949,7 +949,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="off_edit"
                                                         />
-                                                        &nbsp;Sửa
+                                                        Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -958,7 +958,7 @@ function Role() {
                                                             name="authorizations[]"
                                                             value="off_delete"
                                                         />
-                                                        &nbsp;Xoá
+                                                        Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -972,35 +972,23 @@ function Role() {
                                                 ×
                                             </button>
                                         </div>
-                                        {path.includes('/roles') ? (
-                                            <div className={cx('text-center')}>
+                                        <div className={cx('text-center')}>
+                                            {path.includes('/roles') ? (
                                                 <button className={cx('btn', 'btn-success')} onClick={handleClickAdd}>
                                                     Thêm mới
                                                 </button>
-                                                &nbsp;
-                                                <button type="reset" className={cx('btn', 'btn-default')}>
-                                                    Nhập lại
-                                                </button>
-                                                &nbsp;
-                                                <button type="button" className={cx('btn', 'btn-danger')}>
-                                                    <a href={routes.role}>Thoát</a>
-                                                </button>
-                                            </div>
-                                        ) : (
-                                            <div className={cx('text-center')}>
-                                                <button
-                                                    name="redirect"
-                                                    className={cx('btn', 'btn-info')}
-                                                    onClick={clickUpdate}
-                                                >
+                                            ) : (
+                                                <button className={cx('btn', 'btn-info')} onClick={clickUpdate}>
                                                     Lưu lại
                                                 </button>
-                                                &nbsp;
-                                                <button type="button" className={cx('btn', 'btn-danger')}>
-                                                    <a href={routes.role}>Thoát</a>
-                                                </button>
-                                            </div>
-                                        )}
+                                            )}
+                                            <button type="reset" className={cx('btn', 'btn-danger')}>
+                                                Nhập lại
+                                            </button>
+                                            <button type="button" className={cx('btn', 'btn-default')}>
+                                                <a href={routes.role}>Thoát</a>
+                                            </button>
+                                        </div>
                                     </div>
                                 </form>
                             </div>

@@ -22,10 +22,11 @@ export default function Create() {
     const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/salary/edit/', '');
 
-    const getSalary = async () => {
-        if (path.includes('/salary/create')) return;
+    const getSalary = async (id) => {
+        id = id == undefined ? path : id;
+        if (!numberRegex.test(id) && id.includes('/salary/create')) return;
         try {
-            const response = await fetch(`${BASE_URL}salary_static_values/wage?employeeId=${path}`, {
+            const response = await fetch(`${BASE_URL}salary_static_values/wage?employeeId=${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -35,7 +36,8 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                document.querySelector('#user_id').querySelector('option[value="' + path + '"]').selected = true;
+                if (id != undefined)
+                    document.querySelector('#user_id').querySelector('option[value="' + id + '"]').selected = true;
                 const inputs = document.querySelectorAll('input[name^="category_id["]');
                 inputs.forEach((input) => {
                     const idMatch = input.name.match(/\d+/);
@@ -59,7 +61,7 @@ export default function Create() {
             await getAllUser(token).then((result) => setUser(result));
             await getSalaryCate('Lương cố định ', token).then((result) => setSalaryCate(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary();
+            await getSalary(1);
         })();
     }, []);
 
@@ -131,6 +133,11 @@ export default function Create() {
         }
     };
 
+    const handleChangeSelect = () => {
+        const id = document.querySelector('#user_id').value;
+        getSalary(id);
+    };
+
     //đóng alert
     const clickClose = () => {
         const alert = document.querySelector(`.${cx('alert')}`);
@@ -162,7 +169,11 @@ export default function Create() {
                                                 Họ tên<span className={cx('text-red')}> *</span>{' '}
                                             </label>
                                             <div className={cx('pc-8')}>
-                                                <select id="user_id" className={cx('form-control', 'select')}>
+                                                <select
+                                                    id="user_id"
+                                                    className={cx('form-control', 'select')}
+                                                    onChange={handleChangeSelect}
+                                                >
                                                     {user.map((item) => (
                                                         <option key={item.id} value={item.employee.id}>
                                                             {item.employee.name}

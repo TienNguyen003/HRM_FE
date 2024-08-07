@@ -28,6 +28,7 @@ function Static_values() {
         const time = urlParams.get('time') || '';
 
         document.querySelector('#name').value = name;
+        document.querySelector('#time').value = time;
         document.querySelector('#category_id').querySelector('option[value="' + category_id + '"]').selected = true;
 
         try {
@@ -60,6 +61,33 @@ function Static_values() {
         })();
     }, []);
 
+    const clickDelete = async (id) => {        
+        const result = window.confirm('Bạn có chắc chắn muốn xóa?');
+        if (result) handleClickDelete(id);        
+    }
+
+    const handleClickDelete = async (id) => {
+        try {
+            const response = await fetch(
+                `${BASE_URL}salary_dynamic_values?wageId=${id}`,
+                {
+                    method: 'DELETE',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
+                },
+            );
+
+            const data = await response.json();
+            if (data.code === 303) {
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     return (
         <>
             <div className={cx('content-wrapper')}>
@@ -89,6 +117,15 @@ function Static_values() {
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'post-form')}>
+                                                                <input
+                                                                    type="text"
+                                                                    className={cx('form-control')}
+                                                                    name="time"
+                                                                    id="time"
+                                                                    placeholder="Tháng"
+                                                                />
+                                                            </div>
+                                                            <div className={cx('pc-3', 'post-form')}>
                                                                 <select
                                                                     className={cx('form-control', 'select')}
                                                                     name="category_id"
@@ -112,7 +149,7 @@ function Static_values() {
                                                 </div>
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.salaryCreate} className={cx('btn')}>
+                                                <a href={routes.salaryDynamiCreate} className={cx('btn')}>
                                                     <i className={cx('fa fa-plus')}></i> Thêm mới
                                                 </a>
                                             </div>
@@ -146,7 +183,7 @@ function Static_values() {
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a
-                                                                href={routes.salaryEdit.replace(
+                                                                href={routes.salaryDynamiEdit.replace(
                                                                     ':name',
                                                                     item.employee.id,
                                                                 )}
@@ -156,7 +193,7 @@ function Static_values() {
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a className={cx('delete-record')}>
+                                                            <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
                                                                 <i className={cx('far fa-trash-alt text-red')}></i>
                                                             </a>
                                                         </td>

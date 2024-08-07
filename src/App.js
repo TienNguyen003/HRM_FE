@@ -17,7 +17,7 @@ function App() {
         setHeaderClicked((prevHeaderClicked) => !prevHeaderClicked);
     };
 
-    console.log('nhân viên phần update, đổi mật khẩu và edit mật khẩu');
+    console.log('nhân viên phần update, đổi mật khẩu và show mật khẩu, them moi ltt lcd');
 
     return (
         <>

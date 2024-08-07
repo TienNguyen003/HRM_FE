@@ -29,6 +29,10 @@ export const Pagination = ({ currentPage, totalPages }) => {
         }
     };
 
+    if (totalPages <= 1) {
+        return null;
+    }
+
     const pages = [];
     for (let i = 1; i <= totalPages; i++) {
         pages.push(i);

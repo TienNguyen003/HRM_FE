@@ -26,11 +26,14 @@ import advanceCreate from '../component/ingredient/Advances/create';
 import advanceApprovals from '../component/ingredient/Advances/approvals';
 import salary from '../component/ingredient/Salary/salary_static_value/static_values';
 import salaryCreate from '../component/ingredient/Salary/salary_static_value/create';
-import salaryCategories from '../component/ingredient/Salary/categories';
+import salaryCategories from '../component/ingredient/Salary/categories/categories';
+import salaryCategoriesCreate from '../component/ingredient/Salary/categories/create';
 import salaryFormulas from '../component/ingredient/Salary/formulas';
 import salaryDynamic from '../component/ingredient/Salary/salary_dynamic_values/dynamic_values';
+import salaryDynamiCreate from '../component/ingredient/Salary/salary_dynamic_values/create';
 import salaryTable from '../component/ingredient/Salary/tables';
 import holidays from '../component/ingredient/Holidays/holidays';
+import holidaysCreate from '../component/ingredient/Holidays/createH';
 import holidayDayOff from '../component/ingredient/Holidays/day_off_cate';
 import offices from '../component/ingredient/Office/offices';
 import officeStructures from '../component/ingredient/Office/structures';
@@ -79,11 +82,17 @@ const publicRoutes = [
     { path: routesConfig.salaryCreate, component: salaryCreate },
     { path: routesConfig.salaryEdit, component: salaryCreate },
     { path: routesConfig.salaryCategories, component: salaryCategories },
+    { path: routesConfig.salaryCategoriesCreate, component: salaryCategoriesCreate },
+    { path: routesConfig.salaryCategoriesEdit, component: salaryCategoriesCreate },
     { path: routesConfig.salaryDynamic, component: salaryDynamic },
+    { path: routesConfig.salaryDynamiCreate, component: salaryDynamiCreate },
+    { path: routesConfig.salaryDynamiEdit, component: salaryDynamiCreate },
     { path: routesConfig.salaryFormulas, component: salaryFormulas },
     { path: routesConfig.salaryTable, component: salaryTable },
 
     { path: routesConfig.holidays, component: holidays },
+    { path: routesConfig.holidaysCreate, component: holidaysCreate },
+    { path: routesConfig.holidaysEdit, component: holidaysCreate },
     { path: routesConfig.holidayDayOff, component: holidayDayOff },
 
     { path: routesConfig.offices, component: offices },
