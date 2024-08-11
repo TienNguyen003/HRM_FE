@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
-import { changePassword, clickAutoPassword, getRoles, getStructures } from '../../ingredient';
+import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { changePassword, clickAutoPassword, getRoles, getStructures, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -19,7 +19,7 @@ function Role() {
     const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/users/edit/', '');
 
-    async function getUsers() {
+    const getUsers = async () => {
         if (path.includes('/user')) return '';
         try {
             const response = await fetch(`${BASE_URL}users/user?userId=${path}`, {
@@ -56,7 +56,7 @@ function Role() {
         } catch (error) {
             console.error('Error fetching offices:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
         (async function () {
@@ -73,19 +73,8 @@ function Role() {
     const endRegex = /[.!@#$%^&*()]$/;
     const specialRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?\/\\~-]/;
 
-    // css alert
-    const handleAlert = (css, content) => {
-        const alert = document.querySelector(`.${cx('alert')}`);
-        const alertCt = document.querySelector(`.${cx('alert-content')}`);
-
-        alert.setAttribute('class', `${cx('alert')}`);
-        alert.classList.remove(`${cx('hidden')}`);
-        alert.classList.add(`${cx(css)}`);
-        alertCt.textContent = content;
-    };
-
     //save user
-    async function saveUser(employeeId, username, password, role) {
+    const saveUser = async (employeeId, username, password, roleName) => {
         try {
             const response = await fetch(`${BASE_URL}users`, {
                 method: 'POST',
@@ -94,35 +83,42 @@ function Role() {
                     Authorization: `Bearer ${token}`,
                 },
                 body: JSON.stringify({
-                    username: username,
-                    password: password,
-                    roleName: role,
-                    employeeId: employeeId,
+                    username,
+                    password,
+                    roleName,
+                    employeeId,
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
+            const data = await response.json();
+            if (data.code === 303) {
+                handleAlert('alert-success', 'Thêm dữ liệu thành công');
+                reloadAfterDelay(500);
+            } else {
+                console.log(data.message);
+
+                handleAlert('alert-danger', data.message);
+                handleClickDelete(employeeId);
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
-    async function saveEmployee(
+    };
+    const saveEmployee = async (
         name,
         email,
-        phone,
+        phone_number,
         gender,
         image,
-        birthday,
-        hireday,
-        shift,
+        birth_date,
+        hire_date,
+        shift_id,
         vacationTime,
         hourOff,
         vacationHours,
         departmentId,
         username,
-    ) {
+    ) => {
         const response = await fetch(`${BASE_URL}employee?username=${username}`, {
             method: 'POST',
             headers: {
@@ -130,27 +126,25 @@ function Role() {
                 Authorization: `Bearer ${token}`,
             },
             body: JSON.stringify({
-                name: name,
-                email: email,
-                phone_number: phone,
-                gender: gender,
-                image: image,
-                birth_date: birthday,
-                hire_date: hireday,
-                shift_id: shift,
-                vacationTime: vacationTime,
-                hourOff: hourOff,
-                vacationHours: vacationHours,
-                departmentId: departmentId,
+                name,
+                email,
+                phone_number,
+                gender,
+                image,
+                birth_date,
+                hire_date,
+                shift_id,
+                vacationTime,
+                hourOff,
+                vacationHours,
+                departmentId,
             }),
         });
 
         const data = await response.json();
-        if (data.code === 303) {
-            handleAlert('alert-success', 'Thêm dữ liệu thành công');
-            return data.result.id;
-        } else handleAlert('alert-danger', 'Tên đăng nhập đã tồn tại');
-    }
+        if (data.code === 303) return data.result.id;
+        else handleAlert('alert-danger', 'Tên đăng nhập đã tồn tại');
+    };
 
     // lấy input
     const formIp = () => {
@@ -251,6 +245,34 @@ function Role() {
     const clickClose = () => {
         const alert = document.querySelector(`.${cx('alert')}`);
         alert.classList.add(`${cx('hidden')}`);
+    };
+
+    // xóa người dùng
+    const handleClickDelete = async (id) => {
+        try {
+            const response = await fetch(`${BASE_URL}employee?id=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch roles');
+            }
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
+
+    const tooglePass = (isVisible) => {
+        const showPassw = document.querySelector('#iconShow');
+        const hiddenPassw = document.querySelector('#iconHidden');
+        const password = document.querySelector('#password');
+        showPassw.classList.toggle(`${cx('hidden')}`);
+        hiddenPassw.classList.toggle(`${cx('hidden')}`);
+        password.type = isVisible ? 'text' : 'password';
     };
 
     return (
@@ -419,13 +441,38 @@ function Role() {
                                                 </label>
                                                 <div className={cx('pc-8')}>
                                                     <div className={cx('input-group', 'row', 'no-gutters')}>
-                                                        <input
-                                                            type="password"
-                                                            className={cx('form-control', 'pc-10', 'input-10')}
-                                                            id="password"
-                                                            placeholder="Nhập mật khẩu hoặc dùng tính năng tạo tự động"
-                                                            onChange={(e) => changePassword(e)}
-                                                        />
+                                                        <div
+                                                            className={cx('pc-10')}
+                                                            style={{
+                                                                border: '1px solid #ced4da',
+                                                                display: 'flex',
+                                                                alignItems: 'center',
+                                                                textAlign: 'center',
+                                                            }}
+                                                        >
+                                                            <input
+                                                                type="password"
+                                                                className={cx('form-control', 'pc-11', 'input-10')}
+                                                                id="password"
+                                                                placeholder="Nhập mật khẩu hoặc dùng tính năng tạo tự động"
+                                                                onChange={(e) => changePassword(e)}
+                                                                style={{ marginBottom: 0, border: 'unset' }}
+                                                            />
+                                                            <i
+                                                                className={cx('fa-solid fa-eye', 'pc-1')}
+                                                                id="iconShow"
+                                                                onClick={() => tooglePass(true)}
+                                                            ></i>
+                                                            <i
+                                                                className={cx(
+                                                                    'fa-solid fa-eye-slash',
+                                                                    'pc-1',
+                                                                    'hidden',
+                                                                )}
+                                                                id="iconHidden"
+                                                                onClick={() => tooglePass(false)}
+                                                            ></i>
+                                                        </div>
                                                         <span className={cx('input-group-btn', 'pc-2')}>
                                                             <button
                                                                 onClick={clickAutoPassword}
@@ -500,11 +547,11 @@ function Role() {
                                                 >
                                                     Thêm mới
                                                 </button>
-                                                &nbsp;
-                                                <button type="button" className={cx('btn', 'btn-danger')}>
-                                                    <a href={routes.user}>Thoát</a>
-                                                </button>
-                                                &nbsp;
+                                                <a href={routes.user}>
+                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                        Thoát
+                                                    </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </div>

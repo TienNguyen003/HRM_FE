@@ -1,6 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
@@ -15,13 +15,14 @@ export default function Create() {
         await isCheck();
     })();
 
+    const [office, setOffice] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/holidays/edit/', '');
+    const path = window.location.pathname.replace('/offices/structures/edit/', '');
 
-    const getHoliday = async () => {
-        if (path.includes('/holidays/create')) return;
+    const getStructure = async () => {
+        if (path.includes('/offices/structures/create')) return;
         try {
-            const response = await fetch(`${BASE_URL}holidays/day?holidayId=${path}`, {
+            const response = await fetch(`${BASE_URL}structures/department?departmentId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,9 +33,28 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 document.querySelector('#name').value = data.result.name;
-                document.querySelector('#start').value = data.result.startTime;
-                document.querySelector('#end').value = data.result.endTime;
+                document.querySelector('#short').value = data.result.shortName;
+                document
+                    .querySelector('#belong')
+                    .querySelector('option[value="' + data.result.officeI.id + '"]').selected = true;
             }
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
+    const getOfc = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}offices/ofc`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            if (data.code === 303) setOffice(data.result);
         } catch (error) {
             console.log(error);
         }
@@ -42,19 +62,20 @@ export default function Create() {
 
     useEffect(() => {
         (async () => {
-            await getHoliday();
+            await getOfc();
+            await getStructure();
         })();
     }, []);
 
-    const handleSave = async (name, startTime, endTime, totalTime) => {
+    const handleSave = async (name, officeId, shortName) => {
         try {
-            const response = await fetch(`${BASE_URL}holidays`, {
+            const response = await fetch(`${BASE_URL}structures`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name, startTime, endTime, totalTime }),
+                body: JSON.stringify({ name, belongTo: '', officeId, shortName }),
             });
 
             const data = await response.json();
@@ -66,15 +87,15 @@ export default function Create() {
             console.log(error);
         }
     };
-    const handleUpdate = async (name, startTime, endTime, totalTime) => {
+    const handleUpdate = async (name, officeId, shortName) => {
         try {
-            const response = await fetch(`${BASE_URL}holidays?holidayId=${path}`, {
+            const response = await fetch(`${BASE_URL}structures?departmentId=${path}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name, startTime, endTime, totalTime }),
+                body: JSON.stringify({ name, belongTo: '', officeId, shortName }),
             });
 
             const data = await response.json();
@@ -87,19 +108,15 @@ export default function Create() {
         }
     };
 
-    const saveHoliday = () => {
+    const saveOffices = () => {
         const name = document.querySelector('#name').value;
-        const start = document.querySelector('#start').value;
-        const end = document.querySelector('#end').value;
+        const belong = document.querySelector('#belong').value;
+        const short = document.querySelector('#short').value;
 
         if (name === '') handleAlert('alert-danger', 'Tên không được để trống.');
-        else if (start === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống.');
-        else if (end === '') handleAlert('alert-danger', 'Thời gian kết thúc không được để trống.');
-        else if (end <= start) handleAlert('alert-danger', 'Thời gian nghỉ lễ không hợp lệ!');
         else {
-            const totalTime = (new Date(end) - new Date(start)) / (1000 * 3600);
-            if (path.includes('/holidays/create')) handleSave(name, start, end, totalTime);
-            else handleUpdate(name, start, end, totalTime);
+            if (path.includes('/offices/structures/create')) handleSave(name, belong, short);
+            else handleUpdate(name, belong, short);
         }
     };
 
@@ -120,7 +137,7 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Nghỉ lễ <small>Thêm mới</small>
+                                Cấu trúc doanh nghiệp <small>Thêm mới</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -137,7 +154,21 @@ export default function Create() {
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
-                                                    Tên ngày nghỉ<span className={cx('text-red')}> *</span>
+                                                    Thuộc cấp cha<span className={cx('text-red')}> *</span>
+                                                </label>
+                                                <div className={cx('pc-8')}>
+                                                    <select id="belong" className={cx('form-control', 'select')}>
+                                                        {office.map((item) => (
+                                                            <option key={item.id} value={item.id}>
+                                                                {item.name}
+                                                            </option>
+                                                        ))}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className={cx('form-group', 'row', 'no-gutters')}>
+                                                <label className={cx('pc-2')}>
+                                                    Tên cấu trúc<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8')}>
                                                     <input className={cx('form-control')} type="text" id="name" />
@@ -145,22 +176,10 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
-                                                    Ngày bắt đầu nghỉ<span className={cx('text-red')}> *</span>
+                                                    Tên ngắn<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8')}>
-                                                    <div className={cx('input-group')}>
-                                                        <input type="date" className={cx('form-control')} id="start" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
-                                                    Ngày kết thúc nghỉ<span className={cx('text-red')}> *</span>
-                                                </label>
-                                                <div className={cx('pc-8')}>
-                                                    <div className={cx('input-group')}>
-                                                        <input type="date" className={cx('form-control')} id="end" />
-                                                    </div>
+                                                    <input className={cx('form-control')} type="text" id="short" />
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
@@ -175,14 +194,14 @@ export default function Create() {
                                                 <button
                                                     type="submit"
                                                     className={cx('btn', 'btn-success')}
-                                                    onClick={saveHoliday}
+                                                    onClick={saveOffices}
                                                 >
                                                     Lưu lại
                                                 </button>
                                                 <button type="reset" className={cx('btn', 'btn-default')}>
                                                     Nhập lại
                                                 </button>
-                                                <a href={routes.holidays}>
+                                                <a href={routes.officeStructures}>
                                                     <button type="button" className={cx('btn', 'btn-danger')}>
                                                         Thoát
                                                     </button>

@@ -40,7 +40,6 @@ body {
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700);
 .jquery-accordion-menu,
 .jquery-accordion-menu * {
-    font-family: 'Open Sans', sans-serif;
     box-sizing: border-box;
     outline: 0;
     z-index: 999;
@@ -140,6 +139,9 @@ body {
     position: relative;
     border-left: solid 6px transparent;
     transition: border 0.2s linear;
+}
+.jquery-accordion-menu ul ul.submenu li:hover{
+    background-color: #252930;
 }
 .jquery-accordion-menu ul ul.submenu li:hover > a {
     color: #c7dcf2;

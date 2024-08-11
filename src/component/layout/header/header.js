@@ -1,24 +1,11 @@
 import classNames from 'classnames/bind';
 import { useEffect } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-    faDashboard,
-    faCalendarCheck,
-    faCogs,
-    faDollarSign,
-    faEnvelopeOpenText,
-    faHandHoldingDollar,
-    faRegistered,
-    faUmbrellaBeach,
-    faUsers,
-    faBars,
-    faBell,
-    faChevronLeft,
-} from '@fortawesome/free-solid-svg-icons';
+import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
-import {BASE_URL} from '../../../config/config';
+import { BASE_URL } from '../../../config/config';
 
 const cx = classNames.bind(styles);
 
@@ -37,32 +24,8 @@ function Header({ onClick }) {
         if (subMenu) subMenu.classList.toggle(`${cx('showBlock')}`);
     }
 
-    const token = localStorage.getItem('authorizationData') ? localStorage.getItem('authorizationData') : [];
-
-    async function getDataUser() {
-        if (token != '') {
-            const response = await fetch(`${BASE_URL}users/myInfo`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-            });
-            const data = await response.json();
-
-            if(data.code === 303){
-                const emplname = document.querySelector(`.${cx('hidden-xs')}`);
-                const emplimg = document.querySelector(`.${cx('user-image')}`);
-                const emplimgCircle = document.querySelector(`.${cx('img-circle')}`);
-    
-                emplname.textContent = data.result.employee.name;
-                emplimgCircle.src = emplimg.src = data.result.employee.image;
-
-                localStorage.setItem('employee', JSON.stringify(data.result.employee));
-            }
-
-        }
-    }
+    const token = localStorage.getItem('authorizationData') || '';
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     async function logout() {
         const response = await fetch(`${BASE_URL}auth/logout`, {
@@ -76,8 +39,9 @@ function Header({ onClick }) {
         });
 
         localStorage.setItem('authorizationData', '');
+        localStorage.setItem('employee', '');
         redirectLogin();
-    }    
+    }
 
     const clickLanguage = () => {
         const language = document.querySelector(`.${cx('language')}`);
@@ -119,14 +83,17 @@ function Header({ onClick }) {
             });
         });
 
-        getDataUser();
+        document.querySelector(`.${cx('hidden-xs')}`).textContent = employee.name;
+        if (employee.image != '')
+            document.querySelector(`.${cx('img-circle')}`).src = document.querySelector(`.${cx('user-image')}`).src =
+                employee.image;
     }, []);
 
     return (
         <div>
             <div className={cx('nav-wrapper')}>
                 <p className={cx('nav-icon')} onClick={clickBars}>
-                    <FontAwesomeIcon icon={faBars}></FontAwesomeIcon>
+                    <i className="fas fa-bars"></i>
                 </p>
 
                 <ul className={cx('list-group')}>
@@ -145,7 +112,7 @@ function Header({ onClick }) {
                     </li>
                     <li className={cx('nav-item')}>
                         <a className={cx('nav-link')} href="#" id="notification">
-                            <FontAwesomeIcon icon={faBell}></FontAwesomeIcon>
+                            <i className="far fa-bell"></i>
                         </a>
                     </li>
 
@@ -196,14 +163,14 @@ function Header({ onClick }) {
                     <li className={cx('active', 'drop-menu')} data-href={routesConfig.home}>
                         <a href={routesConfig.home}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faDashboard}></FontAwesomeIcon>&nbsp;&nbsp;<p>Dashboard</p>
+                                <i className="fas fa-tachometer-alt"></i>&nbsp;&nbsp;<p>Dashboard</p>
                             </div>
                         </a>
                     </li>
                     <li className={cx('drop-menu')} data-href={routesConfig.role}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faRegistered}></FontAwesomeIcon>&nbsp;&nbsp;<p>Phân Quyền</p>
+                                <i className="fa fa-registered"></i>&nbsp;&nbsp;<p>Phân Quyền</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
                         </a>
@@ -219,7 +186,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.user}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faUsers}></FontAwesomeIcon>&nbsp;&nbsp;<p>Nhân Viên</p>
+                                <i className="fa fa-users"></i>&nbsp;&nbsp;<p>Nhân Viên</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
                         </a>
@@ -241,7 +208,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.leave}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faEnvelopeOpenText}></FontAwesomeIcon>&nbsp;&nbsp;
+                                <i className="fas fa-envelope-open-text"></i>&nbsp;&nbsp;
                                 <p>Đơn Xin Nghỉ</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
@@ -261,7 +228,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.checks}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faCalendarCheck}></FontAwesomeIcon>&nbsp;&nbsp;<p>Chấm Công</p>
+                                <i className="far fa-calendar-check"></i>&nbsp;&nbsp;<p>Chấm Công</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
                         </a>
@@ -286,7 +253,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.advances}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faHandHoldingDollar}></FontAwesomeIcon>&nbsp;&nbsp;
+                                <i className="fas fa-hand-holding-usd"></i>&nbsp;&nbsp;
                                 <p>Ứng Lương</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
@@ -306,7 +273,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.salary}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faDollarSign}></FontAwesomeIcon>&nbsp;&nbsp;<p>Quản Lý Lương</p>
+                                <i className="fas fa-dollar-sign"></i>&nbsp;&nbsp;<p>Quản Lý Lương</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
                         </a>
@@ -331,7 +298,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.holidays}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faUmbrellaBeach}></FontAwesomeIcon>&nbsp;&nbsp;
+                                <i className="fas fa-umbrella-beach"></i>&nbsp;&nbsp;
                                 <p>Quản Lý Ngày Nghỉ</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
@@ -348,7 +315,7 @@ function Header({ onClick }) {
                     <li className={cx('drop-menu')} data-href={routesConfig.offices}>
                         <a className={cx('link-active')}>
                             <div className={cx('nav-link')}>
-                                <FontAwesomeIcon icon={faCogs}></FontAwesomeIcon>&nbsp;&nbsp;<p>Thiết Lập Chung</p>
+                                <i className="fas fa-cogs"></i>&nbsp;&nbsp;<p>Thiết Lập Chung</p>
                             </div>
                             <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
                         </a>

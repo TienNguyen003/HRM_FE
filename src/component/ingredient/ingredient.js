@@ -8,7 +8,7 @@ const cx = classNames.bind(styles);
 export const formatter = new Intl.NumberFormat('vi-VN', {
     style: 'currency',
     currency: 'VND',
-  });
+});
 
 // css alert
 export const handleAlert = (css, content) => {
@@ -109,7 +109,8 @@ export const changePassword = (e) => {
         .replace(/Đ/g, 'D');
     evaluatePasswordStrength(password);
     e.target.value = password;
-    document.querySelector('#comfirm_password').value = password;
+    let confim_pass = document.querySelector('#comfirm_password');
+    if (confim_pass) confim_pass.value = password;
 };
 
 // tự tạo mật khẩu
@@ -123,7 +124,7 @@ export const clickAutoPassword = () => {
     const prompt = window.prompt('Mật khẩu đã được tạo tự động, hãy lưu lại mật khẩu', password);
     if (prompt) {
         evaluatePasswordStrength(prompt);
-        let confim_pass =  document.querySelector('#comfirm_password');
+        let confim_pass = document.querySelector('#comfirm_password');
         document.querySelector('#password').value = prompt;
         if (confim_pass) confim_pass.value = prompt;
     }
@@ -132,7 +133,7 @@ export const clickAutoPassword = () => {
 // lấy phòng làm việc
 export async function getStructures(token) {
     try {
-        const response = await fetch(`${BASE_URL}structures`, {
+        const response = await fetch(`${BASE_URL}structures/struc`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -199,6 +200,24 @@ export async function getAllUser(token) {
 export const getDayOffCate = async (token) => {
     try {
         const response = await fetch(`${BASE_URL}day_off_categories`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        if (data.code === 303) return data.result;
+    } catch (error) {
+        console.log(error);
+    }
+};
+
+// tong thoi gian nghi le theo thang
+export const getTotalTimeHoliday = async (token, time) => {
+    try {
+        const response = await fetch(`${BASE_URL}holidays/time?time=${time}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',

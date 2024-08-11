@@ -35,8 +35,11 @@ import salaryTable from '../component/ingredient/Salary/tables';
 import holidays from '../component/ingredient/Holidays/holidays';
 import holidaysCreate from '../component/ingredient/Holidays/createH';
 import holidayDayOff from '../component/ingredient/Holidays/day_off_cate';
+import holidayDayOffCreate from '../component/ingredient/Holidays/createD';
 import offices from '../component/ingredient/Office/offices';
+import officesCreate from '../component/ingredient/Office/createO';
 import officeStructures from '../component/ingredient/Office/structures';
+import officeStructuresCreate from '../component/ingredient/Office/createS';
 import officeSetup from '../component/ingredient/Office/setups';
 
 // public routes
@@ -94,9 +97,15 @@ const publicRoutes = [
     { path: routesConfig.holidaysCreate, component: holidaysCreate },
     { path: routesConfig.holidaysEdit, component: holidaysCreate },
     { path: routesConfig.holidayDayOff, component: holidayDayOff },
+    { path: routesConfig.holidayDayOffCreate, component: holidayDayOffCreate },
+    { path: routesConfig.holidayDayOffEdit, component: holidayDayOffCreate },
 
     { path: routesConfig.offices, component: offices },
+    { path: routesConfig.officesCreate, component: officesCreate },
+    { path: routesConfig.officesEdit, component: officesCreate },
     { path: routesConfig.officeStructures, component: officeStructures },
+    { path: routesConfig.officeStructuresCreate, component: officeStructuresCreate },
+    { path: routesConfig.officeStructuresEdit, component: officeStructuresCreate },
     { path: routesConfig.officeSetup, component: officeSetup },
 ];
 const privateRoutes = [];

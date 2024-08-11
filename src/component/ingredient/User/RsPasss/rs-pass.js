@@ -3,8 +3,8 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
-import { changePassword, clickAutoPassword } from '../../ingredient';
+import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { changePassword, clickAutoPassword, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -14,9 +14,11 @@ function RsPass() {
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/users/reset-password/', '');
+    let path = window.location.pathname.replace('/users/reset-password/', '');
+    let search = new URLSearchParams(window.location.search).get('token');
+    search = search ? search.split('hrm') : '';
 
-    async function getUsers() {
+    const getUsers = async () => {
         try {
             const response = await fetch(`${BASE_URL}users/user?userId=${path}`, {
                 method: 'GET',
@@ -33,15 +35,76 @@ function RsPass() {
             const data = await response.json();
             if (data.code === 303) {
                 document.querySelector(`.${cx('employee_name')}`).textContent = data.result.employee.name;
+                document.querySelector('#email').textContent = data.result.employee.email;
             }
         } catch (error) {
             console.error('Error fetching offices:', error.message);
         }
-    }
+    };
+
+    const updatePass = async () => {
+        const date = search ? new Date(search[1]) : 0;
+        if (date < new Date() && !path.includes('token')) return;
+        try {
+            const response = await fetch(`${BASE_URL}users/update-pass?userId=${path}&new_pass=${search[2]}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            if (data.code === 303) {
+                alert('Cập nhật thành công');
+                reloadAfterDelay(500);
+                localStorage.setItem('authorizationData', '');
+                localStorage.setItem('employee', '');
+            } else alert(data.message);
+        } catch (error) {
+            console.error('Error fetching offices:', error.message);
+        }
+    };
 
     useEffect(() => {
-        getUsers();
-    }, [])
+        (async () => {
+            await getUsers();
+            await updatePass();
+        })();
+    }, []);
+
+    const resetPass = () => {
+        const email = document.querySelector('#email').textContent;
+        const id = document.querySelector(`.${cx('employee_name')}`).textContent;
+        const pass = document.querySelector('#password').value;
+
+        if (pass !== '' && !path.includes('token')) handleRsPass(path, pass, email);
+    };
+
+    const handleRsPass = async (id, new_pass, email) => {
+        try {
+            const response = await fetch(`${BASE_URL}users/rs-pass`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    id,
+                    new_pass,
+                    email,
+                }),
+            });
+
+            const data = await response.json();
+            if (data.code === 303) {
+                alert(data.result);
+                reloadAfterDelay(500);
+            }
+        } catch (error) {
+            console.error('Error fetching offices:', error.message);
+        }
+    };
 
     return (
         <>
@@ -64,18 +127,8 @@ function RsPass() {
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2')}>Người dùng</label>
                                             <div className={cx('pc-8')}>
-                                                <div className={cx('employee_name')}>Nguyễn Cao Tú</div>
-                                            </div>
-                                        </div>
-                                        <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2', 'control-label')}>Mật khẩu cũ</label>
-                                            <div className={cx('pc-8')}>
-                                                <input
-                                                    id="oll_password"
-                                                    className={cx('form-control')}
-                                                    type="password"       
-                                                    placeholder='Nhập mật khẩu cũ'                                             
-                                                />
+                                                <div className={cx('employee_name')}></div>
+                                                <div id="email" style={{ display: 'none' }}></div>
                                             </div>
                                         </div>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -119,11 +172,12 @@ function RsPass() {
                                                     </span>
                                                 </div>
                                             </div>
-                                        </div>                                        
+                                        </div>
                                         <div className={cx('box-footer', 'text-center')}>
                                             <button
                                                 type="submit"
                                                 className={cx('btn', 'btn-success')}
+                                                onClick={resetPass}
                                             >
                                                 Cập nhật mật khẩu
                                             </button>

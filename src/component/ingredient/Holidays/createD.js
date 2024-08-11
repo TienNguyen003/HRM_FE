@@ -16,12 +16,12 @@ export default function Create() {
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/holidays/edit/', '');
+    const path = window.location.pathname.replace('/holidays/day_off/edit/', '');
 
     const getHoliday = async () => {
-        if (path.includes('/holidays/create')) return;
+        if (path.includes('/holidays/day_off/create')) return;
         try {
-            const response = await fetch(`${BASE_URL}holidays/day?holidayId=${path}`, {
+            const response = await fetch(`${BASE_URL}day_off_categories/day?dayOffId=${path}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -31,9 +31,8 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                document.querySelector('#name').value = data.result.name;
-                document.querySelector('#start').value = data.result.startTime;
-                document.querySelector('#end').value = data.result.endTime;
+                document.querySelector('#name').value = data.result.nameDay;
+                document.querySelector('#time').value = data.result.timeDay;
             }
         } catch (error) {
             console.log(error);
@@ -46,15 +45,15 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSave = async (name, startTime, endTime, totalTime) => {
+    const handleSave = async (nameDay, timeDay) => {
         try {
-            const response = await fetch(`${BASE_URL}holidays`, {
+            const response = await fetch(`${BASE_URL}day_off_categories`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name, startTime, endTime, totalTime }),
+                body: JSON.stringify({ nameDay, timeDay }),
             });
 
             const data = await response.json();
@@ -66,15 +65,15 @@ export default function Create() {
             console.log(error);
         }
     };
-    const handleUpdate = async (name, startTime, endTime, totalTime) => {
+    const handleUpdate = async (nameDay, timeDay) => {
         try {
-            const response = await fetch(`${BASE_URL}holidays?holidayId=${path}`, {
+            const response = await fetch(`${BASE_URL}day_off_categories?dayOffId=${path}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name, startTime, endTime, totalTime }),
+                body: JSON.stringify({ nameDay, timeDay }),
             });
 
             const data = await response.json();
@@ -89,17 +88,13 @@ export default function Create() {
 
     const saveHoliday = () => {
         const name = document.querySelector('#name').value;
-        const start = document.querySelector('#start').value;
-        const end = document.querySelector('#end').value;
+        const time = document.querySelector('#time').value;
 
         if (name === '') handleAlert('alert-danger', 'Tên không được để trống.');
-        else if (start === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống.');
-        else if (end === '') handleAlert('alert-danger', 'Thời gian kết thúc không được để trống.');
-        else if (end <= start) handleAlert('alert-danger', 'Thời gian nghỉ lễ không hợp lệ!');
+        else if (time === '') handleAlert('alert-danger', 'Thời gian không được để trống, chỉ được chứa số.');
         else {
-            const totalTime = (new Date(end) - new Date(start)) / (1000 * 3600);
-            if (path.includes('/holidays/create')) handleSave(name, start, end, totalTime);
-            else handleUpdate(name, start, end, totalTime);
+            if (path.includes('/holidays/day_off/create')) handleSave(name, time);
+            else handleUpdate(name, time);
         }
     };
 
@@ -120,7 +115,7 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Nghỉ lễ <small>Thêm mới</small>
+                                Danh mục nghỉ <small>Thêm mới</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -137,7 +132,7 @@ export default function Create() {
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
-                                                    Tên ngày nghỉ<span className={cx('text-red')}> *</span>
+                                                    Tên danh mục nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8')}>
                                                     <input className={cx('form-control')} type="text" id="name" />
@@ -145,22 +140,10 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2')}>
-                                                    Ngày bắt đầu nghỉ<span className={cx('text-red')}> *</span>
+                                                    Giới hạn giờ nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8')}>
-                                                    <div className={cx('input-group')}>
-                                                        <input type="date" className={cx('form-control')} id="start" />
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
-                                                    Ngày kết thúc nghỉ<span className={cx('text-red')}> *</span>
-                                                </label>
-                                                <div className={cx('pc-8')}>
-                                                    <div className={cx('input-group')}>
-                                                        <input type="date" className={cx('form-control')} id="end" />
-                                                    </div>
+                                                    <input className={cx('form-control')} type="text" id="time" />
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
@@ -182,7 +165,7 @@ export default function Create() {
                                                 <button type="reset" className={cx('btn', 'btn-default')}>
                                                     Nhập lại
                                                 </button>
-                                                <a href={routes.holidays}>
+                                                <a href={routes.holidayDayOff}>
                                                     <button type="button" className={cx('btn', 'btn-danger')}>
                                                         Thoát
                                                     </button>

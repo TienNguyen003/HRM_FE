@@ -31,6 +31,14 @@ function User() {
         const department = urlParams.get('department') || '';
         const username = urlParams.get('username') || '';
         const role = urlParams.get('role') || '';
+        let parts;
+        let departmentName = '';
+        let addressName = '';
+        if (department !== '') {
+            parts = department.split(' - ');
+            departmentName = parts[0].trim();
+            addressName = parts[1].trim();
+        }
 
         document.querySelector('#name').value = name;
         document.querySelector('#username').value = username;
@@ -39,7 +47,7 @@ function User() {
 
         try {
             const response = await fetch(
-                `${BASE_URL}users?pageNumber=${searchParam}&name=${name}&department=${department}&username=${username}&role=${role.toUpperCase()}`,
+                `${BASE_URL}users?pageNumber=${searchParam}&name=${name}&department=${departmentName}&username=${username}&role=${role.toUpperCase()}&office=${addressName}`,
                 {
                     method: 'GET',
                     headers: {
@@ -152,7 +160,12 @@ function User() {
                                                                 >
                                                                     <option value="">-- Phòng ban --</option>
                                                                     {structures.map((item, index) => (
-                                                                        <option key={index} value={item.name}>
+                                                                        <option
+                                                                            key={index}
+                                                                            value={
+                                                                                item.name + ' - ' + item.officeI.name
+                                                                            }
+                                                                        >
                                                                             {item.name} - {item.officeI.name}
                                                                         </option>
                                                                     ))}

@@ -24,11 +24,24 @@ function Login() {
         const data = await response.json();
         if (data.code === 303) {
             localStorage.setItem('authorizationData', data.result.token);
-            window.location.href = '/';
+            getDataUser(data.result.token);
         } else {
             const message = document.querySelector(`.${cx('text-danger')}`);
             message.textContent = data.message;
         }
+    }
+
+    async function getDataUser(token) {
+        const response = await fetch(`${BASE_URL}users/myInfo`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+        const data = await response.json();
+        if (data.code === 303) localStorage.setItem('employee', JSON.stringify(data.result.employee));
+        window.location.href = '/';
     }
 
     const login = () => {

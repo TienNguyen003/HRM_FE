@@ -52,9 +52,15 @@ const routes = {
     holidaysCreate: '/holidays/create',
     holidaysEdit: '/holidays/edit/:name',
     holidayDayOff: '/holidays/day_off',
+    holidayDayOffCreate: '/holidays/day_off/create',
+    holidayDayOffEdit: '/holidays/day_off/edit/:name',
 
     offices: '/offices',
+    officesCreate: '/offices/create',
+    officesEdit: '/offices/edit/:name',
     officeStructures: '/offices/structures',
+    officeStructuresCreate: '/offices/structures/create',
+    officeStructuresEdit: '/offices/structures/edit/:name',
     officeSetup: '/offices/setup',
 };
 
