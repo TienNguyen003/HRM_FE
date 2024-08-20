@@ -4,7 +4,7 @@ import classNames from 'classnames/bind';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { getAllUser, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -71,7 +71,10 @@ export default function Create() {
             });
 
             const data = await response.json();
-            if (data.code === 303) handleAlert('alert-success', 'Thêm thành công');
+            if (data.code === 303) {
+                handleAlert('alert-success', 'Thêm thành công');
+                reloadAfterDelay(500);
+            }
             else handleAlert('alert-danger', 'Thêm thất bại');
         } catch (error) {
             console.log(error);
@@ -90,6 +93,12 @@ export default function Create() {
                     dismissal_date: end,
                 }),
             });
+
+            const data = await response.json();
+            if (data.code === 303) {
+                handleAlert('alert-success', 'Cập nhật thành công');
+                reloadAfterDelay(500);
+            }
         } catch (error) {
             console.log(error);
         }

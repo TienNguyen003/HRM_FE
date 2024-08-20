@@ -3,110 +3,105 @@ import routesConfig from '../config/routes';
 // pages
 import Home from '../pages/home/home';
 import Login from '../pages/login/login';
-import role from '../component/ingredient/Role/role';
-import roleCreate from '../component/ingredient/Role/Create/create';
-import user from '../component/ingredient/User/user';
-import userCreate from '../component/ingredient/User/Create/create';
-import userRsPass from '../component/ingredient/User/RsPasss/rs-pass';
-import userBank from '../component/ingredient/User/Bank/bank';
-import userBankCreate from '../component/ingredient/User/Bank/bank_create';
-import userContracts from '../component/ingredient/User/Contract/contract';
-import userContractsCreate from '../component/ingredient/User/Contract/create';
-import leave from '../component/ingredient/Leave/leave';
-import leaveCreate from '../component/ingredient/Leave/Create/create';
-import leaveApprovals from '../component/ingredient/Leave/Approve/leave';
-import leaveHs from '../component/ingredient/Leave/History/leave';
-import checks from '../component/ingredient/Timekeepting/checks';
-import checkCreate from '../component/ingredient/Timekeepting/create';
-import checkApprovals from '../component/ingredient/Timekeepting/approvals';
-import checkCalendar from '../component/ingredient/Timekeepting/calendar';
-import checkUp from '../component/ingredient/Timekeepting/upload-file';
-import advances from '../component/ingredient/Advances/advances';
-import advanceCreate from '../component/ingredient/Advances/create';
-import advanceApprovals from '../component/ingredient/Advances/approvals';
-import salary from '../component/ingredient/Salary/salary_static_value/static_values';
-import salaryCreate from '../component/ingredient/Salary/salary_static_value/create';
-import salaryCategories from '../component/ingredient/Salary/categories/categories';
-import salaryCategoriesCreate from '../component/ingredient/Salary/categories/create';
-import salaryFormulas from '../component/ingredient/Salary/formulas';
-import salaryDynamic from '../component/ingredient/Salary/salary_dynamic_values/dynamic_values';
-import salaryDynamiCreate from '../component/ingredient/Salary/salary_dynamic_values/create';
-import salaryTable from '../component/ingredient/Salary/tables';
-import holidays from '../component/ingredient/Holidays/holidays';
-import holidaysCreate from '../component/ingredient/Holidays/createH';
-import holidayDayOff from '../component/ingredient/Holidays/day_off_cate';
-import holidayDayOffCreate from '../component/ingredient/Holidays/createD';
-import offices from '../component/ingredient/Office/offices';
-import officesCreate from '../component/ingredient/Office/createO';
-import officeStructures from '../component/ingredient/Office/structures';
-import officeStructuresCreate from '../component/ingredient/Office/createS';
-import officeSetup from '../component/ingredient/Office/setups';
+import { Role, CreateRole } from '../component/ingredient/Role/index';
+import {
+    User,
+    CreateUser,
+    RsPass,
+    Bank,
+    CreateBank,
+    Contract,
+    CreateContract,
+    ChangePass
+} from '../component/ingredient/User/index';
+import { Leave, CreateLeave, ApproveLeave, HsLeave } from '../component/ingredient/Leave/index';
+import { Calendar, Checks, Create } from '../component/ingredient/Timekeepting/index';
+import { Advances, ApprovelsAd, CreateAd } from '../component/ingredient/Advances/index';
+import {
+    Tables,
+    TableView,
+    TableCreate,
+    Formulas,
+    FormulasCreate,
+    CateSalary,
+    CateSalaryCreate,
+    Dynamic,
+    DynamicCreate,
+    Static,
+    StaticCreate,
+} from '../component/ingredient/Salary/index';
+import { Holidays, DayOff, CreateDayOff, CreateHolidays } from '../component/ingredient/Holidays/index';
+import { Office, Structures, Setups, CreateOffice, CreateStruct } from '../component/ingredient/Office/index';
 
 // public routes
 const publicRoutes = [
     { path: routesConfig.home, component: Home },
     { path: routesConfig.login, component: Login },
 
-    { path: routesConfig.role, component: role },
-    { path: routesConfig.roleCreate, component: roleCreate },
-    { path: routesConfig.roleEdit, component: roleCreate },
+    { path: routesConfig.role, component: Role },
+    { path: routesConfig.roleCreate, component: CreateRole },
+    { path: routesConfig.roleEdit, component: CreateRole },
 
-    { path: routesConfig.user, component: user },
-    { path: routesConfig.userCreate, component: userCreate },
-    { path: routesConfig.userEdit, component: userCreate },
-    { path: routesConfig.userRsPass, component: userRsPass },
-    { path: routesConfig.userBank, component: userBank },
-    { path: routesConfig.userBankCreate, component: userBankCreate },
-    { path: routesConfig.userBankEdit, component: userBankCreate },
-    { path: routesConfig.userContracts, component: userContracts },
-    { path: routesConfig.userContractsCreate, component: userContractsCreate },
-    { path: routesConfig.userContractsEdit, component: userContractsCreate },
+    { path: routesConfig.user, component: User },
+    { path: routesConfig.userCreate, component: CreateUser },
+    { path: routesConfig.userEdit, component: CreateUser },
+    { path: routesConfig.userRsPass, component: RsPass },
+    { path: routesConfig.userBank, component: Bank },
+    { path: routesConfig.userBankCreate, component: CreateBank },
+    { path: routesConfig.userBankEdit, component: CreateBank },
+    { path: routesConfig.userContracts, component: Contract },
+    { path: routesConfig.userContractsCreate, component: CreateContract },
+    { path: routesConfig.userContractsEdit, component: CreateContract },
+    { path: routesConfig.userChangePass, component: ChangePass },
 
-    { path: routesConfig.leave, component: leave },
-    { path: routesConfig.leaveCreate, component: leaveCreate },
-    { path: routesConfig.leaveEdit, component: leaveCreate },
-    { path: routesConfig.leaveApprovals, component: leave },
-    { path: routesConfig.leaveApprovalsEdit, component: leaveApprovals },
-    { path: routesConfig.leaveHs, component: leaveHs },
+    { path: routesConfig.leave, component: Leave },
+    { path: routesConfig.leaveCreate, component: CreateLeave },
+    { path: routesConfig.leaveEdit, component: CreateLeave },
+    { path: routesConfig.leaveApprovals, component: Leave },
+    { path: routesConfig.leaveApprovalsEdit, component: ApproveLeave },
+    { path: routesConfig.leaveHs, component: HsLeave },
 
-    { path: routesConfig.checks, component: checks },
-    { path: routesConfig.checkCreate, component: checkCreate },
-    { path: routesConfig.checkApprovals, component: checkApprovals },
-    { path: routesConfig.checkCalendar, component: checkCalendar },
-    { path: routesConfig.checkUp, component: checkUp },
+    { path: routesConfig.checks, component: Checks },
+    { path: routesConfig.checkCreate, component: Create },
+    { path: routesConfig.checkEdit, component: Create },
+    { path: routesConfig.checkCalendar, component: Calendar },
 
-    { path: routesConfig.advances, component: advances },
-    { path: routesConfig.advanceCreate, component: advanceCreate },
-    { path: routesConfig.advanceEdit, component: advanceCreate },
-    { path: routesConfig.advanceApprovals, component: advances },
-    { path: routesConfig.advanceApprovalsEdit, component: advanceApprovals },
+    { path: routesConfig.advances, component: Advances },
+    { path: routesConfig.advanceCreate, component: CreateAd },
+    { path: routesConfig.advanceEdit, component: CreateAd },
+    { path: routesConfig.advanceApprovals, component: Advances },
+    { path: routesConfig.advanceApprovalsEdit, component: ApprovelsAd },
 
-    { path: routesConfig.salary, component: salary },
-    { path: routesConfig.salaryCreate, component: salaryCreate },
-    { path: routesConfig.salaryEdit, component: salaryCreate },
-    { path: routesConfig.salaryCategories, component: salaryCategories },
-    { path: routesConfig.salaryCategoriesCreate, component: salaryCategoriesCreate },
-    { path: routesConfig.salaryCategoriesEdit, component: salaryCategoriesCreate },
-    { path: routesConfig.salaryDynamic, component: salaryDynamic },
-    { path: routesConfig.salaryDynamiCreate, component: salaryDynamiCreate },
-    { path: routesConfig.salaryDynamiEdit, component: salaryDynamiCreate },
-    { path: routesConfig.salaryFormulas, component: salaryFormulas },
-    { path: routesConfig.salaryTable, component: salaryTable },
+    { path: routesConfig.salary, component: Static },
+    { path: routesConfig.salaryCreate, component: StaticCreate },
+    { path: routesConfig.salaryEdit, component: StaticCreate },
+    { path: routesConfig.salaryCategories, component: CateSalary },
+    { path: routesConfig.salaryCategoriesCreate, component: CateSalaryCreate },
+    { path: routesConfig.salaryCategoriesEdit, component: CateSalaryCreate },
+    { path: routesConfig.salaryDynamic, component: Dynamic },
+    { path: routesConfig.salaryDynamiCreate, component: DynamicCreate },
+    { path: routesConfig.salaryDynamiEdit, component: DynamicCreate },
+    { path: routesConfig.salaryFormulas, component: Formulas },
+    { path: routesConfig.salaryFormulasCreate, component: FormulasCreate },
+    { path: routesConfig.salaryFormulasEdit, component: FormulasCreate },
+    { path: routesConfig.salaryTable, component: Tables },
+    { path: routesConfig.salaryTableDetail, component: TableView },
+    { path: routesConfig.salaryTableCreate, component: TableCreate },
 
-    { path: routesConfig.holidays, component: holidays },
-    { path: routesConfig.holidaysCreate, component: holidaysCreate },
-    { path: routesConfig.holidaysEdit, component: holidaysCreate },
-    { path: routesConfig.holidayDayOff, component: holidayDayOff },
-    { path: routesConfig.holidayDayOffCreate, component: holidayDayOffCreate },
-    { path: routesConfig.holidayDayOffEdit, component: holidayDayOffCreate },
+    { path: routesConfig.holidays, component: Holidays },
+    { path: routesConfig.holidaysCreate, component: CreateHolidays },
+    { path: routesConfig.holidaysEdit, component: CreateHolidays },
+    { path: routesConfig.holidayDayOff, component: DayOff },
+    { path: routesConfig.holidayDayOffCreate, component: CreateDayOff },
+    { path: routesConfig.holidayDayOffEdit, component: CreateDayOff },
 
-    { path: routesConfig.offices, component: offices },
-    { path: routesConfig.officesCreate, component: officesCreate },
-    { path: routesConfig.officesEdit, component: officesCreate },
-    { path: routesConfig.officeStructures, component: officeStructures },
-    { path: routesConfig.officeStructuresCreate, component: officeStructuresCreate },
-    { path: routesConfig.officeStructuresEdit, component: officeStructuresCreate },
-    { path: routesConfig.officeSetup, component: officeSetup },
+    { path: routesConfig.offices, component: Office },
+    { path: routesConfig.officesCreate, component: CreateOffice },
+    { path: routesConfig.officesEdit, component: CreateOffice },
+    { path: routesConfig.officeStructures, component: Structures },
+    { path: routesConfig.officeStructuresCreate, component: CreateStruct },
+    { path: routesConfig.officeStructuresEdit, component: CreateStruct },
+    { path: routesConfig.officeSetup, component: Setups },
 ];
 const privateRoutes = [];
 

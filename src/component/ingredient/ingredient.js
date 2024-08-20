@@ -98,6 +98,15 @@ const evaluatePasswordColor = (length, className, classText, value) => {
     }
 };
 
+export const tooglePass = (isVisible) => {
+    const showPassw = document.querySelector('#iconShow');
+    const hiddenPassw = document.querySelector('#iconHidden');
+    const password = document.querySelector('#password');
+    showPassw.classList.toggle(`${cx('hidden')}`);
+    hiddenPassw.classList.toggle(`${cx('hidden')}`);
+    password.type = isVisible ? 'text' : 'password';
+};
+
 // input thay đổi giá trị
 export const changePassword = (e) => {
     let password = e.target.value;

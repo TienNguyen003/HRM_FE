@@ -42,7 +42,7 @@ body {
 .jquery-accordion-menu * {
     box-sizing: border-box;
     outline: 0;
-    z-index: 999;
+    z-index: 10;
 }
 .jquery-accordion-menu {
     transition: width .3s ease-in-out;    
@@ -317,7 +317,7 @@ body {
     height: 50px;
     background-color: #fff;
     transition: left .3s ease-in-out;
-    z-index: 999;
+    z-index: 10;
 }
 
 .nav-icon {

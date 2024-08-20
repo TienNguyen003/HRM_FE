@@ -5,6 +5,7 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
+import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 
 const cx = classNames.bind(styles);
@@ -26,6 +27,7 @@ function Header({ onClick }) {
 
     const token = localStorage.getItem('authorizationData') || '';
     const employee = JSON.parse(localStorage.getItem('employee')) || '';
+    const idU = localStorage.getItem('idU');
 
     async function logout() {
         const response = await fetch(`${BASE_URL}auth/logout`, {
@@ -40,6 +42,7 @@ function Header({ onClick }) {
 
         localStorage.setItem('authorizationData', '');
         localStorage.setItem('employee', '');
+        localStorage.setItem('idU', '');
         redirectLogin();
     }
 
@@ -138,12 +141,18 @@ function Header({ onClick }) {
 
                             <li className={cx('user-footer')}>
                                 <div className={cx('pull-bottom')}>
-                                    <a href="#" className={cx('btn-success', 'btn')}>
+                                    <a
+                                        href={routes.userEdit.replace(':name', idU)}
+                                        className={cx('btn-success', 'btn')}
+                                    >
                                         Sửa hồ sơ
                                     </a>
                                 </div>
                                 <div className={cx('pull-bottom')}>
-                                    <a href="#" className={cx('btn-warning', 'btn')}>
+                                    <a
+                                        href={routes.userChangePass}
+                                        className={cx('btn-warning', 'btn')}
+                                    >
                                         Đổi mật khẩu
                                     </a>
                                 </div>
@@ -241,12 +250,6 @@ function Header({ onClick }) {
                             </li>
                             <li>
                                 <a href={routesConfig.checkCalendar}>Bảng Thời Gian</a>
-                            </li>
-                            <li>
-                                <a href={routesConfig.checkApprovals}>Danh Sách Chờ Duyệt</a>
-                            </li>
-                            <li>
-                                <a href={routesConfig.checkUp}>Upload File</a>
                             </li>
                         </ul>
                     </li>

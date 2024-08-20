@@ -171,7 +171,7 @@
     cursor: pointer;
 }
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 .input-group {
@@ -321,4 +321,40 @@
 
 .post-form {
     margin-right: 10px;
+}
+
+.load {
+    background: #dbd8d838;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 10;
+    right: 0;
+}
+
+.list_formula_categories {
+    background: #e5e5e5;
+    color: #272727;
+    margin: auto 10px;
+    padding: 14px;
+
+    .formula_categories {
+        background: #fff;
+        font-size: 14px;
+        padding: 15px 8px;
+        margin: 15px auto;
+        background-size: 100%;
+        border-radius: 5px;
+    }
+
+    .item_formula_category {
+        border-bottom: 1px solid #ababab;
+        padding: 10px 15px 0;
+        color: #166B94;
+    }
+
+    .title{
+        font-size: 1.6rem;
+    }
 }

@@ -172,3 +172,28 @@
         cursor: no-drop;
     }
 }
+
+.text-danger{
+    color: #dc3545;
+}
+.text-green{
+    color: #28a745;
+}
+
+.btn-success {
+    background-color: #28a745;
+}
+.btn-info {
+    background-color: #17a2b8;
+}
+.btn-default {
+    background-color: #e7eef5;
+    color: #212529 !important;
+}
+.btn-danger {
+    background-color: #dc354573;
+}
+.btn-primary {
+    margin-left: 0;
+    width: 100%;
+}

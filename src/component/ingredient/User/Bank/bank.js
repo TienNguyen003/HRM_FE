@@ -8,6 +8,7 @@ import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { Status } from '../../../layout/status/status';
 
 const cx = classNames.bind(styles);
 
@@ -46,13 +47,11 @@ function Bank() {
                 },
             );
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
-            }
-
             const data = await response.json();
-            setBank(data.result);
-            setPage(data.page);
+            if (data.code === 303) {
+                setBank(data.result);
+                setPage(data.page);
+            }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
@@ -97,6 +96,25 @@ function Bank() {
             console.error('Error fetching roles:', error.message);
         }
     }
+
+    const changeStatus = (e) => {
+        let isCheck = e.target.checked ? 1 : 0;
+        handleChangeStt(isCheck, e.target.id);
+    };
+
+    const handleChangeStt = async (status, id) => {
+        try {
+            const response = await fetch(`${BASE_URL}bank_accounts/stt?id=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
 
     return (
         <>
@@ -195,20 +213,20 @@ function Bank() {
                                                 </tr>
                                                 {bank.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
-                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
+                                                        <td className={cx('text-center')}>
+                                                            {(+page.currentPage - 1) * 30 + index + 1}
+                                                        </td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td>{item.nameBank}</td>
                                                         <td className={cx('text-center')}>{item.owner}</td>
                                                         <td className={cx('text-center')}>{item.numberBank}</td>
                                                         <td className={cx('text-center')}>{item.priority}</td>
-                                                        <td className={cx('text-center')}>
-                                                            <div className={cx('')}>
-                                                                <div className={cx('')}>
-                                                                    <span className={cx('')}>
-                                                                        {item.status === 1 ? 'ON' : 'OFF'}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                        <td style={{ display: 'flex', justifyContent: 'center' }}>
+                                                            <Status
+                                                                id={item.id}
+                                                                isStatus={item.status}
+                                                                handleChange={(e) => changeStatus(e)}
+                                                            />
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a

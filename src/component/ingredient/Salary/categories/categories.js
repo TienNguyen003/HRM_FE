@@ -1,3 +1,4 @@
+import React from 'react'
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
@@ -9,7 +10,7 @@ import { Pagination } from '../../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
 
-function Categories() {
+export default function Categories() {
     (async function () {
         await isCheck();
     })();
@@ -210,4 +211,3 @@ function Categories() {
     );
 }
 
-export default Categories;

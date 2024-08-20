@@ -40,8 +40,11 @@ function Login() {
             },
         });
         const data = await response.json();
-        if (data.code === 303) localStorage.setItem('employee', JSON.stringify(data.result.employee));
-        window.location.href = '/';
+        if (data.code === 303) {
+            localStorage.setItem('employee', JSON.stringify(data.result.employee));
+            localStorage.setItem('idU', data.result.id);
+            window.location.href = '/';
+        }
     }
 
     const login = () => {

@@ -16,6 +16,7 @@ const routes = {
     userContracts: '/users/contracts',
     userContractsCreate: '/users/contracts/create',
     userContractsEdit: '/users/contracts/edit/:name',
+    userChangePass: '/users/change-pass',
 
     leave: '/day_off_letters',
     leaveCreate: '/day_off_letters/create',
@@ -26,9 +27,8 @@ const routes = {
 
     checks: '/checks',
     checkCreate: '/checks/create',
+    checkEdit: '/checks/edit/:name',
     checkCalendar: '/checks/calendar',
-    checkApprovals: '/checks/approvals',
-    checkUp: '/checks/upload-file',
 
     advances: '/advances',
     advanceCreate: '/advances/create',
@@ -43,10 +43,14 @@ const routes = {
     salaryDynamiCreate: '/salary/dynamic_values/create',
     salaryDynamiEdit: '/salary/dynamic_values/edit/:name',
     salaryTable: '/salary/table',
+    salaryTableDetail: '/salary/table/view/:name',
+    salaryTableCreate: '/salary/table/create',
     salaryCategories: '/salary/categories',
     salaryCategoriesCreate: '/salary/categories/create',
     salaryCategoriesEdit: '/salary/categories/edit/:name',
     salaryFormulas: '/salary/formulas',
+    salaryFormulasCreate: '/salary/formulas/create',
+    salaryFormulasEdit: '/salary/formulas/edit/:name',
 
     holidays: '/holidays',
     holidaysCreate: '/holidays/create',

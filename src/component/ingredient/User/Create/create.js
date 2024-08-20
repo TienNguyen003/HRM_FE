@@ -5,7 +5,7 @@ import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
 import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
-import { changePassword, clickAutoPassword, getRoles, getStructures, handleAlert } from '../../ingredient';
+import { tooglePass, changePassword, clickAutoPassword, getRoles, getStructures, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -48,8 +48,6 @@ function Role() {
                 form.joined_date.value = dataEmp.hire_date;
                 form.timekeeper_id.value = dataEmp.vacationTime;
                 form.sabbatical.value = dataEmp.vacationHours;
-                form.password.value = data.password;
-                form.comfirm_password.value = data.password;
                 form.role_id.querySelector('option[value="' + dataRs.role.name + '"]').selected = true;
                 form.structure_id.querySelector('option[value="' + dataEmp.department.id + '"]').selected = true;
             }
@@ -266,15 +264,6 @@ function Role() {
         }
     };
 
-    const tooglePass = (isVisible) => {
-        const showPassw = document.querySelector('#iconShow');
-        const hiddenPassw = document.querySelector('#iconHidden');
-        const password = document.querySelector('#password');
-        showPassw.classList.toggle(`${cx('hidden')}`);
-        hiddenPassw.classList.toggle(`${cx('hidden')}`);
-        password.type = isVisible ? 'text' : 'password';
-    };
-
     return (
         <>
             <div>
@@ -442,12 +431,13 @@ function Role() {
                                                 <div className={cx('pc-8')}>
                                                     <div className={cx('input-group', 'row', 'no-gutters')}>
                                                         <div
-                                                            className={cx('pc-10')}
+                                                            className={cx('pc-10', 'input-10')}
                                                             style={{
                                                                 border: '1px solid #ced4da',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 textAlign: 'center',
+                                                                cursor: 'pointer'
                                                             }}
                                                         >
                                                             <input

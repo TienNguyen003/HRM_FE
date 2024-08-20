@@ -7,6 +7,7 @@ import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
+import { Status } from '../../layout/status/status';
 
 const cx = classNames.bind(styles);
 
@@ -24,7 +25,7 @@ function Holidays() {
         const page = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
         const status = urlParams.get('status') || '';
-        
+
         document.querySelector('#name').value = name;
         document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
 
@@ -55,7 +56,26 @@ function Holidays() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, []);    
+    }, []);
+
+    const changeStatus = (e) => {
+        let isCheck = e.target.checked ? 1 : 0;
+        handleChangeStt(isCheck, e.target.id);
+    };
+
+    const handleChangeStt = async (status, id) => {
+        try {
+            const response = await fetch(`${BASE_URL}day_off_categories/stt?id=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
 
     return (
         <>
@@ -135,10 +155,25 @@ function Holidays() {
                                                             {item.timeUpdate.slice(0, 10)}{' '}
                                                             {item.timeUpdate.slice(11, 16)}
                                                         </td>
-                                                        <td className={cx('text-center')}>{item.status}</td>
+                                                        <td
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                border: 'none',
+                                                            }}
+                                                        >
+                                                            <Status
+                                                                id={item.id}
+                                                                isStatus={item.status}
+                                                                handleChange={(e) => changeStatus(e)}
+                                                            />
+                                                        </td>
                                                         <td className={cx('text-center')}>
                                                             <a
-                                                                href={routes.holidayDayOffEdit.replace(':name', item.id)}
+                                                                href={routes.holidayDayOffEdit.replace(
+                                                                    ':name',
+                                                                    item.id,
+                                                                )}
                                                                 className={cx('edit-record')}
                                                             >
                                                                 <i className={cx('fas fa-edit')}></i>

@@ -20,6 +20,7 @@ export default function Create() {
     const [user, setUser] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
     const path = window.location.pathname.replace('/salary/dynamic_values/edit/', '');
 
     const getSalary = async (id, time) => {
@@ -67,7 +68,7 @@ export default function Create() {
                 setUser(result);
             });
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(1, time);
+            await getSalary(employee.id, time);
         })();
     }, []);
 

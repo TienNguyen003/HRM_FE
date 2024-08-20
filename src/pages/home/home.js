@@ -129,7 +129,7 @@ function Home() {
                                                     ))}
                                                     <tr>
                                                         <td>Số lần đi muộn</td>
-                                                        <td className={cx('text-right')}>0</td>
+                                                        <td className={cx('text-right')}>{employee.lateness}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Số lần quên chấm công</td>

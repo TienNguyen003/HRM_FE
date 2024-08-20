@@ -6,6 +6,7 @@ import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { Status } from '../../../layout/status/status';
 
 const cx = classNames.bind(styles);
 
@@ -92,6 +93,25 @@ function Contract() {
         }
     }
 
+    const changeStatus = (e) => {
+        let isCheck = e.target.checked ? 1 : 0;
+        handleChangeStt(isCheck, e.target.id);
+    };
+
+    const handleChangeStt = async (status, id) => {
+        try {
+            const response = await fetch(`${BASE_URL}contracts/stt?id=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
+
     return (
         <>
             <div className={cx('content-wrapper')}>
@@ -165,7 +185,9 @@ function Contract() {
                                                 </tr>
                                                 {contracts.map((item, index) => (
                                                     <tr className={cx('record-data')} key={item.id}>
-                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
+                                                        <td className={cx('text-center')}>
+                                                            {(+page.currentPage - 1) * 30 + index + 1}
+                                                        </td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td className={cx('text-center')}>{item.employee.hire_date}</td>
                                                         <td className={cx('text-center')}>
@@ -181,8 +203,18 @@ function Contract() {
                                                                 ''
                                                             )}
                                                         </td>
-                                                        <td className={cx('text-center')}>
-                                                            {item.status === 1 ? 'ON' : 'OFF'}
+                                                        <td
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                border: 'none',
+                                                            }}
+                                                        >
+                                                            <Status
+                                                                id={item.id}
+                                                                isStatus={item.status}
+                                                                handleChange={(e) => changeStatus(e)}
+                                                            />
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a

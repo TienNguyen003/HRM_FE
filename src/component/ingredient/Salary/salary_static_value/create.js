@@ -20,6 +20,7 @@ export default function Create() {
     const [user, setUser] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
     const path = window.location.pathname.replace('/salary/edit/', '');
 
     const getSalary = async (id) => {
@@ -61,7 +62,7 @@ export default function Create() {
             await getAllUser(token).then((result) => setUser(result));
             await getSalaryCate('Lương cố định ', token).then((result) => setSalaryCate(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(1);
+            await getSalary(employee.id);
         })();
     }, []);
 

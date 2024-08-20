@@ -7,6 +7,7 @@ import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
+import { Status } from '../../layout/status/status';
 
 const cx = classNames.bind(styles);
 
@@ -31,13 +32,16 @@ function Structures() {
         document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
 
         try {
-            const response = await fetch(`${BASE_URL}structures?pageNumber=${page}&name=${name}&status=${status}&shortName=${shortName}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+            const response = await fetch(
+                `${BASE_URL}structures?pageNumber=${page}&name=${name}&status=${status}&shortName=${shortName}`,
+                {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        Authorization: `Bearer ${token}`,
+                    },
                 },
-            });
+            );
 
             const data = await response.json();
             if (data.code === 303) {
@@ -63,16 +67,13 @@ function Structures() {
 
     const handleClickDelete = async (id) => {
         try {
-            const response = await fetch(
-                `${BASE_URL}structures?departmentId=${id}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}structures?departmentId=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) {
@@ -81,7 +82,26 @@ function Structures() {
         } catch (error) {
             console.log(error);
         }
-    }
+    };
+
+    const changeStatus = (e) => {
+        let isCheck = e.target.checked ? 1 : 0;
+        handleChangeStt(isCheck, e.target.id);
+    };
+
+    const handleChangeStt = async (status, id) => {
+        try {
+            const response = await fetch(`${BASE_URL}structures/stt?id=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
 
     return (
         <>
@@ -168,7 +188,19 @@ function Structures() {
                                                         <td className={cx('text-center')}>{item.name}</td>
                                                         <td className={cx('text-center')}>{item.shortName}</td>
                                                         <td className={cx('text-center')}>{item.officeI.name}</td>
-                                                        <td className={cx('text-center')}>{item.status}</td>
+                                                        <td
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                border: 'none',
+                                                            }}
+                                                        >
+                                                            <Status
+                                                                id={item.id}
+                                                                isStatus={item.status}
+                                                                handleChange={(e) => changeStatus(e)}
+                                                            />
+                                                        </td>
                                                         <td className={cx('text-center')}>
                                                             <a
                                                                 href={routes.officeStructuresEdit.replace(

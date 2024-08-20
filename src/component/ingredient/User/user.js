@@ -9,6 +9,7 @@ import { BASE_URL } from '../../../config/config';
 import { isCheck } from '../../globalstyle/checkToken';
 import { getRoles, getStructures } from '../ingredient';
 import { Pagination } from '../../layout/pagination/pagination';
+import { Status } from '../../layout/status/status';
 
 const cx = classNames.bind(styles);
 
@@ -113,6 +114,10 @@ function User() {
             console.error('Error fetching roles:', error.message);
         }
     }
+
+    const changeStatus = () => {
+        console.log(123);
+    };
 
     return (
         <>
@@ -235,7 +240,18 @@ function User() {
                                                                 Reset
                                                             </a>
                                                         </td>
-                                                        <td className={cx('text-center')}>1</td>
+                                                        <td
+                                                            style={{
+                                                                display: 'flex',
+                                                                justifyContent: 'center',
+                                                                border: 'none',
+                                                            }}
+                                                        >
+                                                            <Status
+                                                                isStatus={item.status}
+                                                                handleChange={changeStatus}
+                                                            />
+                                                        </td>
                                                         <td className={cx('text-center')}>
                                                             <a
                                                                 className={cx('edit-record')}

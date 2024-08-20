@@ -1,0 +1,11 @@
+export { default as Tables } from './table/tables';
+export { default as TableView } from './table/view';
+export { default as TableCreate } from './table/create';
+export { default as Formulas } from './formula/formulas';
+export { default as FormulasCreate } from './formula/create';
+export { default as CateSalary } from './categories/categories';
+export { default as CateSalaryCreate } from './categories/create';
+export { default as Dynamic } from './salary_dynamic_values/dynamic_values';
+export { default as DynamicCreate } from './salary_dynamic_values/create';
+export { default as Static } from './salary_static_value/static_values';
+export { default as StaticCreate } from './salary_static_value/create';

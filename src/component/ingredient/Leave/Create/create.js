@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getAllUser, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
-function Role() {
+export default function Create() {
     (async function () {
         await isCheck();
     })();
@@ -93,8 +93,10 @@ function Role() {
             }
 
             const data = await response.json();
-            if (data.code === 303) handleAlert('alert-success', 'Thêm thành công');
-            else handleAlert('alert-danger', 'Thêm thất bại');
+            if (data.code === 303) {
+                handleAlert('alert-success', 'Thêm thành công');
+                reloadAfterDelay(500);
+            } else handleAlert('alert-danger', 'Thêm thất bại');
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
@@ -345,5 +347,3 @@ function Role() {
         </>
     );
 }
-
-export default Role;
