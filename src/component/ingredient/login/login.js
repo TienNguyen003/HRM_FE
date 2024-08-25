@@ -4,7 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './login.module.scss';
-import { BASE_URL } from '../../config/config';
+import { BASE_URL } from '../../../config/config';
 
 const cx = classNames.bind(styles);
 

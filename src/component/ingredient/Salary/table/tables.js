@@ -8,6 +8,7 @@ import { BASE_URL } from '../../../../config/config';
 import { isCheck } from '../../../globalstyle/checkToken';
 import { formatter } from '../../ingredient';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { exportExcel } from '../../../layout/excel/excel';
 
 const cx = classNames.bind(styles);
 
@@ -60,6 +61,58 @@ export default function Salary() {
         })();
     }, []);
 
+    const handleExportExcel = async () => {
+        const newArray = salary.map(
+            ({
+                status,
+                advance,
+                totalSalary,
+                employee: { name, department },
+                bank: { owner, nameBank, numberBank },
+                ...rest
+            }) => ({
+                ...rest,
+                'Tên nhân viên': name,
+                'Tên phòng': department.name + ' - ' + department.officeI.name,
+                'Tên chủ tài khoản': owner,
+                'Tên ngân hàng': nameBank,
+                'Số tài khoản': numberBank,
+                'Ứng lương': formatter.format(advance),
+                'Tổng lương': formatter.format(totalSalary),
+            }),
+        );
+
+        await exportExcel(newArray, 'Bảng lương', 'Bảng lương');
+    };
+
+    const showQRCode = (e) => {
+        const info = e.target.querySelector('#vietqr');
+        const name = info.getAttribute('bank_name').replace(/ /g, '');
+        const number = info.getAttribute('bank_number');
+        const owner = info.getAttribute('bank_account');
+        const money = info.getAttribute('price');
+        const time = e.target.parentElement.querySelector('#des').textContent;
+
+        const vietqr = document.querySelector('#vietqrInfo');
+        vietqr.classList.remove(`${cx('hidden')}`);
+
+        document.querySelector('#bank_name').textContent = name;
+        document.querySelector('#bank_number').textContent = number;
+        document.querySelector('#bank_account').textContent = owner;
+        document.querySelector('#price').textContent = formatter.format(money);
+        document.querySelector('#content').textContent = 'Lương tháng ' + time;
+        document.querySelector(
+            '#image-vietqr',
+        ).src = `https://img.vietqr.io/image/${name}-${number}-compact2.png?amount=${money}&addInfo=${
+            'Lương%20tháng%20' + time
+        }&accountName=${owner.replace(/ /g, '%20')}`;
+    };
+
+    const clickCloseQrCode = (e) => {
+        const parent = e.target.parentElement.parentElement;
+        parent.classList.add(`${cx('hidden')}`);
+    };
+
     return (
         <>
             <div className={cx('content-wrapper')}>
@@ -75,7 +128,7 @@ export default function Salary() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-9')}>
                                                 <div>
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -112,20 +165,23 @@ export default function Salary() {
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
-                                                                <button
-                                                                    style={{ marginLeft: '5px' }}
-                                                                    type="submit"
-                                                                    className={cx('btn', 'btn-success')}
-                                                                >
-                                                                    <i className={cx('fas fa-download')}></i> Xuất excel
-                                                                </button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 </div>
                                             </div>
-                                            <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.salaryTableCreate} className={cx('btn')}>
+                                            <div className={cx('pc-3', 'text-right')}>
+                                                <button
+                                                    className={cx('btn', 'btn-success')}
+                                                    onClick={handleExportExcel}
+                                                >
+                                                    <i className={cx('fas fa-download')}></i> Xuất excel
+                                                </button>
+                                                <a
+                                                    style={{ marginLeft: '5px' }}
+                                                    href={routes.salaryTableCreate}
+                                                    className={cx('btn')}
+                                                >
                                                     <i className={cx('fa fa-plus')}></i> Tạo Bảng Lương
                                                 </a>
                                             </div>
@@ -140,48 +196,55 @@ export default function Salary() {
                                         <button disabled className={cx('btn', 'send-mail', 'btn-success')}>
                                             <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;Gửi mail
                                         </button>
-                                        {/* <div className={cx('modal fade modal-notif')} id="vietqr">
-                                            <div className={cx('modal-dialog modal-dialog-centered')}>
+                                        <div className={cx('modal', 'fade', 'modal-notif', 'hidden')} id="vietqrInfo">
+                                            <div className={cx('modal-dialog', 'modal-dialog-centered')}>
                                                 <div className={cx('modal-content')}>
                                                     <div className={cx('modal-body')}>
-                                                        <div className={cx('row')}>
-                                                            <div className={cx('col-md-5')}>
-                                                                <p className={cx('m-0')}>Tên ngân hàng:</p>
-                                                                <p className={cx('bank_name')}>
-                                                                    <b></b>
+                                                        <div className={cx('row', 'no-gutters')}>
+                                                            <div className={cx('pc-5')}>
+                                                                <p className={cx('pc-6')}>Tên ngân hàng:</p>
+                                                                <p>
+                                                                    <b id="bank_name"></b>
                                                                 </p>
-                                                                <p className={cx('m-0')}>Số tài khoản:</p>
-                                                                <p className={cx('bank_number')}>
-                                                                    <b></b>
+                                                                <p className={cx('pc-6')}>Số tài khoản:</p>
+                                                                <p>
+                                                                    <b id="bank_number"></b>
                                                                 </p>
-                                                                <p className={cx('m-0')}>Chủ tài khoản:</p>
-                                                                <p className={cx('bank_account')}>
-                                                                    <b></b>
+                                                                <p className={cx('pc-6')}>Chủ tài khoản:</p>
+                                                                <p>
+                                                                    <b id="bank_account"></b>
                                                                 </p>
-                                                                <p className={cx('m-0')}>Số tiền:</p>
-                                                                <p className={cx('price')}>
-                                                                    <b></b>
+                                                                <p className={cx('pc-6')}>Số tiền:</p>
+                                                                <p>
+                                                                    <b id="price"></b>
                                                                 </p>
-                                                                <p className={cx('m-0')}>Nội dung:</p>
-                                                                <p className={cx('content')}>
-                                                                    <b></b>
+                                                                <p className={cx('pc-6')}>Nội dung:</p>
+                                                                <p>
+                                                                    <b id="content"></b>
                                                                 </p>
                                                             </div>
-                                                            <div className={cx('col-md-7 text-center')}>
-                                                                <img src="" className={cx('image-vietqr')} />
-                                                                <button
-                                                                    className={cx(
-                                                                        'btn btn-sm btn-success confirm-transferred',
-                                                                    )}
-                                                                >
+                                                            <div className={cx('pc-7', 'text-center')}>
+                                                                <img
+                                                                    src=""
+                                                                    className={cx('image-vietqr')}
+                                                                    id="image-vietqr"
+                                                                />
+                                                                <button className={cx('btn', 'btn-success')}>
                                                                     Gửi mail xác nhận đã chuyển
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     </div>
                                                 </div>
+                                                <div
+                                                    className={cx('close-qrcode')}
+                                                    id="close-qrcode"
+                                                    onClick={(e) => clickCloseQrCode(e)}
+                                                >
+                                                    X
+                                                </div>
                                             </div>
-                                        </div> */}
+                                        </div>
                                         <table className={cx('table')} style={{ marginTop: '10px' }}>
                                             <tbody>
                                                 <tr>
@@ -192,7 +255,6 @@ export default function Salary() {
                                                     <th className={cx('text-center')}>Họ tên</th>
                                                     <th className={cx('text-center')}>Phòng ban</th>
                                                     <th className={cx('text-center')}>Lương tháng</th>
-                                                    <th className={cx('text-center')}>Mức lương</th>
                                                     <th className={cx('text-center')}>Tổng lương</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>
                                                     <th className={cx('text-center')}>VietQR</th>
@@ -211,26 +273,39 @@ export default function Salary() {
                                                             {item.employee.department.name} -{' '}
                                                             {item.employee.department.officeI.name}
                                                         </td>
-                                                        <td className={cx('text-center')}>{item.time}</td>
-                                                        <td className={cx('text-right')}>{formatter.format(item.salary)}</td>
-                                                        <td className={cx('text-right')}>{formatter.format(item.totalSalary)}</td>
+                                                        <td className={cx('text-center')} id="des">
+                                                            {item.time}
+                                                        </td>
+                                                        <td className={cx('text-right')}>
+                                                            {formatter.format(item.totalSalary)}
+                                                        </td>
                                                         <td className={cx('text-center', 'text-danger')}>
                                                             <i className={cx('fas fa-lock-open')} title="Chưa khoá"></i>
                                                         </td>
-                                                        <td className={cx('text-center')}>
+                                                        <td
+                                                            className={cx('text-center')}
+                                                            onClick={(e) => showQRCode(e)}
+                                                            style={{ cursor: 'pointer' }}
+                                                        >
                                                             <a
-                                                                className={cx('vietqr')}
-                                                                bank_name="Vietcombank"
-                                                                bank_number="1971000001045"
-                                                                bank_account="Nguyễn Văn D"
+                                                                id="vietqr"
+                                                                bank_name={item.bank.nameBank}
+                                                                bank_number={item.bank.numberBank}
+                                                                bank_account={item.bank.owner}
                                                                 price={item.totalSalary}
                                                                 email={item.employee.email}
+                                                                style={{ pointerEvents: 'none' }}
                                                             >
                                                                 <i className={cx('fas fa-qrcode')}></i>
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a href={routes.salaryTableDetail.replace(":name", item.id)}>
+                                                            <a
+                                                                href={routes.salaryTableDetail.replace(
+                                                                    ':name',
+                                                                    item.id,
+                                                                )}
+                                                            >
                                                                 <i className={cx('fas fa-eye', 'text-green')}></i>
                                                             </a>
                                                         </td>
@@ -241,7 +316,7 @@ export default function Salary() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng
                                                     <b>{page.totalItems}</b>
                                                 </p>
                                             </div>

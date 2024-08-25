@@ -1,11 +1,11 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
-import routesConfig from '../../config/routes';
+import routesConfig from '../../../config/routes';
 import styles from './home.module.scss';
-import '../../component/globalstyle/LibaralyLayout/grid.css';
-import { isCheck } from '../../component/globalstyle/checkToken';
-import { getDayOffCate, getTotalTimeHoliday } from '../../component/ingredient/ingredient';
+import '../../globalstyle/LibaralyLayout/grid.css';
+import { isCheck } from '../../globalstyle/checkToken';
+import { getDayOffCate, getTotalTimeHoliday } from '../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -21,7 +21,7 @@ function Home() {
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
-    
+
     useEffect(() => {
         (async () => {
             const formattedDate = `${year}-${month}`;
@@ -103,7 +103,7 @@ function Home() {
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <h4 className={cx('card-title', 'text-center')}>
-                                                Thông tin tháng {month + " - " + year} (giờ)
+                                                Thông tin tháng {month + ' - ' + year} (giờ)
                                             </h4>
                                         </div>
                                         <div>

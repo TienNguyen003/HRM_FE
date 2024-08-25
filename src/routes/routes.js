@@ -1,8 +1,8 @@
 import routesConfig from '../config/routes';
 
 // pages
-import Home from '../pages/home/home';
-import Login from '../pages/login/login';
+import Home from '../component/ingredient/home/home';
+import Login from '../component/ingredient/login/login';
 import { Role, CreateRole } from '../component/ingredient/Role/index';
 import {
     User,

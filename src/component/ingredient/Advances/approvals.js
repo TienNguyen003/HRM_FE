@@ -77,7 +77,7 @@ function Approvals() {
                                                 Người thực hiện: <strong>{item.approvedBy}</strong>
                                             </p>
                                             {isStatus === 0 ? (
-                                                <div className={cx('pc-2', 'post-form')}>
+                                                <div className={cx('pc-2')}>
                                                     <select className={cx('form-control', 'select')} id="status">
                                                         <option value="1">Phê duyệt</option>
                                                         <option value="2">Từ chối</option>

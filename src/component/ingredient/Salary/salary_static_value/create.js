@@ -24,7 +24,7 @@ export default function Create() {
     const path = window.location.pathname.replace('/salary/edit/', '');
 
     const getSalary = async (id) => {
-        id = id == undefined ? path : id;
+        id = numberRegex.test(path) ? path : id;
         if (!numberRegex.test(id) && id.includes('/salary/create')) return;
         try {
             const response = await fetch(`${BASE_URL}salary_static_values/wage?employeeId=${id}`, {
@@ -80,7 +80,7 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(1000);
+                reloadAfterDelay(500);
             }
         } catch (error) {
             console.log(error);

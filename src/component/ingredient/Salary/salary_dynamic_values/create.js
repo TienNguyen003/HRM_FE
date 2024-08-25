@@ -24,7 +24,7 @@ export default function Create() {
     const path = window.location.pathname.replace('/salary/dynamic_values/edit/', '');
 
     const getSalary = async (id, time) => {
-        id = id == undefined ? path : id;
+        id = numberRegex.test(path) ? path : id;
         if (!numberRegex.test(id) && id.includes('/salary/dynamic_values/create')) return;
         try {
             const response = await fetch(`${BASE_URL}salary_dynamic_values/wage?employeeId=${id}&time=${time}`, {

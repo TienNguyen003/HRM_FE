@@ -107,11 +107,8 @@ function RsPass() {
             if (data.code === 303) {
                 load.classList.toggle(`${cx('hidden')}`);
                 modalLoad.classList.toggle(`${cx('hidden')}`);
-                localStorage.setItem('authorizationData', '');
-                localStorage.setItem('employee', '');
-                localStorage.setItem('idU', '');
                 alert(data.result);
-                reloadAfterDelay(500);
+                reloadAfterDelay(400)
             }
         } catch (error) {
             console.error('Error fetching offices:', error.message);

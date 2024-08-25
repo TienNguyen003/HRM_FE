@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { getAllUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -125,8 +125,10 @@ function Bank() {
             });
 
             const data = await response.json();
-            if (data.code === 303) handleAlert('alert-success', message);
-            else handleAlert('alert-danger', data.message);
+            if (data.code === 303) {
+                handleAlert('alert-success', message);
+                reloadAfterDelay(400);
+            } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }

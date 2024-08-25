@@ -24,7 +24,7 @@ function App() {
         setHeaderClicked((prevHeaderClicked) => !prevHeaderClicked);
     };
 
-    console.log('nhân viên phần update, cài đặt, bảng lương, bảng tg chấm công, "Phân quyền người dùng vào web"');
+    console.log('nhân viên phần update, cài đặt, bảng lương(chốt lương, gửi mail), bảng tg chấm công, "Phân quyền người dùng vào web"');
 
     return (
         <>
