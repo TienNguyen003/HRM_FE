@@ -24,7 +24,7 @@ function Role() {
     const token = localStorage.getItem('authorizationData') || '';
 
     // lấy role
-    async function fetchData() {
+    const fetchData = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const searchParam = urlParams.get('page') || 1;
         const name = (urlParams.get('name') || '').toUpperCase();
@@ -65,7 +65,7 @@ function Role() {
         if (result) handleClickDelete(name);
     };
 
-    async function handleClickDelete(name) {
+    const handleClickDelete = async (name) => {
         try {
             const response = await fetch(`${BASE_URL}roles?name=${name}`, {
                 method: 'DELETE',
@@ -102,7 +102,7 @@ function Role() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'no-gutters', 'form-group', 'mb-0')}>
@@ -116,7 +116,7 @@ function Role() {
                                                                     onChange={(e) => setNameParam(e.target.value.toUpperCase())}
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-7')}>
+                                                            <div className={cx('pc-2')}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <FontAwesomeIcon icon={faSearch} />
                                                                     &ensp;Tìm Kiếm

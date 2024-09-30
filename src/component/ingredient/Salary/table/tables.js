@@ -296,7 +296,7 @@ export default function Salary() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-9', 'm-9')}>
+                                            <div className={cx('pc-9', 'm-12')}>
                                                 <div>
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -319,7 +319,7 @@ export default function Salary() {
                                                                     <option value="1">Đã khoá</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3')}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -328,7 +328,7 @@ export default function Salary() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            <div className={cx('pc-3', 'm-3', 'text-right')}>
+                                            <div className={cx('pc-3', 'm-6', 'text-right')}>
                                                 <button className={cx('btn', 'btn-success')} onClick={handleExportExcel}>
                                                     <i className={cx('fas fa-download')}></i> Xuất excel
                                                 </button>

@@ -13,6 +13,7 @@ export default function Calendar() {
     const [dataField, setDataField] = useState([]);
     const [user, setUser] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const options = {
         weekday: 'short',
@@ -119,13 +120,13 @@ export default function Calendar() {
         (async function () {
             if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
             else await getAllUser(token).then((result) => setUser(result));
-            await fetchData(1);
+            await fetchData(employee.id);
         })();
     }, []);
 
     const handleChangeEmployee = (e) => {
-        fetchData(e.target.value)
-    }
+        fetchData(e.target.value);
+    };
 
     return (
         <div className={cx('content-wrapper')}>

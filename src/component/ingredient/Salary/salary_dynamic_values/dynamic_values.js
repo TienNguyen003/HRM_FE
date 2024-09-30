@@ -101,7 +101,7 @@ function Static_values() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -121,7 +121,7 @@ function Static_values() {
                                                                     ))}
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3')}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -130,7 +130,7 @@ function Static_values() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, "SAUF_ADD") && <div className={cx('pc-2', 'text-right')}>
+                                            {decodeToken(token, "SAUP_ADD") && <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.salaryDynamiCreate} className={cx('btn')}>
                                                     <i className={cx('fa fa-plus')}></i> Thêm mới
                                                 </a>

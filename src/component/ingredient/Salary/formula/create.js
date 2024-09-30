@@ -222,13 +222,13 @@ export default function Create() {
                                                             >
                                                                 Thêm mới
                                                             </button>
-                                                            <button type="reset" className={cx('btn', 'btn-default')}>
+                                                            <button type="reset" className={cx('btn', 'btn-danger')}>
                                                                 Nhập lại
                                                             </button>
                                                             <a href={routes.salaryFormulas}>
                                                                 <button
                                                                     type="button"
-                                                                    className={cx('btn', 'btn-danger')}
+                                                                    className={cx('btn', 'btn-default')}
                                                                 >
                                                                     Thoát
                                                                 </button>

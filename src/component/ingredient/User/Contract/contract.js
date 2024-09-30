@@ -124,7 +124,7 @@ function Contract() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <input type="hidden" name="search" value="1" />
@@ -145,7 +145,7 @@ function Contract() {
                                                                     <option value="1">Hoạt động</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-2')}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>

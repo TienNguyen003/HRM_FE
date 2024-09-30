@@ -35,16 +35,13 @@ export default function Advances() {
         document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
 
         try {
-            const response = await fetch(
-                `${BASE_URL}advances?pageNumber=${searchParam}&name=${name}&status=${status}&id=${id}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}advances?pageNumber=${searchParam}&name=${name}&status=${status}&id=${id}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-            );
+            });
 
             if (!response.ok) {
                 throw new Error('Failed to fetch roles');
@@ -58,7 +55,7 @@ export default function Advances() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
         (async function () {
@@ -82,25 +79,15 @@ export default function Advances() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input
-                                                                    type="text"
-                                                                    className={cx('form-control')}
-                                                                    name="name"
-                                                                    id="name"
-                                                                    placeholder="Họ tên"
-                                                                />
+                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                    id="status"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="status" id="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="0">Đang chờ duyệt</option>
                                                                     <option value="1">Đã phê duyệt</option>
@@ -108,7 +95,7 @@ export default function Advances() {
                                                                     <option value="3">Đã huỷ</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3')}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -140,23 +127,16 @@ export default function Advances() {
                                                 </tr>
                                                 {advances.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+pages.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+pages.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td className={cx('text-center', 'm-0')}>
-                                                            {item.requestTime.slice(0, 10)}{' '}
-                                                            {item.requestTime.slice(11, 16)}
+                                                            {item.requestTime.slice(0, 10)} {item.requestTime.slice(11, 16)}
                                                         </td>
-                                                        <td className={cx('text-center')}>
-                                                            {formatter.format(item.money)}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{formatter.format(item.money)}</td>
                                                         <td className={cx('text-center')}>{item.approvedBy}</td>
                                                         <td className={cx('text-center', 'm-0')}>
                                                             {item.approvalTime !== null
-                                                                ? item.approvalTime.slice(0, 10) +
-                                                                  ' ' +
-                                                                  item.approvalTime.slice(11, 16)
+                                                                ? item.approvalTime.slice(0, 10) + ' ' + item.approvalTime.slice(11, 16)
                                                                 : ''}
                                                         </td>
                                                         <td className={cx('text-center')}>
@@ -164,12 +144,7 @@ export default function Advances() {
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             {path.includes('approvals') ? (
-                                                                <a
-                                                                    href={routes.advanceApprovalsEdit.replace(
-                                                                        ':name',
-                                                                        item.id,
-                                                                    )}
-                                                                >
+                                                                <a href={routes.advanceApprovalsEdit.replace(':name', item.id)}>
                                                                     <i className={cx('fas fa-eye')}></i>
                                                                 </a>
                                                             ) : (
@@ -185,15 +160,11 @@ export default function Advances() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{pages.totalItems}</b>
+                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng <b>{pages.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={pages.currentPage}
-                                                    totalPages={pages.totalPages}
-                                                />
+                                                <Pagination currentPage={pages.currentPage} totalPages={pages.totalPages} />
                                             </div>
                                         </div>
                                     </div>

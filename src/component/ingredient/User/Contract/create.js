@@ -290,11 +290,11 @@ export default function Create() {
                                                         Lưu
                                                     </button>
                                                 )}
-                                                <button type="reset" className={cx('btn', 'btn-default')} onClick={clickReset}>
+                                                <button type="reset" className={cx('btn', 'btn-danger')} onClick={clickReset}>
                                                     Nhập lại
                                                 </button>
                                                 <a href={routes.userContracts}>
-                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                    <button type="button" className={cx('btn', 'btn-default')}>
                                                         Thoát
                                                     </button>
                                                 </a>

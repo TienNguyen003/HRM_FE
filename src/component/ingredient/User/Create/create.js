@@ -619,7 +619,7 @@ function Role() {
                                                     Lưu
                                                 </button>
                                                 <a href={routes.user}>
-                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                    <button type="button" className={cx('btn', 'btn-default')}>
                                                         Thoát
                                                     </button>
                                                 </a>

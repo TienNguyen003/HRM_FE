@@ -113,7 +113,7 @@ export default function Formulas() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -133,7 +133,7 @@ export default function Formulas() {
                                                                     <option value="0">Không hoạt động</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                            <div className={cx('pc-2', 'm-5', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>

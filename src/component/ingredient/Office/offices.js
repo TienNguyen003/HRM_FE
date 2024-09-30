@@ -113,7 +113,7 @@ function Offices() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -137,7 +137,7 @@ function Offices() {
                                                                     <option value="0">Không hoạt động</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-2', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>

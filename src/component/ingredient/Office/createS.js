@@ -181,11 +181,11 @@ export default function Create() {
                                                 >
                                                     Lưu lại
                                                 </button>
-                                                <button type="reset" className={cx('btn', 'btn-default')}>
+                                                <button type="reset" className={cx('btn', 'btn-danger')}>
                                                     Nhập lại
                                                 </button>
                                                 <a href={routes.officeStructures}>
-                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                    <button type="button" className={cx('btn', 'btn-default')}>
                                                         Thoát
                                                     </button>
                                                 </a>

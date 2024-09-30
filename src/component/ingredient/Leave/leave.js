@@ -82,7 +82,7 @@ function Leave() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-10')}>
+                                            <div className={cx('pc-10', 'm-12')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
@@ -122,7 +122,7 @@ function Leave() {
                                                                     <option value="3">Đã huỷ</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3')}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -202,13 +202,13 @@ function Leave() {
                                             </tbody>
                                         </table>
                                         <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-9')}>
                                                 <p>
                                                     Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
                                                     <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-2')}>
+                                            <div className={cx('pc-2', 'm-3')}>
                                                 <Pagination
                                                     currentPage={page.currentPage}
                                                     totalPages={page.totalPages}

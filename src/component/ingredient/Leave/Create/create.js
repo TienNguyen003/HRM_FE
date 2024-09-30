@@ -328,12 +328,12 @@ export default function Create() {
                                                         Lưu
                                                     </button>
                                                 )}
-                                                <button type="reset" className={cx('btn', 'btn-default')}>
+                                                <button type="reset" className={cx('btn', 'btn-danger')}>
                                                     Nhập lại
                                                 </button>
 
                                                 <a href={routes.leave}>
-                                                    <button type="button" className={cx('btn', 'btn-danger')}>
+                                                    <button type="button" className={cx('btn', 'btn-default')}>
                                                         Thoát
                                                     </button>
                                                 </a>
