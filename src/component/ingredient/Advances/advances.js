@@ -6,7 +6,7 @@ import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import Status from '../../globalstyle/Status/status';
 import { BASE_URL } from '../../../config/config';
-import { isCheck } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { formatter } from '../ingredient';
 
@@ -15,15 +15,17 @@ const cx = classNames.bind(styles);
 export default function Advances() {
     (async function () {
         await isCheck();
-    })();    
+        decodeToken(token, 'ADV_VIEW', true);
+    })();
 
     const [advances, setAdvances] = useState([]);
     const [pages, setPages] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/advances/approvals', 'approvals');
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     //lấy don ung luong
-    async function fetchData() {
+    const fetchData = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
         const searchParam = urlParams.get('search') || 1;
         const name = urlParams.get('name') || '';
@@ -34,7 +36,7 @@ export default function Advances() {
 
         try {
             const response = await fetch(
-                `${BASE_URL}advances?pageNumber=${searchParam}&name=${name}&status=${status}`,
+                `${BASE_URL}advances?pageNumber=${searchParam}&name=${name}&status=${status}&id=${id}`,
                 {
                     method: 'GET',
                     headers: {
@@ -61,7 +63,7 @@ export default function Advances() {
     useEffect(() => {
         (async function () {
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await fetchData();
+            await fetchData(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
         })();
     }, []);
 
@@ -76,15 +78,15 @@ export default function Advances() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -93,7 +95,7 @@ export default function Advances() {
                                                                     placeholder="Họ tên"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select
                                                                     className={cx('form-control', 'select')}
                                                                     name="status"
@@ -129,10 +131,10 @@ export default function Advances() {
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center')}>Thời gian yêu cầu</th>
+                                                    <th className={cx('text-center', 'm-0')}>Thời gian yêu cầu</th>
                                                     <th className={cx('text-center')}>Số tiền</th>
                                                     <th className={cx('text-center')}>Người duyệt</th>
-                                                    <th className={cx('text-center')}>Thời gian phê duyệt</th>
+                                                    <th className={cx('text-center', 'm-0')}>Thời gian phê duyệt</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>
                                                     <th className={cx('text-center')}>Sửa</th>
                                                 </tr>
@@ -142,13 +144,15 @@ export default function Advances() {
                                                             {(+pages.currentPage - 1) * 30 + index + 1}
                                                         </td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
-                                                        <td className={cx('text-center')}>
+                                                        <td className={cx('text-center', 'm-0')}>
                                                             {item.requestTime.slice(0, 10)}{' '}
                                                             {item.requestTime.slice(11, 16)}
                                                         </td>
-                                                        <td className={cx('text-center')}>{formatter.format(item.money)}</td>
-                                                        <td className={cx('text-center')}>{item.approvedBy}</td>
                                                         <td className={cx('text-center')}>
+                                                            {formatter.format(item.money)}
+                                                        </td>
+                                                        <td className={cx('text-center')}>{item.approvedBy}</td>
+                                                        <td className={cx('text-center', 'm-0')}>
                                                             {item.approvalTime !== null
                                                                 ? item.approvalTime.slice(0, 10) +
                                                                   ' ' +
@@ -160,7 +164,12 @@ export default function Advances() {
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             {path.includes('approvals') ? (
-                                                                <a href={routes.advanceApprovalsEdit.replace(':name', item.id)}>
+                                                                <a
+                                                                    href={routes.advanceApprovalsEdit.replace(
+                                                                        ':name',
+                                                                        item.id,
+                                                                    )}
+                                                                >
                                                                     <i className={cx('fas fa-eye')}></i>
                                                                 </a>
                                                             ) : (

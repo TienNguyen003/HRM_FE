@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
 
 const cx = classNames.bind(styles);
@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'COMP_ADD', true);
     })();
 
     const [office, setOffice] = useState([]);
@@ -67,40 +68,22 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSave = async (name, officeId, shortName) => {
+    const handleSave = async (name, officeId, shortName, method) => {
+        let url = '';
+        if (method == 'PUT') url = `?departmentId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}structures`, {
-                method: 'POST',
+            const response = await fetch(`${BASE_URL}structures${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
                 },
-                body: JSON.stringify({ name, belongTo: '', officeId, shortName }),
+                body: JSON.stringify({ name, officeId, shortName }),
             });
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
-            } else handleAlert('alert-danger', data.message);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleUpdate = async (name, officeId, shortName) => {
-        try {
-            const response = await fetch(`${BASE_URL}structures?departmentId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ name, belongTo: '', officeId, shortName }),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công!');
+                handleAlert('alert-success', 'Thành công');
                 reloadAfterDelay(500);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
@@ -115,8 +98,8 @@ export default function Create() {
 
         if (name === '') handleAlert('alert-danger', 'Tên không được để trống.');
         else {
-            if (path.includes('/offices/structures/create')) handleSave(name, belong, short);
-            else handleUpdate(name, belong, short);
+            if (path.includes('/offices/structures/create')) handleSave(name, belong, short, 'POST');
+            else handleSave(name, belong, short, 'PUT');
         }
     };
 
@@ -141,7 +124,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -153,10 +136,10 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Thuộc cấp cha<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="belong" className={cx('form-control', 'select')}>
                                                         {office.map((item) => (
                                                             <option key={item.id} value={item.id}>
@@ -167,18 +150,18 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Tên cấu trúc<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input className={cx('form-control')} type="text" id="name" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Tên ngắn<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input className={cx('form-control')} type="text" id="short" />
                                                 </div>
                                             </div>

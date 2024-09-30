@@ -4,20 +4,22 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, getRoles, getStructures, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
 function Role() {
-    (async function () {
-        await isCheck();
-    })();
-
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
+    const [formula, setFormula] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/users/edit/', '');
+
+    (async function () {
+        await isCheck();
+        decodeToken(token, 'USER_ADD');
+    })();
 
     const getUsers = async () => {
         if (path.includes('/user')) return '';
@@ -45,21 +47,54 @@ function Role() {
                 form.fullname.value = dataEmp.name;
                 form.phone.value = dataEmp.phone_number;
                 form.birthday.value = dataEmp.birth_date;
-                form.joined_date.value = dataEmp.hire_date;
+                form.joined_date.value = dataEmp.joined_date;
                 form.timekeeper_id.value = dataEmp.vacationTime;
                 form.sabbatical.value = dataEmp.vacationHours;
-                form.role_id.querySelector('option[value="' + dataRs.role.name + '"]').selected = true;
-                form.structure_id.querySelector('option[value="' + dataEmp.department.id + '"]').selected = true;
+                if (decodeToken(token, 'ROLE_NHÂN')) {
+                    const opRole = new Option(dataRs.role.name, dataRs.role.name);
+                    form.role_id.add(opRole);
+                    const opStruct = new Option(
+                        dataEmp.department.name + ' - ' + dataEmp.department.officeI.name,
+                        dataEmp.department.id,
+                    );
+                    form.structure_id.add(opStruct);
+                    const opFor = new Option(dataEmp.formula.name, dataEmp.formula.id);
+                    form.salary_formula_id.add(opFor);
+                } else {
+                    form.role_id.querySelector('option[value="' + dataRs.role.name + '"]').selected = true;
+                    form.structure_id.querySelector('option[value="' + dataEmp.department.id + '"]').selected = true;
+                    form.salary_formula_id.querySelector('option[value="' + dataEmp.formula.id + '"]').selected = true;
+                }
             }
         } catch (error) {
             console.error('Error fetching offices:', error.message);
         }
     };
 
+    const getFormula = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}salary_formulas/get-all`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+
+            const data = await response.json();
+            if (data.code === 303) setFormula(data.result);
+        } catch (error) {
+            console.log(error);
+        }
+    };
+
     useEffect(() => {
         (async function () {
-            await getStructures(token).then((result) => setStructures(result));
-            await getRoles(token).then((result) => setRoles(result));
+            if (!decodeToken(token, 'ROLE_NHÂN')) {
+                await getFormula();
+                await getStructures(token).then((result) => setStructures(result));
+                await getRoles(token).then((result) => setRoles(result));
+            }
             await getUsers();
         })();
     }, []);
@@ -72,10 +107,12 @@ function Role() {
     const specialRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?\/\\~-]/;
 
     //save user
-    const saveUser = async (employeeId, username, password, roleName) => {
+    const saveUser = async (employeeId, username, password, roleName, method) => {
+        let url = '';
+        if (method == 'PUT') url = `?userId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}users`, {
-                method: 'POST',
+            const response = await fetch(`${BASE_URL}users${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -91,10 +128,9 @@ function Role() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm dữ liệu thành công');
-                reloadAfterDelay(500);
+                if (method == 'POST') reloadAfterDelay(500);
+                return data.result.employee;
             } else {
-                console.log(data.message);
-
                 handleAlert('alert-danger', data.message);
                 handleClickDelete(employeeId);
             }
@@ -109,16 +145,22 @@ function Role() {
         gender,
         image,
         birth_date,
-        hire_date,
+        joined_date,
         shift_id,
         vacationTime,
         hourOff,
         vacationHours,
         departmentId,
         username,
+        formulaId,
+        method,
+        id = '',
     ) => {
-        const response = await fetch(`${BASE_URL}employee?username=${username}`, {
-            method: 'POST',
+        let url;
+        if (method == 'POST') url = `username=${username}`;
+        else if (method == 'PUT') url = `id=${id}`;
+        const response = await fetch(`${BASE_URL}employee?${url}`, {
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
                 Authorization: `Bearer ${token}`,
@@ -130,12 +172,13 @@ function Role() {
                 gender,
                 image,
                 birth_date,
-                hire_date,
+                joined_date,
                 shift_id,
                 vacationTime,
                 hourOff,
                 vacationHours,
                 departmentId,
+                formulaId,
             }),
         });
 
@@ -170,37 +213,42 @@ function Role() {
     const handleClickAddUser = () => {
         const form = formIp();
 
-        if (form.username.value === '' || form.username.length < 6)
-            handleAlert('alert-danger', 'Tên đăng nhập không được để trống');
+        if (form.username.value === '') handleAlert('alert-danger', 'Tên đăng nhập không được để trống');
+        else if (form.username.value.length < 7) handleAlert('alert-danger', 'Tên đăng nhập phải nhiều hơn 6 ký tự');
+        else if (form.username.value.includes(' '))
+            handleAlert('alert-danger', 'Tên đăng nhập không được chứa khoảng trắng');
         else if (startRgex.test(form.username.value) || endRegex.test(form.username.value))
-            handleAlert('alert-danger', 'Đầu và cuối tên đăng nhập không được chứa kí tự đặc biệt');
-        else if (
-            form.email.value === '' ||
-            startRgex.test(form.email.value) ||
-            endRegex.test(form.email.value) ||
-            !emailRegex.test(form.email.value)
-        )
-            handleAlert('alert-danger', 'Email không đúng định dạng');
-        else if (form.fullname.value === '' || numberRegex.test(form.fullname.value))
-            handleAlert('alert-danger', 'Tên không được để trống và không được chứa số');
-        else if (form.phone.value === '' || specialRegex.test(form.phone.value))
-            handleAlert('alert-danger', 'Số điện thoại không đúng định dạng');
+            handleAlert('alert-danger', 'Đầu và cuối không được chứa kí tự đặc biệt');
+        else if (form.email.value === '') handleAlert('alert-danger', 'Email không được để trống');
+        else if (startRgex.test(form.email.value) || endRegex.test(form.email.value))
+            handleAlert('alert-danger', 'Đầu và cuối không được chứa kí tự đặc biệt');
+        else if (!emailRegex.test(form.email.value)) handleAlert('alert-danger', 'Email không đúng định dạng');
+        else if (form.fullname.value.trim() === '') handleAlert('alert-danger', 'Tên không được để trống');
+        else if (numberRegex.test(form.fullname.value)) handleAlert('alert-danger', 'Tên không được chứa số');
+        else if (specialRegex.test(form.fullname.value))
+            handleAlert('alert-danger', 'Tên không được chứa ký tự đặc biệt');
+        else if (form.phone.value === '') handleAlert('alert-danger', 'Số điện thoại không được để trống');
+        else if (specialRegex.test(form.phone.value))
+            handleAlert('alert-danger', 'Số điện thoại không dược chứa ký tự đặc biệt');
+        else if (form.phone.value.includes(' '))
+            handleAlert('alert-danger', 'Số điện thoại không được chứa khoảng trắng');
         else if (form.address.value === '') handleAlert('alert-danger', 'Địa chỉ không được để trống');
         else if (form.birthday.value === '') handleAlert('alert-danger', 'Ngày sinh không được để trống');
         else if (form.joined_date.value === '') handleAlert('alert-danger', 'Ngày tham gia không được để trống');
-        else if (
-            form.timekeeper_id.value === '' ||
-            !numberRegex.test(form.timekeeper_id.value) ||
-            specialRegex.test(form.timekeeper_id.value)
-        )
-            handleAlert('alert-danger', 'Số giờ nghỉ phép không đúng định dạng');
-        else if (
-            form.sabbatical.value === '' ||
-            !numberRegex.test(form.sabbatical.value) ||
-            specialRegex.test(form.sabbatical.value)
-        )
-            handleAlert('alert-danger', 'Số giờ nghỉ phép không đúng định dạng');
-        else if (form.password.value === '') handleAlert('alert-danger', 'Mật khẩu không được để trống');
+        else if (form.timekeeper_id.value === '') handleAlert('alert-danger', 'Số giờ cần làm không được để trống');
+        else if (!numberRegex.test(form.timekeeper_id.value))
+            handleAlert('alert-danger', 'Số giờ cần làm chỉ được chứa số ');
+        else if (specialRegex.test(form.timekeeper_id.value))
+            handleAlert('alert-danger', 'Số giờ cần làm không được chứa ký tự đặc biệt');
+        else if (form.timekeeper_id.value.includes(' '))
+            handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
+        else if (form.sabbatical.value === '') handleAlert('alert-danger', 'Số giờ nghỉ phép không được để trống');
+        else if (!numberRegex.test(form.sabbatical.value))
+            handleAlert('alert-danger', 'Số giờ nghỉ phép chỉ được chứa số ');
+        else if (specialRegex.test(form.sabbatical.value))
+            handleAlert('alert-danger', 'Số giờ nghỉ phép không được chứa ký tự đặc biệt');
+        else if (form.sabbatical.value.includes(' '))
+            handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
         else {
             if (form.username.value.includes(' ')) form.username.value = form.username.value.replace(/ /g, '');
             form.username.value = form.username.value
@@ -209,34 +257,63 @@ function Role() {
                 .replace(/đ/g, 'd')
                 .replace(/Đ/g, 'D');
 
-            const employeeId = saveEmployee(
-                form.fullname.value,
-                form.email.value,
-                form.phone.value,
-                1,
-                '',
-                form.birthday.value,
-                form.joined_date.value,
-                '',
-                form.timekeeper_id.value,
-                0,
-                form.sabbatical.value,
-                +form.structure_id.value,
-                form.username.value,
-            );
-            employeeId
-                .then((result) => {
-                    if (result) saveUser(result, form.username.value, form.password.value, form.role_id.value);
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+            if (path.includes('/users/create')) {
+                const employeeId = saveEmployee(
+                    form.fullname.value.trim(),
+                    form.email.value.trim(),
+                    form.phone.value.trim(),
+                    1,
+                    '',
+                    form.birthday.value.trim(),
+                    form.joined_date.value,
+                    '',
+                    form.timekeeper_id.value,
+                    0,
+                    form.sabbatical.value.trim(),
+                    +form.structure_id.value.trim(),
+                    form.username.value.trim(),
+                    form.salary_formula_id.value,
+                    'POST',
+                );
+                employeeId
+                    .then((result) => {
+                        if (result)
+                            saveUser(
+                                result,
+                                form.username.value.trim(),
+                                form.password.value.trim(),
+                                form.role_id.value.trim(),
+                                'POST',
+                            );
+                    })
+                    .catch((error) => {
+                        console.error('Error:', error);
+                    });
+            } else {
+                const user = saveUser('', '', '', form.role_id.value.trim(), 'PUT');
+                user.then((result) =>
+                    saveEmployee(
+                        form.fullname.value.trim(),
+                        form.email.value.trim(),
+                        form.phone.value.trim(),
+                        1,
+                        '',
+                        form.birthday.value.trim(),
+                        form.joined_date.value,
+                        '',
+                        form.timekeeper_id.value,
+                        0,
+                        form.sabbatical.value.trim(),
+                        +form.structure_id.value.trim(),
+                        form.username.value.trim(),
+                        form.salary_formula_id.value,
+                        'PUT',
+                        result.id,
+                    ),
+                );
+                reloadAfterDelay(400);
+            }
         }
-    };
-
-    // thêm nhân viên
-    const clickAddUser = () => {
-        handleClickAddUser();
     };
 
     //đóng alert
@@ -277,7 +354,7 @@ function Role() {
                             </section>
                         </div>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -289,10 +366,10 @@ function Role() {
                                     <div className={cx('form-horizontal')}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
                                                     Tên đăng nhập<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         id="username"
                                                         className={cx('form-control')}
@@ -302,8 +379,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Email</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Email</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="email"
@@ -313,8 +390,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Họ tên</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Họ tên</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -324,8 +401,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Số điện thoại</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Số điện thoại</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -335,8 +412,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Ngày sinh</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày sinh</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input
                                                             type="date"
@@ -347,8 +424,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Địa chỉ</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Địa chỉ</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -358,8 +435,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Ngày gia nhập</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày gia nhập</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input
                                                             type="date"
@@ -371,24 +448,25 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
                                                     Văn phòng làm việc
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="structure_id" className={cx('form-control', 'select')}>
-                                                        {structures.map((item) => (
-                                                            <option key={item.id} value={item.id}>
-                                                                {item.name} - {item.officeI.name}
-                                                            </option>
-                                                        ))}
+                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                            structures.map((item) => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.name} - {item.officeI.name}
+                                                                </option>
+                                                            ))}
                                                     </select>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
                                                     Số giờ cần làm<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -399,8 +477,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Số giờ nghỉ phép</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Số giờ nghỉ phép</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -411,38 +489,40 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Công thức lương</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Công thức lương</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select
                                                         id="salary_formula_id"
                                                         className={cx('form-control', 'select')}
                                                     >
-                                                        <option value="1">Công thức cơ bản</option>
-                                                        <option value="2">
-                                                            Trưởng phòng, Quản lý, Không Chấm Công
-                                                        </option>
+                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                            formula.map((item) => (
+                                                                <option key={item.id} value={item.id}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
                                                     </select>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
                                                     Mật khẩu<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group', 'row', 'no-gutters')}>
                                                         <div
-                                                            className={cx('pc-10', 'input-10')}
+                                                            className={cx('pc-10', 'm-12', 'input-10')}
                                                             style={{
                                                                 border: '1px solid #ced4da',
                                                                 display: 'flex',
                                                                 alignItems: 'center',
                                                                 textAlign: 'center',
-                                                                cursor: 'pointer'
+                                                                cursor: 'pointer',
                                                             }}
                                                         >
                                                             <input
                                                                 type="password"
-                                                                className={cx('form-control', 'pc-11', 'input-10')}
+                                                                className={cx('form-control', 'pc-11', 'm-11', 'input-10')}
                                                                 id="password"
                                                                 placeholder="Nhập mật khẩu hoặc dùng tính năng tạo tự động"
                                                                 onChange={(e) => changePassword(e)}
@@ -493,8 +573,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>Nhập lại mật khẩu</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Nhập lại mật khẩu</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="password"
@@ -504,16 +584,17 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
                                                     Phân quyền<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="role_id" className={cx('form-control', 'select')}>
-                                                        {roles.map((item) => (
-                                                            <option key={item.name} value={item.name}>
-                                                                {item.name}
-                                                            </option>
-                                                        ))}
+                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                            roles.map((item) => (
+                                                                <option key={item.name} value={item.name}>
+                                                                    {item.name}
+                                                                </option>
+                                                            ))}
                                                     </select>
                                                 </div>
                                             </div>
@@ -533,9 +614,9 @@ function Role() {
                                                 <button
                                                     type="submit"
                                                     className={cx('btn', 'btn-success')}
-                                                    onClick={clickAddUser}
+                                                    onClick={handleClickAddUser}
                                                 >
-                                                    Thêm mới
+                                                    Lưu
                                                 </button>
                                                 <a href={routes.user}>
                                                     <button type="button" className={cx('btn', 'btn-danger')}>

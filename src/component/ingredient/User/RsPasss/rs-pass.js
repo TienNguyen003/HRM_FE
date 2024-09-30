@@ -2,9 +2,9 @@ import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
-import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import Load from '../../../globalstyle/Loading/load';
+import { BASE_URL } from '../../../../config/config';
+import { decodeToken, isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 function RsPass() {
     (async function () {
         await isCheck();
+        decodeToken(token, "USER_RSPASS", true)
     })();
 
     const token = localStorage.getItem('authorizationData') || '';

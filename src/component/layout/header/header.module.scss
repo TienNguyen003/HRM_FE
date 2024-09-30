@@ -45,7 +45,7 @@ body {
     z-index: 10;
 }
 .jquery-accordion-menu {
-    transition: width .3s ease-in-out;    
+    transition: width 0.3s ease-in-out;
     width: 260px;
     left: 0;
     top: 0;
@@ -67,6 +67,7 @@ body {
     font-size: 3rem;
     color: #f0f0f0;
     background: #414956;
+    transition: font-size 0.4s ease-in-out;
 }
 .jquery-accordion-menu ul {
     margin: 0;
@@ -122,7 +123,7 @@ body {
 }
 .jquery-accordion-menu ul ul.submenu,
 .jquery-accordion-menu ul ul.submenu li ul.submenu {
-    width: 100%;    
+    width: 100%;
     display: none;
     position: static;
 }
@@ -140,7 +141,7 @@ body {
     border-left: solid 6px transparent;
     transition: border 0.2s linear;
 }
-.jquery-accordion-menu ul ul.submenu li:hover{
+.jquery-accordion-menu ul ul.submenu li:hover {
     background-color: #252930;
 }
 .jquery-accordion-menu ul ul.submenu li:hover > a {
@@ -276,19 +277,24 @@ body {
 .black.jquery-accordion-menu ul li a {
     background: #292929;
 }
-.jquery-accordion-menu{
-    &:hover{
+.jquery-accordion-menu {
+    &:hover {
         width: 260px;
 
-        .submenu li a{
+        .submenu li a {
             visibility: visible;
         }
 
-        ul li a p{
+        ul li a p {
             visibility: visible;
-            transition: visibility .3s ease-in-out;
+            transition: visibility 0.3s ease-in-out;
         }
-    }    
+
+        .jquery-accordion-menu-header {
+            font-size: 3rem !important;
+            transition: font-size 0.4s ease-in-out;
+        }
+    }
 }
 .black.jquery-accordion-menu > ul > li.active > a,
 .black.jquery-accordion-menu > ul > li:hover > a {
@@ -300,10 +306,10 @@ body {
 .black.jquery-accordion-menu ul ul.submenu li:hover > a {
     border-left-color: #222;
 }
-.jquery-accordion-menu ul li a{
+.jquery-accordion-menu ul li a {
     cursor: pointer;
 }
-.jquery-accordion-menu ul li p{
+.jquery-accordion-menu ul li p {
     font-size: 1.5rem;
 }
 
@@ -316,7 +322,8 @@ body {
     justify-content: space-between;
     height: 50px;
     background-color: #fff;
-    transition: left .3s ease-in-out;
+    border-bottom: 3px solid #b2c35b;
+    transition: left 0.3s ease-in-out;
     z-index: 10;
 }
 
@@ -339,6 +346,7 @@ body {
 
 .nav-item {
     position: relative;
+    cursor: pointer;
 }
 
 .dropdown-menu {
@@ -374,6 +382,8 @@ body {
 }
 
 .user-menu {
+    cursor: pointer;
+
     .dropdown-toggle {
         display: flex;
         align-items: center;
@@ -442,55 +452,68 @@ body {
     background-color: #dc3545 !important;
 }
 
-.menu-click{
-    transition: width .3s ease-in-out;
+.menu-click {
+    transition: width 0.3s ease-in-out;
     width: 60px;
 
-    p, .submenu li a{
-        transition: visibility .3s ease-in-out;
+    p,
+    .submenu li a {
+        transition: visibility 0.3s ease-in-out;
         visibility: hidden;
     }
 
-    .submenu li{
+    .submenu li {
         background-color: #414956e8;
     }
 
-    .jquery-accordion-menu-header{
+    .jquery-accordion-menu-header {
         font-size: 1.5rem;
+        transition: font-size 0.4s ease-in-out;
     }
 }
 
-.nav-click{
-    transition: left .3s ease-in-out;
+.nav-click {
+    transition: left 0.3s ease-in-out;
     left: 60px;
 }
 
-.drop-menu a{
+.drop-menu a {
     display: flex;
     justify-content: space-between;
 
-    .nav-link{
+    .nav-link {
         display: flex;
         align-items: center;
     }
 }
 
-.iconLeft{
-    transition: rotate .3s ease-in-out;
+.iconLeft {
+    transition: rotate 0.3s ease-in-out;
 }
-.icon-rotate{
+.icon-rotate {
     rotate: -90deg;
-    transition: rotate .3s ease-in-out;
+    transition: rotate 0.3s ease-in-out;
 }
-.change-bg{
+.change-bg {
     background: #2e3b47 !important;
 }
 
 @media (max-width: 740px) {
-    .jquery-accordion-menu{
-        display: none;
+    .jquery-accordion-menu {
+        width: 60px;
     }
-    .nav-wrapper{
-        left: 0;
+    .nav-wrapper {
+        left: 60px;
     }
+    .jquery-accordion-menu .jquery-accordion-menu-footer,
+    .jquery-accordion-menu .jquery-accordion-menu-header {
+        font-size: 1.5rem;
+    }
+
+    .menu-click {
+        .submenu li a {
+            transition: visibility 0.3s ease-in-out;
+            visibility: hidden;
+        }
+    }    
 }

@@ -6,7 +6,7 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
@@ -14,8 +14,10 @@ const cx = classNames.bind(styles);
 function Role() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'PERM_VIEW', true);
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [roles, setRoles] = useState([]);
     const [page, setPage] = useState([]);
     const [nameParam, setNameParam] = useState('');
@@ -55,7 +57,7 @@ function Role() {
         (async function () {
             await fetchData();
         })();
-    }, [token]);
+    }, [token, tableData]);
 
     const clickDelete = async (event, name) => {
         event.preventDefault();
@@ -79,9 +81,7 @@ function Role() {
 
             const data = await response.json();
 
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.name !== name));
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
@@ -98,24 +98,22 @@ function Role() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'no-gutters', 'form-group', 'mb-0')}>
-                                                            <div className={cx('pc-3')}>
+                                                            <div className={cx('pc-3')} style={{ marginRight: '10px' }}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control', 'form-control-sm')}
                                                                     placeholder="Thuộc module"
                                                                     name="name"
                                                                     value={nameParam}
-                                                                    onChange={(e) =>
-                                                                        setNameParam(e.target.value.toUpperCase())
-                                                                    }
+                                                                    onChange={(e) => setNameParam(e.target.value.toUpperCase())}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-7')}>
@@ -159,22 +157,13 @@ function Role() {
                                                         <td>{item.name}</td>
                                                         <td>{item.des}</td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('edit-record')}
-                                                                href={routes.roleEdit.replace(':name', item.name)}
-                                                            >
+                                                            <a className={cx('edit-record')} href={routes.roleEdit.replace(':name', item.name)}>
                                                                 <FontAwesomeIcon icon={faEdit} />
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={(e) => clickDelete(e, item.name)}
-                                                            >
-                                                                <FontAwesomeIcon
-                                                                    icon={faTrash}
-                                                                    className={cx('text-red')}
-                                                                />
+                                                            <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.name)}>
+                                                                <FontAwesomeIcon icon={faTrash} className={cx('text-red')} />
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -184,15 +173,11 @@ function Role() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

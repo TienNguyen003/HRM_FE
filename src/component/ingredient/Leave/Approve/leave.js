@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import Status from '../../../globalstyle/Status/status';
 
 const cx = classNames.bind(styles);
@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 function Leave() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'REQ_APPROVALS', true);
     })();
 
     const [isStatus, setIsStatus] = useState(0);
@@ -63,6 +64,12 @@ function Leave() {
                     time,
                 }),
             });
+
+            const data = await response.json();
+            if (data.code === 303) {
+                alert('Cập nhật thành công!');
+                reloadAfterDelay(400);
+            } else alert(data.messages);
         } catch (error) {
             console.log(error);
         }
@@ -92,11 +99,6 @@ function Leave() {
                     remaining,
                 }),
             });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                window.confirm('Cập nhật thành công!');
-            }
         } catch (error) {
             console.log(error);
         }
@@ -125,11 +127,11 @@ function Leave() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 {leave.map((item) => (
                                     <div key={item.id} className={cx('card')}>
                                         <div className={cx('card-header', 'row', 'no-gutters')}>
-                                            <p className={cx('card-title', 'pc-10')}>
+                                            <p className={cx('card-title', 'pc-10', 'm-9')}>
                                                 Trạng thái:{' '}
                                                 <span className={cx('badge', 'badge-success')}>
                                                     <Status status={item.status} />
@@ -138,7 +140,7 @@ function Leave() {
                                                 Người thực hiện: <strong>{item.approved}</strong>
                                             </p>
                                             {isStatus === 0 ? (
-                                                <div className={cx('pc-2')}>
+                                                <div className={cx('pc-2', 'm-3')}>
                                                     <select className={cx('form-control', 'select')} id="status">
                                                         <option value="1">Phê duyệt</option>
                                                         <option value="2">Từ chối</option>
@@ -151,10 +153,10 @@ function Leave() {
                                         </div>
                                         <div className={cx('card-body')}>
                                             <div className={cx('row', 'no-gutters')}>
-                                                <div className={cx('pc-5')}>
+                                                <div className={cx('pc-5', 'm-12')}>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Họ tên:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Họ tên:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p
                                                                 id="employeeId"
                                                                 data-employee={item.employee.id}
@@ -165,22 +167,22 @@ function Leave() {
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Văn phòng làm việc:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Văn phòng làm việc:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.employee.department.name}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Loại nghỉ:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Loại nghỉ:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.dayOffCategories.nameDay}</p>
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <div className={cx('pc-7')}>
+                                                <div className={cx('pc-7', 'm-12')}>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Thời gian tạo:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Thời gian tạo:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p>
                                                                 {new Date(item.creationTime)
                                                                     .toISOString()
@@ -190,20 +192,20 @@ function Leave() {
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Thời gian bắt đầu:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Thời gian bắt đầu:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.startTime}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Thời gian kết thúc:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Thời gian kết thúc:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.endTime}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5')}>Tổng thời gian xin nghỉ:</label>
-                                                        <div className={cx('pc-7')}>
+                                                        <label className={cx('pc-5', 'm-4')}>Tổng thời gian xin nghỉ:</label>
+                                                        <div className={cx('pc-7', 'm-7')}>
                                                             <p id="timeTotal">{item.totalTime} giờ</p>
                                                         </div>
                                                     </div>
@@ -217,30 +219,27 @@ function Leave() {
                                                     </p>
                                                 </div>
                                             </div>
-                                            <form>
-                                                <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2')}>Bình luận</label>
-                                                    <textarea
-                                                        className={cx('form-control', 'message', 'pc-8')}
-                                                        rows="6"
-                                                    ></textarea>
-                                                </div>
-                                                <div className={cx('text-center')}>
-                                                    <button
-                                                        disabled={isStatus !== 0}
-                                                        className={cx('btn', 'btn-default')}
-                                                        onClick={updateStatusLeave}
-                                                    >
-                                                        Sửa
-                                                    </button>
-                                                    <a
-                                                        href={routes.leaveApprovals}
-                                                        className={cx('btn', 'btn-default')}
-                                                    >
+                                            <div className={cx('row', 'no-gutters', 'form-group')}>
+                                                <label className={cx('pc-2')}>Bình luận</label>
+                                                <textarea
+                                                    className={cx('form-control', 'message', 'pc-8')}
+                                                    rows="6"
+                                                ></textarea>
+                                            </div>
+                                            <div className={cx('text-center')}>
+                                                <button
+                                                    disabled={isStatus !== 0}
+                                                    className={cx('btn', 'btn-default')}
+                                                    onClick={updateStatusLeave}
+                                                >
+                                                    Lưu
+                                                </button>
+                                                <a href={routes.leaveApprovals}>
+                                                    <button type="submit" className={cx('btn', 'btn-default')}>
                                                         Thoát
-                                                    </a>
-                                                </div>
-                                            </form>
+                                                    </button>
+                                                </a>
+                                            </div>
                                         </div>
                                     </div>
                                 ))}

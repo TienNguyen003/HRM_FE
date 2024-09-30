@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
 
 const cx = classNames.bind(styles);
@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'HOLI_ADD', true)
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
@@ -124,7 +125,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -136,28 +137,28 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Tên ngày nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input className={cx('form-control')} type="text" id="name" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Ngày bắt đầu nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="start" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Ngày kết thúc nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="end" />
                                                     </div>

@@ -4,14 +4,15 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../globalstyle/checkToken';
-import { getAllUser, getAdvances, handleAlert } from '../ingredient';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
+import { getAllUser, getAdvances, handleAlert, getUser } from '../ingredient';
 
 const cx = classNames.bind(styles);
 
 function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'ADV_ADD', true);
     })();
 
     const specialRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?\/\\~-]/;
@@ -31,7 +32,8 @@ function Create() {
 
     useEffect(() => {
         (async function () {
-            await getAllUser(token).then((result) => setUser(result));
+            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
+            else await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             if (path.includes('/advances/create')) return;
             await getAdvances(path, token).then((result) => handleAdvances(result));
@@ -60,7 +62,7 @@ function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(2000);
+                reloadAfterDelay(400);
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -88,12 +90,12 @@ function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Cập nhật thành công');
-                reloadAfterDelay(1000);
+                reloadAfterDelay(400);
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     const saveAdvances = () => {
         const employeeId = document.querySelector('#user_id').value;
@@ -129,22 +131,21 @@ function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
                                     <div className={cx('card-body')}>
                                         <form onSubmit={(e) => submitForm(e)}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
                                                             <option key={item.id} value={item.employee.id}>
@@ -155,20 +156,17 @@ function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Số tiền<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input className={cx('form-control')} id="price" placeholder="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>Ghi chú</label>
-                                                <div className={cx('pc-8')}>
-                                                    <textarea
-                                                        className={cx('form-control', 'message')}
-                                                        rows="6"
-                                                    ></textarea>
+                                                <label className={cx('pc-2', 'm-3')}>Ghi chú</label>
+                                                <div className={cx('pc-8', 'm-8')}>
+                                                    <textarea className={cx('form-control', 'message')} rows="6"></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
@@ -185,11 +183,7 @@ function Create() {
                                                         Thêm
                                                     </button>
                                                 ) : (
-                                                    <button
-                                                        className={cx('btn', 'btn-success')}
-                                                        disabled={isStatus !== 0}
-                                                        onClick={saveAdvances}
-                                                    >
+                                                    <button className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={saveAdvances}>
                                                         Lưu
                                                     </button>
                                                 )}

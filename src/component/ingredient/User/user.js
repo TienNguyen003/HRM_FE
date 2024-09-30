@@ -6,7 +6,7 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { getRoles, getStructures } from '../ingredient';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
@@ -16,8 +16,10 @@ const cx = classNames.bind(styles);
 function User() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'USER_VIEW', true);
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
     const [user, setUsers] = useState([]);
@@ -25,7 +27,7 @@ function User() {
     const token = localStorage.getItem('authorizationData') || '';
 
     //lấy thông tin user
-    async function fetchData() {
+    const fetchData = async () => {
         const urlParams = new URLSearchParams(window.location.search);
         const searchParam = urlParams.get('search') || 1;
         const name = urlParams.get('name') || '';
@@ -70,7 +72,7 @@ function User() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
         (async function () {
@@ -81,7 +83,7 @@ function User() {
 
             await fetchData();
         })();
-    }, []);
+    }, [tableData]);
 
     // sự kiện xóa người dùng
     const clickDelete = async (event, name) => {
@@ -91,7 +93,7 @@ function User() {
     };
 
     // xóa người dùng
-    async function handleClickDelete(name) {
+    const handleClickDelete = async (name) => {
         try {
             const response = await fetch(`${BASE_URL}users?userId=${name}`, {
                 method: 'DELETE',
@@ -101,22 +103,31 @@ function User() {
                 },
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
-            }
-
             const data = await response.json();
 
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.name !== name));
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
     }
 
-    const changeStatus = () => {
-        console.log(123);
+    const changeStatus = (e) => {
+        let isCheck = e.target.checked ? 1 : 0;
+        handleChangeStt(isCheck, e.target.id);
+    };
+
+    const handleChangeStt = async (status, id) => {
+        try {
+            const response = await fetch(`${BASE_URL}users/stt?id=${id}&status=${status}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+            });
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
     };
 
     return (
@@ -130,16 +141,16 @@ function User() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <input type="hidden" name="search" value="1" />
                                                         <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     id="name"
@@ -148,7 +159,7 @@ function User() {
                                                                     name="name"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     id="username"
@@ -157,31 +168,18 @@ function User() {
                                                                     name="username"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <select
-                                                                    id="structure_id"
-                                                                    name="department"
-                                                                    className={cx('form-control', 'select')}
-                                                                >
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <select id="structure_id" name="department" className={cx('form-control', 'select')}>
                                                                     <option value="">-- Phòng ban --</option>
                                                                     {structures.map((item, index) => (
-                                                                        <option
-                                                                            key={index}
-                                                                            value={
-                                                                                item.name + ' - ' + item.officeI.name
-                                                                            }
-                                                                        >
+                                                                        <option key={index} value={item.name + ' - ' + item.officeI.name}>
                                                                             {item.name} - {item.officeI.name}
                                                                         </option>
                                                                     ))}
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <select
-                                                                    id="role_id"
-                                                                    name="role"
-                                                                    className={cx('form-control', 'select')}
-                                                                >
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <select id="role_id" name="role" className={cx('form-control', 'select')}>
                                                                     <option value="">-- Phân quyền --</option>
                                                                     {roles.map((item) => (
                                                                         <option key={item.name} value={item.name}>
@@ -214,10 +212,10 @@ function User() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên đăng nhập</th>
+                                                    <th className={cx('text-center', 'm-0')}>Tên đăng nhập</th>
                                                     <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center')}>Phân quyền</th>
-                                                    <th className={cx('text-center')}>Phòng ban</th>
+                                                    <th className={cx('text-center', 'm-0')}>Phân quyền</th>
+                                                    <th className={cx('text-center', 'm-0')}>Phòng ban</th>
                                                     <th className={cx('text-center')}>Reset password</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>
                                                     <th className={cx('text-center')}>Sửa</th>
@@ -225,50 +223,31 @@ function User() {
                                                 </tr>
                                                 {user.map((item, index) => (
                                                     <tr key={item.id} id={`record-${item.id}`}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+pages.currentPage - 1) * 30 + index + 1}
-                                                        </td>
-                                                        <td className={cx('text-center')}>{item.username}</td>
+                                                        <td className={cx('text-center')}>{(+pages.currentPage - 1) * 30 + index + 1}</td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.username}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
-                                                        <td className={cx('text-center')}>{item.role.name}</td>
-                                                        <td className={cx('text-center')}>
-                                                            {item.employee.department.name} (
-                                                            {item.employee.department.officeI.name})
+                                                        <td className={cx('text-center', 'm-0')}>{item.role.name}</td>
+                                                        <td className={cx('text-center', 'm-0')}>
+                                                            {item.employee.department.name} ({item.employee.department.officeI.name})
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a href={routes.userRsPass.replace(':name', item.id)}>
-                                                                Reset
-                                                            </a>
+                                                            <a href={routes.userRsPass.replace(':name', item.id)}>Reset</a>
                                                         </td>
                                                         <td
                                                             style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                border: 'none',
+                                                                width: '120px',
                                                             }}
                                                         >
-                                                            <Status
-                                                                isStatus={item.status}
-                                                                handleChange={changeStatus}
-                                                            />
+                                                            <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('edit-record')}
-                                                                href={routes.userEdit.replace(':name', item.id)}
-                                                            >
+                                                            <a className={cx('edit-record')} href={routes.userEdit.replace(':name', item.id)}>
                                                                 <FontAwesomeIcon icon={faEdit} />
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={(e) => clickDelete(e, item.id)}
-                                                            >
-                                                                <FontAwesomeIcon
-                                                                    icon={faTrash}
-                                                                    className={cx('text-red')}
-                                                                />
+                                                            <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.id)}>
+                                                                <FontAwesomeIcon icon={faTrash} className={cx('text-red')} />
                                                             </a>
                                                         </td>
                                                     </tr>
@@ -278,15 +257,11 @@ function User() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{pages.totalItems}</b>
+                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng <b>{pages.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={pages.currentPage}
-                                                    totalPages={pages.totalPages}
-                                                />
+                                                <Pagination currentPage={pages.currentPage} totalPages={pages.totalPages} />
                                             </div>
                                         </div>
                                     </div>

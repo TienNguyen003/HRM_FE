@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getSalaryCate, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'CALC_ADD', true);
     })();
 
     const [dayOff, setDayOff] = useState([]);

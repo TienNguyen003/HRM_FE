@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 
 const cx = classNames.bind(styles);
@@ -13,8 +13,10 @@ const cx = classNames.bind(styles);
 export default function Categories() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'CATG_VIEW', true);
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
@@ -57,7 +59,7 @@ export default function Categories() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getSalary();
         })();
-    }, []);
+    }, [tableData]);
 
     const clickDelete = async (id) => {        
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -78,9 +80,7 @@ export default function Categories() {
             );
 
             const data = await response.json();
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
@@ -97,15 +97,15 @@ export default function Categories() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -114,7 +114,7 @@ export default function Categories() {
                                                                     placeholder="Tên loại lương"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -123,7 +123,7 @@ export default function Categories() {
                                                                     placeholder="Ký hiệu"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select
                                                                     className={cx('form-control', 'select')}
                                                                     name="type"
@@ -136,7 +136,7 @@ export default function Categories() {
                                                                     </option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>

@@ -5,14 +5,15 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../globalstyle/checkToken';
-import { getAllUser, handleAlert } from '../ingredient';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
+import { getAllUser, handleAlert, getUser } from '../ingredient';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'ATTD_ADD', true)
     })();
 
     const date = new Date();
@@ -56,7 +57,8 @@ export default function Create() {
 
     useEffect(() => {
         (async function () {
-            await getAllUser(token).then((result) => setUser(result));
+            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
+            else await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getTimeKeeping();
         })();
@@ -130,7 +132,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -142,10 +144,10 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
                                                             <option
@@ -160,10 +162,10 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Thời gian<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-5')}>
+                                                <div className={cx('pc-5', 'm-5')}>
                                                     <div className={cx('input-group')}>
                                                         <input
                                                             className={cx('form-control')}
@@ -174,7 +176,7 @@ export default function Create() {
                                                         />
                                                     </div>
                                                 </div>
-                                                <div className={cx('pc-3')}>
+                                                <div className={cx('pc-3', 'm-3')}>
                                                     <div className={cx('input-group', 'date')}>
                                                         <input
                                                             className={cx('form-control')}
@@ -187,8 +189,8 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>Ghi chú</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3')}>Ghi chú</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <textarea
                                                         className={cx('form-control', 'message')}
                                                         rows="6"

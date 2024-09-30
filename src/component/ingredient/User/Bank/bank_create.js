@@ -4,19 +4,20 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
-import { getAllUser } from '../../ingredient';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { getAllUser, getUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
 function Bank() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'BANK_ADD', true);
     })();
 
     const [user, setUser] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/users/bank_account/edit/', '');
+    const path = window.location.pathname.replace('/users/bank_account/edit/', '');    
 
     //regex
     const numberRegex = /[0-9]/;
@@ -54,7 +55,8 @@ function Bank() {
 
     useEffect(() => {
         (async function () {
-            await getAllUser(token).then((result) => setUser(result));
+            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
+            else await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getBank();
         })();
@@ -83,7 +85,7 @@ function Bank() {
         const nameUser = document.querySelector('#user_id').value;
         const prioritize = document.querySelector('#prioritize').value;
 
-        if (numberRegex.test(nameBank) || !specialRegex.test(nameBank))
+        if (nameBank === '' || numberRegex.test(nameBank) || !specialRegex.test(nameBank))
             handleAlert('alert-danger', 'Tên ngân hàng không được bỏ trống, không chứa số hoặc kí tự đặc biệt');
         else if (owner === '' || numberRegex.test(owner) || !specialRegex.test(owner))
             handleAlert('alert-danger', 'Tên chủ tài khoản không được bỏ trống, không chứa số hoặc kí tự đặc biệt');
@@ -154,7 +156,7 @@ function Bank() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -166,10 +168,10 @@ function Bank() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
                                                             <option key={item.id} value={item.employee.id}>
@@ -185,10 +187,10 @@ function Bank() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Tên ngân hàng<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -198,10 +200,10 @@ function Bank() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Chủ tài khoản<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -211,10 +213,10 @@ function Bank() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Số tài khoản<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="text"
@@ -224,10 +226,10 @@ function Bank() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Độ ưu tiên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select id="prioritize" className={cx('form-control', 'select')}>
                                                         <option value="1">1</option>
                                                         <option value="2">2</option>
@@ -238,7 +240,7 @@ function Bank() {
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                                 <button
@@ -267,12 +269,14 @@ function Bank() {
                                                         Lưu lại
                                                     </button>
                                                 )}
-                                                <button type="reset" className={cx('btn', 'btn-default')}>
+                                                <button type="reset" className={cx('btn', 'btn-danger')}>
                                                     Nhập lại
                                                 </button>
-                                                <button type="button" className={cx('btn', 'btn-danger')}>
-                                                    <a href={routes.userBank}>Thoát</a>
-                                                </button>
+                                                <a href={routes.userBank}>
+                                                    <button type="button" className={cx('btn', 'btn-default')}>
+                                                        Thoát
+                                                    </button>
+                                                </a>
                                             </div>
                                         </div>
                                     </form>

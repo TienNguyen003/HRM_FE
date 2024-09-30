@@ -6,7 +6,7 @@ import { faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
 
@@ -15,14 +15,17 @@ const cx = classNames.bind(styles);
 function Bank() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'BANK_VIEW', true);
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [bank, setBank] = useState([]);
     const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
+    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     //lấy thông tin ngân hàng
-    async function fetchData() {
+    async function fetchData(id) {
         const urlParams = new URLSearchParams(window.location.search);
         const searchParam = urlParams.get('search') || 1;
         const name = urlParams.get('name') || '';
@@ -37,7 +40,7 @@ function Bank() {
 
         try {
             const response = await fetch(
-                `${BASE_URL}bank_accounts?pageNumber=${searchParam}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}`,
+                `${BASE_URL}bank_accounts?pageNumber=${searchParam}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}&id=${id}`,
                 {
                     method: 'GET',
                     headers: {
@@ -60,10 +63,10 @@ function Bank() {
     useEffect(() => {
         (async function () {
             await new Promise((resolve) => setTimeout(resolve, 1));
-
-            await fetchData();
+            if (decodeToken(token, 'ROLE_NHÂN')) await fetchData(employee.id);
+            else await fetchData('');
         })();
-    }, []);
+    }, [tableData]);
 
     // ấn xóa tài khoản ngân hàng
     const clickDelete = async (event, id) => {
@@ -73,7 +76,7 @@ function Bank() {
     };
 
     // xóa người dùng
-    async function handleClickDelete(id) {
+    const handleClickDelete = async (id) => {
         try {
             const response = await fetch(`${BASE_URL}bank_accounts?id=${id}`, {
                 method: 'DELETE',
@@ -89,9 +92,7 @@ function Bank() {
 
             const data = await response.json();
 
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
@@ -127,24 +128,18 @@ function Bank() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <input
-                                                                    type="text"
-                                                                    id="name"
-                                                                    className={cx('form-control')}
-                                                                    name="name"
-                                                                    placeholder="Họ tên"
-                                                                />
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <input type="text" id="name" className={cx('form-control')} name="name" placeholder="Họ tên" />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     id="bank"
@@ -153,12 +148,8 @@ function Bank() {
                                                                     placeholder="Tên ngân hàng"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    id="prioritize"
-                                                                    name="priority"
-                                                                >
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <select className={cx('form-control', 'select')} id="prioritize" name="priority">
                                                                     <option value="">-- Độ ưu tiên --</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
@@ -167,12 +158,8 @@ function Bank() {
                                                                     <option value="5">5</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <select
-                                                                    id="status"
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                >
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <select id="status" className={cx('form-control', 'select')} name="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="0">Không hoạt động</option>
                                                                     <option value="1">Hoạt động</option>
@@ -188,12 +175,14 @@ function Bank() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.userBankCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i>
-                                                    &nbsp;Thêm mới
-                                                </a>
-                                            </div>
+                                            {decodeToken(token, 'BANK_ADD') && (
+                                                <div className={cx('pc-2', 'text-right')}>
+                                                    <a href={routes.userBankCreate} className={cx('btn')}>
+                                                        <i className={cx('fa fa-plus')}></i>
+                                                        &nbsp;Thêm mới
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -204,46 +193,44 @@ function Bank() {
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Họ tên</th>
                                                     <th className={cx('text-center')}>Tên ngân hàng</th>
-                                                    <th className={cx('text-center')}>Chủ tài khoản</th>
-                                                    <th className={cx('text-center')}>Số tài khoản</th>
-                                                    <th className={cx('text-center')}>Độ ưu tiên</th>
-                                                    <th className={cx('text-center')}>Trạng thái</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xoá</th>
+                                                    <th className={cx('text-center', 'm-0')}>Chủ tài khoản</th>
+                                                    <th className={cx('text-center', 'm-0')}>Số tài khoản</th>
+                                                    <th className={cx('text-center', 'm-0')}>Độ ưu tiên</th>
+                                                    {decodeToken(token, 'BANK_EDIT') && (
+                                                        <>
+                                                            <th className={cx('text-center')}>Trạng thái</th>
+                                                            <th className={cx('text-center')}>Sửa</th>
+                                                        </>
+                                                    )}
+                                                    {decodeToken(token, 'BANK_DELETE') && <th className={cx('text-center')}>Xoá</th>}
                                                 </tr>
                                                 {bank.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
                                                         <td>{item.nameBank}</td>
-                                                        <td className={cx('text-center')}>{item.owner}</td>
-                                                        <td className={cx('text-center')}>{item.numberBank}</td>
-                                                        <td className={cx('text-center')}>{item.priority}</td>
-                                                        <td style={{ display: 'flex', justifyContent: 'center' }}>
-                                                            <Status
-                                                                id={item.id}
-                                                                isStatus={item.status}
-                                                                handleChange={(e) => changeStatus(e)}
-                                                            />
-                                                        </td>
-                                                        <td className={cx('text-center')}>
-                                                            <a
-                                                                href={routes.userBankEdit.replace(':name', item.id)}
-                                                                className={cx('edit-record')}
-                                                            >
-                                                                <FontAwesomeIcon icon={faEdit} />
-                                                            </a>
-                                                        </td>
-                                                        <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={(e) => clickDelete(e, item.id)}
-                                                            >
-                                                                <FontAwesomeIcon icon={faTrash} />
-                                                            </a>
-                                                        </td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.owner}</td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.numberBank}</td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.priority}</td>
+                                                        {decodeToken(token, 'BANK_EDIT') && (
+                                                            <>
+                                                                <td>
+                                                                    <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
+                                                                </td>
+                                                                <td className={cx('text-center')}>
+                                                                    <a href={routes.userBankEdit.replace(':name', item.id)} className={cx('edit-record')}>
+                                                                        <FontAwesomeIcon icon={faEdit} />
+                                                                    </a>
+                                                                </td>
+                                                            </>
+                                                        )}
+                                                        {decodeToken(token, 'BANK_DELETE') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.id)}>
+                                                                    <FontAwesomeIcon icon={faTrash} />
+                                                                </a>
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -251,15 +238,11 @@ function Bank() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

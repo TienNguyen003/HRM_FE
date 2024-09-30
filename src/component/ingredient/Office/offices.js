@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
 
@@ -14,8 +14,10 @@ const cx = classNames.bind(styles);
 function Offices() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'OFF_VIEW', true)
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [offices, setOffices] = useState([]);
     const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
@@ -53,7 +55,7 @@ function Offices() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, []);
+    }, [tableData]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -71,9 +73,7 @@ function Offices() {
             });
 
             const data = await response.json();
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
@@ -109,15 +109,15 @@ function Offices() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -126,7 +126,7 @@ function Offices() {
                                                                     placeholder="Tên văn phòng"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select
                                                                     className={cx('form-control', 'select')}
                                                                     name="status"
@@ -160,7 +160,7 @@ function Offices() {
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Tên văn phòng</th>
-                                                    <th className={cx('text-center')}>Địa chỉ</th>
+                                                    <th className={cx('text-center', 'm-0')}>Địa chỉ</th>
                                                     <th className={cx('text-center')}>Email</th>
                                                     <th className={cx('text-center')}>Số điện thoại</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>
@@ -173,14 +173,12 @@ function Offices() {
                                                             {(+page.currentPage - 1) * 30 + index + 1}
                                                         </td>
                                                         <td className={cx('text-center')}>{item.name}</td>
-                                                        <td className={cx('text-center')}>{item.address}</td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.address}</td>
                                                         <td className={cx('text-center')}>{item.email}</td>
                                                         <td className={cx('text-center')}>{item.phone}</td>
                                                         <td
                                                             style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                border: 'none',
+                                                                width: '120px',
                                                             }}
                                                         >
                                                             <Status

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { getAdvances, handleAlert, formatter } from '../ingredient';
 import Status from '../../globalstyle/Status/status';
 
@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 function Approvals() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'ADV_APPROVALS', true);
     })();
 
     const [isStatus, setIsStatus] = useState(0);
@@ -49,7 +50,7 @@ function Approvals() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Cập nhật thành công!');
-                reloadAfterDelay(1000);
+                reloadAfterDelay(400);
             }
         } catch (error) {
             console.log(error);
@@ -67,17 +68,17 @@ function Approvals() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 {advances.map((item) => (
                                     <div key={item.id} className={cx('card')}>
                                         <div className={cx('card-header', 'row', 'no-gutters')}>
-                                            <p className={cx('card-title', 'pc-10')}>
+                                            <p className={cx('card-title', 'pc-10', 'm-9')}>
                                                 Trạng thái: <Status status={item.status} />
                                                 <br />
                                                 Người thực hiện: <strong>{item.approvedBy}</strong>
                                             </p>
                                             {isStatus === 0 ? (
-                                                <div className={cx('pc-2')}>
+                                                <div className={cx('pc-2', 'm-3')}>
                                                     <select className={cx('form-control', 'select')} id="status">
                                                         <option value="1">Phê duyệt</option>
                                                         <option value="2">Từ chối</option>
@@ -90,28 +91,28 @@ function Approvals() {
                                         </div>
                                         <div className={cx('card-body')}>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Họ tên:</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3')}>Họ tên:</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <p>{item.employee.name}</p>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Số tiền:</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3')}>Số tiền:</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <p>{formatter.format(item.money)}</p>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Ghi chú:</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3')}>Ghi chú:</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <p>
                                                         <i>{item.note}</i>
                                                     </p>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Bình luận:</label>
-                                                <div className={cx('pc-8')}>
+                                                <label className={cx('pc-2', 'm-3')}>Bình luận:</label>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <textarea
                                                         className={cx('form-control', 'message')}
                                                         rows="6"

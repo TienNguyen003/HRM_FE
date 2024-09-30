@@ -8,3 +8,9 @@
     margin-left: 80px;
     transition: margin .3s ease-in-out;
 }
+
+@media (max-width: 740px) {
+    .app {
+       margin-left: 80px;
+    }
+}

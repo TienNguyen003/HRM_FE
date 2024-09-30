@@ -5,14 +5,15 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
-import { getAllUser, getSalaryCate, handleAlert } from '../../ingredient';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { getAllUser, getSalaryCate, handleAlert, getUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'SAUP_ADD', true);
     })();
 
     const numberRegex = /[0-9]/;
@@ -37,8 +38,7 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                if (id != undefined)
-                    document.querySelector('#user_id').querySelector('option[value="' + id + '"]').selected = true;
+                if (id != undefined) document.querySelector('#user_id').querySelector('option[value="' + id + '"]').selected = true;
                 const inputs = document.querySelectorAll('input[name^="category_id["]');
                 inputs.forEach((input) => {
                     const idMatch = input.name.match(/\d+/);
@@ -64,9 +64,8 @@ export default function Create() {
 
         (async function () {
             await getSalaryCate('Lương theo tháng ', token).then((result) => setSalaryCate(result));
-            await getAllUser(token).then((result) => {
-                setUser(result);
-            });
+            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
+            else await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getSalary(employee.id, time);
         })();
@@ -135,9 +134,7 @@ export default function Create() {
         else {
             if (path.includes('/salary/dynamic_values/create')) handleSaveSalary(results);
             else {
-                const filteredResults = results
-                    .filter(({ id }) => id && id.trim() !== '')
-                    .map(({ id, salary }) => ({ id, salary }));
+                const filteredResults = results.filter(({ id }) => id && id.trim() !== '').map(({ id, salary }) => ({ id, salary }));
                 handleUpdateSalary(filteredResults);
             }
         }
@@ -168,25 +165,20 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2')}>
+                                            <label className={cx('pc-2', 'm-3')}>
                                                 Họ tên<span className={cx('text-red')}> *</span>{' '}
                                             </label>
-                                            <div className={cx('pc-8')}>
-                                                <select
-                                                    id="user_id"
-                                                    className={cx('form-control', 'select')}
-                                                    onChange={handleChangeSelect}
-                                                >
+                                            <div className={cx('pc-8', 'm-8')}>
+                                                <select id="user_id" className={cx('form-control', 'select')} onChange={handleChangeSelect}>
                                                     {user.map((item) => (
                                                         <option key={item.id} value={item.employee.id}>
                                                             {item.employee.name}
@@ -196,10 +188,10 @@ export default function Create() {
                                             </div>
                                         </div>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2')}>
+                                            <label className={cx('pc-2', 'm-3')}>
                                                 Tháng/Năm<span className={cx('text-red')}> *</span>
                                             </label>
-                                            <div className={cx('pc-8')} style={{ display: 'flex' }}>
+                                            <div className={cx('pc-8', 'm-8')} style={{ display: 'flex' }}>
                                                 <select
                                                     id="month"
                                                     className={cx('form-control', 'select', 'pc-1')}
@@ -219,11 +211,7 @@ export default function Create() {
                                                     <option value="11">11</option>
                                                     <option value="12">12</option>
                                                 </select>
-                                                <select
-                                                    id="year"
-                                                    className={cx('form-control', 'select', 'pc-2')}
-                                                    onChange={handleChangeSelect}
-                                                >
+                                                <select id="year" className={cx('form-control', 'select', 'pc-2')} onChange={handleChangeSelect}>
                                                     <option value="2024">2024</option>
                                                     <option value="2025">2025</option>
                                                     <option value="2026">2026</option>
@@ -233,10 +221,7 @@ export default function Create() {
                                         <h4 className={cx('title', 'text-center')}>
                                             <b>Các khoản lương cố định trong tháng</b>
                                         </h4>
-                                        <div
-                                            className={cx('row', 'no-gutters', 'text-center')}
-                                            style={{ justifyContent: 'center' }}
-                                        >
+                                        <div className={cx('row', 'no-gutters', 'text-center')} style={{ justifyContent: 'center' }}>
                                             <div className={cx('pc-8')}>
                                                 <table className={cx('table')}>
                                                     <tbody id="table-salary">
@@ -273,11 +258,7 @@ export default function Create() {
                                             </button>
                                         </div>
                                         <div className={cx('text-center')}>
-                                            <button
-                                                type="submit"
-                                                className={cx('btn', 'btn-success')}
-                                                onClick={saveSalary}
-                                            >
+                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={saveSalary}>
                                                 Cập nhật
                                             </button>
                                             <a href={routes.salaryDynamic}>

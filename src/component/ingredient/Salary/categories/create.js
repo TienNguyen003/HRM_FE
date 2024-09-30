@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import { handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -13,6 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'CATG_ADD', true)
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
@@ -124,7 +125,7 @@ export default function Create() {
                                 </h1>
                             </section>
                             <div className={cx('row', 'no-gutters')}>
-                                <div className={cx('pc-12')}>
+                                <div className={cx('pc-12', 'm-12')}>
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <p className={cx('card-title')}>
@@ -136,24 +137,24 @@ export default function Create() {
                                         <form onSubmit={(e) => handleSubmit(e)}>
                                             <div className={cx('card-body')}>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2')}>
+                                                    <label className={cx('pc-2', 'm-3')}>
                                                         Tên loại lương<span className={cx('text-red')}> *</span>
                                                     </label>
-                                                    <div className={cx('pc-8')}>
+                                                    <div className={cx('pc-8', 'm-8')}>
                                                         <input className={cx('form-control')} type="text" id="name" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2')}>
+                                                    <label className={cx('pc-2', 'm-3')}>
                                                         Ký hiệu<span className={cx('text-red')}> *</span>
                                                     </label>
-                                                    <div className={cx('pc-8')}>
+                                                    <div className={cx('pc-8', 'm-8')}>
                                                         <input className={cx('form-control')} type="text" id="symbol" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2')}>Loại lương</label>
-                                                    <div className={cx('pc-8')}>
+                                                    <label className={cx('pc-2', 'm-3')}>Loại lương</label>
+                                                    <div className={cx('pc-8', 'm-8')}>
                                                         <select id="type" className={cx('form-control', 'select')}>
                                                             <option value="Lương cố định">Lương cố định</option>
                                                             <option value="Lương theo tháng">Lương theo tháng</option>

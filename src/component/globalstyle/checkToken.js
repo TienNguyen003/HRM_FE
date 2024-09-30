@@ -1,4 +1,5 @@
 import { BASE_URL } from '../../config/config';
+import { jwtDecode } from 'jwt-decode';
 
 function redirectLogin() {
     return (window.location.href = '/login');
@@ -30,4 +31,19 @@ export const reloadAfterDelay = (delay) => {
     setTimeout(() => {
         window.location.reload();
     }, delay);
+};
+
+export const decodeToken = (token, permission, isCheck) => {
+    let flag = false;
+    const scope = jwtDecode(token).scope.split(' ');
+    flag = scope.includes(permission.trim()) ? true : false;
+    if (isCheck) if (!flag) window.location.href = window.location.href + '/404';
+    return flag;
+};
+
+export const checkPermission = (token, permission) => {
+    let flag = false;
+    const scope = jwtDecode(token).scope.split(' ');
+    flag = permission.some(p => scope.includes(p.trim()));
+    return flag;
 };

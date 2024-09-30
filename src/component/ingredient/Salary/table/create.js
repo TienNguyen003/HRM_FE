@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
-import { getAllUser } from '../../ingredient';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
+import { getAllUser, getUser } from '../../ingredient';
 import TableSalary from './tablesalary';
 
 const cx = classNames.bind(styles);
@@ -14,6 +14,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'SALA_ADD', true)
     })();
 
     const [bank, setBank] = useState([]);
@@ -36,7 +37,6 @@ export default function Create() {
             });
 
             const data = await response.json();
-            console.log(data);
             if (data.code === 303) setBank(data.result);
         } catch (error) {
             console.log(error);
@@ -45,7 +45,8 @@ export default function Create() {
 
     useEffect(() => {
         (async () => {
-            await getAllUser(token).then((result) => setUser(result));
+            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
+            else await getAllUser(token).then((result) => setUser(result));
         })();
     }, []);
 
@@ -90,7 +91,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -102,10 +103,10 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select
                                                         id="user_name"
                                                         className={cx('form-control', 'select')}
@@ -126,10 +127,10 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Ngân hàng<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')}>
+                                                <div className={cx('pc-8', 'm-8')}>
                                                     <select
                                                         id="bank"
                                                         className={cx('form-control', 'select')}
@@ -145,10 +146,10 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2')}>
+                                                <label className={cx('pc-2', 'm-3')}>
                                                     Tháng/Năm<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8')} style={{ display: 'flex' }}>
+                                                <div className={cx('pc-8', 'm-8')} style={{ display: 'flex' }}>
                                                     <select
                                                         id="month"
                                                         onChange={saveSalaryTable}

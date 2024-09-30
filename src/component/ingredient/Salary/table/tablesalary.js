@@ -218,7 +218,7 @@ export default function TableSalary({ isFlag, recipe, className, employeeId, tim
 
     return (
         <div className={cx('row', 'no-gutters', className)} id={id}>
-            <div className={cx('pc-12')}>
+            <div className={cx('pc-12', 'm-12')}>
                 <div className={cx('card')}>
                     <div className={cx('card-body')}>
                         <table className={cx('table')}>

@@ -100,7 +100,7 @@
     }
 
     tbody tr:nth-of-type(odd) {
-        background-color: rgba(0, 0, 0, .05);
+        background-color: rgba(0, 0, 0, 0.05);
     }
 
     .non-bg {
@@ -110,59 +110,65 @@
 .text-center {
     text-align: center;
 }
-.delete-record{
+.delete-record {
     cursor: pointer;
 }
 
 .form-group {
     margin-bottom: 1.6rem;
 }
-.text-red{
-    color: #dc3545!important;
+.text-red {
+    color: #dc3545 !important;
 }
-.card-title{
+.card-title {
     font-size: 1.7rem;
 }
-.btn-success{
+.btn-success {
     background-color: #28a745;
 }
-.btn-info{
+.btn-info {
     background-color: #17a2b8;
 }
-.btn-default{
+.btn-default {
     background-color: #e7eef5;
     color: #212529 !important;
 }
-.btn-danger{
+.btn-danger {
     background-color: #dc3545;
 }
 
-.alert{
+.alert {
     display: none;
     padding: 1rem 0;
     margin-bottom: 1rem;
     border: 1px solid transparent;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
 
-    ul{
+    ul {
         margin-left: 2rem;
         color: #fff;
         list-style: none;
     }
 }
-.alert-danger{
+.alert-danger {
     display: flex;
     background-color: #dc3545;
 }
-.alert-success{
+.alert-success {
     display: flex;
     background-color: #28a745;
 }
-.close{
+.close {
     font-size: 2.5rem;
     background-color: transparent;
     cursor: pointer;
 }
-.hidden{
+.hidden {
     display: none;
+}
+
+.list-role {
+    input {
+        margin-right: 5px;
+    }
 }

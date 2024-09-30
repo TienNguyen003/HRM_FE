@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
 
@@ -14,6 +14,7 @@ const cx = classNames.bind(styles);
 function Holidays() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'LEAV_VIEW', true)
     })();
 
     const [holiday, setHoliday] = useState([]);
@@ -88,15 +89,15 @@ function Holidays() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -105,7 +106,7 @@ function Holidays() {
                                                                     placeholder="Tên danh mục nghỉ"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select
                                                                     className={cx('form-control', 'select')}
                                                                     name="status"
@@ -157,9 +158,7 @@ function Holidays() {
                                                         </td>
                                                         <td
                                                             style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                border: 'none',
+                                                                width: '120px',
                                                             }}
                                                         >
                                                             <Status

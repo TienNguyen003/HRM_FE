@@ -205,6 +205,26 @@ export async function getAllUser(token) {
     }
 }
 
+export const getUser = async (token) => {
+    const userId = localStorage.getItem('idU') || '';
+    try {
+        const response = await fetch(`${BASE_URL}users/user?userId=${userId}`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        if (data.code === 303) {
+            return data.result;
+        }
+    } catch (error) {
+        console.error('Error fetching roles:', error.message);
+    }
+};
+
 // danh sach ngay nghi
 export const getDayOffCate = async (token) => {
     try {

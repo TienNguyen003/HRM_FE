@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
 
@@ -14,8 +14,10 @@ const cx = classNames.bind(styles);
 export default function Formulas() {
     (async function () {
         await isCheck();
+        decodeToken(token, 'CALC_VIEW', true);
     })();
 
+    const [tableData, setTableData] = useState([]);
     const [formula, setFormula] = useState([]);
     const [page, setPage] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
@@ -30,16 +32,13 @@ export default function Formulas() {
         document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
 
         try {
-            const response = await fetch(
-                `${BASE_URL}salary_formulas?pageNumber=${page}&name=${name}&status=${status}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}salary_formulas?pageNumber=${page}&name=${name}&status=${status}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) {
@@ -56,7 +55,7 @@ export default function Formulas() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getFormula();
         })();
-    }, []);
+    }, [tableData]);
 
     const clickDelete = (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -74,9 +73,7 @@ export default function Formulas() {
             });
 
             const data = await response.json();
-            if (data.code === 303) {
-                window.location.reload();
-            }
+            if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
@@ -112,15 +109,15 @@ export default function Formulas() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12')}>
+                            <div className={cx('pc-12', 'm-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-10', 'm-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control')}
@@ -129,18 +126,14 @@ export default function Formulas() {
                                                                     placeholder="Tên loại lương"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                    id="status"
-                                                                >
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
+                                                                <select className={cx('form-control', 'select')} name="status" id="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="1">Hoạt động</option>
                                                                     <option value="0">Không hoạt động</option>
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-3', 'post-form')}>
+                                                            <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -149,11 +142,11 @@ export default function Formulas() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            <div className={cx('pc-2', 'text-right')}>
+                                            {decodeToken(token, "CALC_ADD") && <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.salaryFormulasCreate} className={cx('btn')}>
                                                     <i className={cx('fa fa-plus')}></i> Thêm mới
                                                 </a>
-                                            </div>
+                                            </div>}
                                         </div>
                                     </div>
 
@@ -163,50 +156,43 @@ export default function Formulas() {
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Tên công thức</th>
-                                                    <th className={cx('text-center')}>Công thức tính</th>
-                                                    <th className={cx('text-center')}>Trạng thái</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xóa</th>
+                                                    <th className={cx('text-center', 'm-0')}>Công thức tính</th>
+                                                    {decodeToken(token, 'CALC_EDIT') && (
+                                                        <>
+                                                            <th className={cx('text-center')}>Trạng thái</th>
+                                                            <th className={cx('text-center')}>Sửa</th>
+                                                        </>
+                                                    )}
+                                                    {decodeToken(token, 'CALC_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {formula.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.name}</td>
-                                                        <td className={cx('text-center')}>{item.salaryFormula}</td>
-                                                        <td
-                                                            style={{
-                                                                display: 'flex',
-                                                                justifyContent: 'center',
-                                                                border: 'none',
-                                                            }}
-                                                        >
-                                                            <Status
-                                                                id={item.id}
-                                                                isStatus={item.status}
-                                                                handleChange={(e) => changeStatus(e)}
-                                                            />
-                                                        </td>
-                                                        <td className={cx('text-center')}>
-                                                            <a
-                                                                href={routes.salaryFormulasEdit.replace(
-                                                                    ':name',
-                                                                    item.id,
-                                                                )}
-                                                                className={cx('edit-record')}
-                                                            >
-                                                                <i className={cx('fas fa-edit')}></i>
-                                                            </a>
-                                                        </td>
-                                                        <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={() => clickDelete(item.id)}
-                                                            >
-                                                                <i className={cx('far fa-trash-alt text-red')}></i>
-                                                            </a>
-                                                        </td>
+                                                        <td className={cx('text-center', 'm-0')}>{item.salaryFormula}</td>
+                                                        {decodeToken(token, 'CALC_EDIT') && (
+                                                            <>
+                                                                <td
+                                                                    style={{
+                                                                        width: '120px',
+                                                                    }}
+                                                                >
+                                                                    <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
+                                                                </td>
+                                                                <td className={cx('text-center')}>
+                                                                    <a href={routes.salaryFormulasEdit.replace(':name', item.id)} className={cx('edit-record')}>
+                                                                        <i className={cx('fas fa-edit')}></i>
+                                                                    </a>
+                                                                </td>
+                                                            </>
+                                                        )}
+                                                        {decodeToken(token, 'CALC_DELETE') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
+                                                                    <i className={cx('far fa-trash-alt text-red')}></i>
+                                                                </a>
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -214,15 +200,11 @@ export default function Formulas() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>
