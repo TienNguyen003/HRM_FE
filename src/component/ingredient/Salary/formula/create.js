@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getSalaryCate, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -86,7 +86,12 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Cập nhật thành công');
-                reloadAfterDelay(500);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             }
         } catch (error) {
             console.log(error);
@@ -175,18 +180,13 @@ export default function Create() {
                                     <div className={cx('pc-7')}>
                                         <div className={cx('d-flex justify-content-end')}>
                                             <div className={cx('pc-11')}>
-                                                <form onSubmit={(e) => handleSubmit(e)}>
+                                                <form onSubmit={(e) => handleSubmit(e)} id='formReset'>
                                                     <div className={cx('card-body')}>
                                                         <div className={cx('form-group')}>
                                                             <label>
                                                                 Tên công thức<span className={cx('text-red')}> *</span>
                                                             </label>
-                                                            <input
-                                                                type="text"
-                                                                className={cx('form-control')}
-                                                                id="name"
-                                                                placeholder="Nhập tên công thức..."
-                                                            />
+                                                            <input type="text" className={cx('form-control')} id="name" placeholder="Nhập tên công thức..." />
                                                         </div>
                                                         <div className={cx('form-group')}>
                                                             <label>
@@ -202,34 +202,21 @@ export default function Create() {
                                                         </div>
                                                         <div className={cx('alert')}>
                                                             <ul className={cx('pc-10')}>
-                                                                <li className={cx('alert-content')}>
-                                                                    Tên không được để trống.
-                                                                </li>
+                                                                <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                             </ul>
-                                                            <button
-                                                                type="button"
-                                                                className={cx('close', 'pc-2')}
-                                                                onClick={clickClose}
-                                                            >
+                                                            <button type="button" className={cx('close', 'pc-2')} onClick={clickClose}>
                                                                 ×
                                                             </button>
                                                         </div>
                                                         <div className={cx('text-center')}>
-                                                            <button
-                                                                type="submit"
-                                                                className={cx('btn', 'btn-success')}
-                                                                onClick={clickAdd}
-                                                            >
+                                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAdd}>
                                                                 Thêm mới
                                                             </button>
                                                             <button type="reset" className={cx('btn', 'btn-danger')}>
                                                                 Nhập lại
                                                             </button>
                                                             <a href={routes.salaryFormulas}>
-                                                                <button
-                                                                    type="button"
-                                                                    className={cx('btn', 'btn-default')}
-                                                                >
+                                                                <button type="button" className={cx('btn', 'btn-default')}>
                                                                     Thoát
                                                                 </button>
                                                             </a>

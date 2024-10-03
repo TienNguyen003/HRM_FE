@@ -1,27 +1,32 @@
 import classNames from 'classnames/bind';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { registerLicense } from '@syncfusion/ej2-base';
+import { jwtDecode } from 'jwt-decode';
 
 import { publicRoutes } from '../src/routes/routes';
 import styles from './App.module.scss';
 import Header from '../src/component/layout/header/header';
 import Error from './component/layout/404/404.js';
+import { BASE_URL } from './config/config.js';
 
-import "../node_modules/@syncfusion/ej2-base/styles/material.css";
-import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
-import "../node_modules/@syncfusion/ej2-calendars/styles/material.css";
-import "../node_modules/@syncfusion/ej2-dropdowns/styles/material.css";
-import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
-import "../node_modules/@syncfusion/ej2-navigations/styles/material.css";
-import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
-import "../node_modules/@syncfusion/ej2-react-schedule/styles/material.css";
+import '../node_modules/@syncfusion/ej2-base/styles/material.css';
+import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
+import '../node_modules/@syncfusion/ej2-calendars/styles/material.css';
+import '../node_modules/@syncfusion/ej2-dropdowns/styles/material.css';
+import '../node_modules/@syncfusion/ej2-inputs/styles/material.css';
+import '../node_modules/@syncfusion/ej2-navigations/styles/material.css';
+import '../node_modules/@syncfusion/ej2-popups/styles/material.css';
+import '../node_modules/@syncfusion/ej2-react-schedule/styles/material.css';
 
 const cx = classNames.bind(styles);
 
 registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1NpR2VGfV5ycEVFallQTnZdUiweQnxTdEFjUH1YcHdQR2BYUUVxXQ==');
 
 function App() {
+    const [userActive, setUserActive] = useState(false);
+
+    const token = localStorage.getItem('authorizationData') || '';
     const isLoginPage = window.location.pathname === '/login';
     const isValidPath = (path) => {
         return publicRoutes.some((route) => {
@@ -35,6 +40,53 @@ function App() {
     const handleHeaderClick = () => {
         setHeaderClicked((prevHeaderClicked) => !prevHeaderClicked);
     };
+
+    const refreshToken = async () => {
+        try {
+            const response = await fetch(`${BASE_URL}auth/refresh`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    token,
+                }),
+            });
+
+            const data = await response.json();
+            if (data.code === 303) {
+                localStorage.setItem('authorizationData', data.result.token);
+            }
+            setUserActive(false);
+        } catch (error) {
+            console.error('Error fetching roles:', error.message);
+        }
+    };
+
+    const handleUserActivity = () => {
+        setUserActive(true);
+    };
+
+    useEffect(() => {
+        document.addEventListener('mousemove', handleUserActivity);
+        document.addEventListener('keypress', handleUserActivity);
+        document.addEventListener('scroll', handleUserActivity);
+        document.addEventListener('click', handleUserActivity);
+
+        const time = jwtDecode(token).exp;
+
+        setTimeout(() => {
+            userActive && refreshToken();
+        }, time - 300);
+
+        return () => {
+            document.removeEventListener('mousemove', handleUserActivity);
+            document.removeEventListener('keypress', handleUserActivity);
+            document.removeEventListener('scroll', handleUserActivity);
+            document.removeEventListener('click', handleUserActivity);
+        };
+    }, [userActive]);
 
     console.log('cài đặt, bảng tg chấm công, "Phân quyền người dùng vào web", "check trong db", "response"');
 

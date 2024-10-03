@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { getAllUser, getAdvances, handleAlert, getUser } from '../ingredient';
 
 const cx = classNames.bind(styles);
@@ -40,9 +40,11 @@ function Create() {
         })();
     }, []);
 
-    const handleSaveAdvances = async (employeeId, money, note) => {
+    const handleSaveAdvances = async (employeeId, money, note, method = 'POST') => {
+        let url = `${BASE_URL}advances`;
+        if (method == 'PUT') url += `?advaceId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}advances`, {
+            const response = await fetch(`${url}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -55,42 +57,15 @@ function Create() {
                 }),
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
-            }
-
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(400);
-            }
-        } catch (error) {
-            console.error('Error fetching roles:', error.message);
-        }
-    };
-    const handleUpdateAdvances = async (employeeId, money, note) => {
-        try {
-            const response = await fetch(`${BASE_URL}advances?advaceId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    money,
-                    note,
-                    employeeId,
-                }),
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch roles');
-            }
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công');
-                reloadAfterDelay(400);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             }
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -106,7 +81,7 @@ function Create() {
         else if (specialRegex.test(price.value)) handleAlert('alert-danger', 'Só tiền không được chứa kí tự đặc biệt');
         else {
             if (path.includes('/advances/create')) handleSaveAdvances(employeeId, Number(price.value), note.value);
-            else handleUpdateAdvances(employeeId, Number(price.value), note.value);
+            else handleSaveAdvances(employeeId, Number(price.value), note.value, 'PUT');
         }
     };
 
@@ -140,7 +115,7 @@ function Create() {
                                     </div>
 
                                     <div className={cx('card-body')}>
-                                        <form onSubmit={(e) => submitForm(e)}>
+                                        <form onSubmit={(e) => submitForm(e)} id='formReset'>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>{' '}

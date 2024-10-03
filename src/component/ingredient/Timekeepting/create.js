@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
-        decodeToken(token, 'ATTD_ADD', true)
+        decodeToken(token, 'ATTD_ADD', true);
     })();
 
     const date = new Date();
@@ -43,9 +43,7 @@ export default function Create() {
             if (data.code === 303) {
                 const dataRs = data.result;
 
-                document
-                    .querySelector('#user_id')
-                    .querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
+                document.querySelector('#user_id').querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
                 document.querySelector('#start').value = dataRs.date;
                 document.querySelector('#time').value = dataRs.time;
                 document.querySelector(`.${cx('message')}`).value = dataRs.reason;
@@ -86,7 +84,12 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -136,12 +139,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -150,11 +152,7 @@ export default function Create() {
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
-                                                            <option
-                                                                data-vacationhours={item.employee.vacationHours}
-                                                                key={item.id}
-                                                                value={item.employee.id}
-                                                            >
+                                                            <option data-vacationhours={item.employee.vacationHours} key={item.id} value={item.employee.id}>
                                                                 {item.employee.name}
                                                             </option>
                                                         ))}
@@ -167,35 +165,19 @@ export default function Create() {
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5')}>
                                                     <div className={cx('input-group')}>
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="date"
-                                                            id="start"
-                                                            defaultValue={day}
-                                                            disabled
-                                                        />
+                                                        <input className={cx('form-control')} type="date" id="start" defaultValue={day} disabled />
                                                     </div>
                                                 </div>
                                                 <div className={cx('pc-3', 'm-3')}>
                                                     <div className={cx('input-group', 'date')}>
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="text"
-                                                            id="time"
-                                                            defaultValue={time}
-                                                            disabled
-                                                        />
+                                                        <input className={cx('form-control')} type="text" id="time" defaultValue={time} disabled />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>Ghi chú</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <textarea
-                                                        className={cx('form-control', 'message')}
-                                                        rows="6"
-                                                        placeholder=""
-                                                    ></textarea>
+                                                    <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
@@ -208,19 +190,11 @@ export default function Create() {
                                             </div>
                                             <div className={cx('text-center')}>
                                                 {path.includes('/day_off_letters/create') ? (
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        onClick={clickAddTimeKeeping}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
                                                         Thêm mới
                                                     </button>
                                                 ) : (
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        onClick={clickAddTimeKeeping}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
                                                         Lưu
                                                     </button>
                                                 )}

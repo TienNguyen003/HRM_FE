@@ -49,10 +49,10 @@ export default function Create() {
     }, []);
 
     const handleSave = async (name, address, phone, email, method) => {
-        let url = '';
-        if (method == 'PUT') url = `?officeId=${path}`;
+        let url = `${BASE_URL}offices`;
+        if (method == 'PUT') url += `?officeId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}offices${url}`, {
+            const response = await fetch(`${url}`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
@@ -64,7 +64,12 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thành công');
-                reloadAfterDelay(400);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.log(error);
@@ -109,12 +114,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -151,11 +155,7 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={saveHoliday}
-                                                >
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
                                                     Lưu lại
                                                 </button>
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>

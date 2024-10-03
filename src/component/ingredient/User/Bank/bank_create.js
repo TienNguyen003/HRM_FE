@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
-import { getAllUser, getUser } from '../../ingredient';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
+import { getAllUser, getUser, handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
@@ -17,14 +17,14 @@ function Bank() {
 
     const [user, setUser] = useState([]);
     const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/users/bank_account/edit/', '');    
+    const path = window.location.pathname.replace('/users/bank_account/edit/', '');
 
     //regex
     const numberRegex = /[0-9]/;
     const specialRegex = /^[a-zA-Z0-9\s]*$/;
 
     // lấy bank
-    async function getBank() {
+    const getBank = async () => {
         if (path.includes('/users/bank_account')) return '';
         try {
             const response = await fetch(`${BASE_URL}bank_accounts/bank?id=${path}`, {
@@ -38,12 +38,8 @@ function Bank() {
             const data = await response.json();
             if (data.code === 303) {
                 const dataRs = data.result;
-                document
-                    .querySelector('#prioritize')
-                    .querySelector('option[value="' + dataRs.priority + '"]').selected = true;
-                document
-                    .querySelector('#user_id')
-                    .querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
+                document.querySelector('#prioritize').querySelector('option[value="' + dataRs.priority + '"]').selected = true;
+                document.querySelector('#user_id').querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
                 document.querySelector('#bank_name').value = dataRs.nameBank;
                 document.querySelector('#bank_account').value = dataRs.owner;
                 document.querySelector('#bank_number').value = dataRs.numberBank;
@@ -51,27 +47,15 @@ function Bank() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
         (async function () {
             if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
             else await getAllUser(token).then((result) => setUser(result));
-            await new Promise((resolve) => setTimeout(resolve, 1));
             await getBank();
         })();
     }, []);
-
-    // css alert
-    const handleAlert = (css, content) => {
-        const alert = document.querySelector(`.${cx('alert')}`);
-        const alertCt = document.querySelector(`.${cx('alert-content')}`);
-
-        alert.setAttribute('class', `${cx('alert')}`);
-        alert.classList.remove(`${cx('hidden')}`);
-        alert.classList.add(`${cx(css)}`);
-        alertCt.textContent = content;
-    };
 
     const saveBank = () => {
         const nameBank = document.querySelector('#bank_name').value;
@@ -95,16 +79,7 @@ function Bank() {
             if (path.includes('/users/bank_account')) {
                 handleSaveUpdateUser('POST', '', nameBank, owner, numberBank, nameUser, prioritize, 'Thêm thành công');
             } else {
-                handleSaveUpdateUser(
-                    'PUT',
-                    `?id=${path}`,
-                    nameBank,
-                    owner,
-                    numberBank,
-                    nameUser,
-                    prioritize,
-                    'Cập nhật thành công',
-                );
+                handleSaveUpdateUser('PUT', `?id=${path}`, nameBank, owner, numberBank, nameUser, prioritize, 'Cập nhật thành công');
             }
         }
     };
@@ -129,7 +104,12 @@ function Bank() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', message);
-                reloadAfterDelay(400);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -160,12 +140,11 @@ function Bank() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -179,11 +158,7 @@ function Bank() {
                                                             </option>
                                                         ))}
                                                     </select>
-                                                    <span
-                                                        className={cx(
-                                                            'select2 select2-container select2-container--default',
-                                                        )}
-                                                    ></span>
+                                                    <span className={cx('select2 select2-container select2-container--default')}></span>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -191,12 +166,7 @@ function Bank() {
                                                     Tên ngân hàng<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        id="bank_name"
-                                                        placeholder="Vietcombank"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" id="bank_name" placeholder="Vietcombank" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -204,12 +174,7 @@ function Bank() {
                                                     Chủ tài khoản<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        id="bank_account"
-                                                        placeholder="NGUYEN VAN A"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" id="bank_account" placeholder="NGUYEN VAN A" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -217,12 +182,7 @@ function Bank() {
                                                     Số tài khoản<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        id="bank_number"
-                                                        placeholder="012345678910JQKÁT"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" id="bank_number" placeholder="012345678910JQKÁT" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -243,29 +203,17 @@ function Bank() {
                                                 <ul className={cx('pc-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
-                                                <button
-                                                    type="button"
-                                                    className={cx('close', 'pc-1')}
-                                                    onClick={clickClose}
-                                                >
+                                                <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>
                                                     ×
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
                                                 {path.includes('/bank_account') ? (
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        onClick={saveBank}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={saveBank}>
                                                         Thêm mới
                                                     </button>
                                                 ) : (
-                                                    <button
-                                                        name="redirect"
-                                                        className={cx('btn', 'btn-info')}
-                                                        onClick={saveBank}
-                                                    >
+                                                    <button name="redirect" className={cx('btn', 'btn-info')} onClick={saveBank}>
                                                         Lưu lại
                                                     </button>
                                                 )}

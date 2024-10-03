@@ -5,7 +5,7 @@ import { useEffect } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
 
 const cx = classNames.bind(styles);
@@ -47,10 +47,12 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSave = async (name, startTime, endTime, totalTime) => {
+    const handleSave = async (name, startTime, endTime, totalTime, method = "POST") => {
+        let url = `${BASE_URL}holidays`;
+        if(method == "PUT") url += `?holidayId=${path}`
         try {
-            const response = await fetch(`${BASE_URL}holidays`, {
-                method: 'POST',
+            const response = await fetch(`${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -60,33 +62,18 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.log(error);
         }
-    };
-    const handleUpdate = async (name, startTime, endTime, totalTime) => {
-        try {
-            const response = await fetch(`${BASE_URL}holidays?holidayId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ name, startTime, endTime, totalTime }),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công!');
-                reloadAfterDelay(500);
-            } else handleAlert('alert-danger', data.message);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    };    
 
     const saveHoliday = () => {
         const name = document.querySelector('#name').value;
@@ -100,7 +87,7 @@ export default function Create() {
         else {
             const totalTime = (new Date(end) - new Date(start)) / (1000 * 3600);
             if (path.includes('/holidays/create')) handleSave(name, start, end, totalTime);
-            else handleUpdate(name, start, end, totalTime);
+            else handleSave(name, start, end, totalTime, "PUT");
         }
     };
 
@@ -134,7 +121,7 @@ export default function Create() {
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>

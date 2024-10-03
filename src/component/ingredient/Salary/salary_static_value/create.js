@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { getAllUser, getSalaryCate, handleAlert, getUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -38,8 +38,7 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                if (id != undefined)
-                    document.querySelector('#user_id').querySelector('option[value="' + id + '"]').selected = true;
+                if (id != undefined) document.querySelector('#user_id').querySelector('option[value="' + id + '"]').selected = true;
                 const inputs = document.querySelectorAll('input[name^="category_id["]');
                 inputs.forEach((input) => {
                     const idMatch = input.name.match(/\d+/);
@@ -68,10 +67,10 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSaveSalary = async (wageRequests) => {
+    const handleSaveSalary = async (wageRequests, method = 'POST') => {
         try {
             const response = await fetch(`${BASE_URL}salary_static_values`, {
-                method: 'POST',
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -81,28 +80,10 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleUpdateSalary = async (wageRequests) => {
-        try {
-            const response = await fetch(`${BASE_URL}salary_static_values`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(wageRequests),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công');
-                reloadAfterDelay(500);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    clickClose();
+                }, 3000);
             }
         } catch (error) {
             console.log(error);
@@ -128,10 +109,8 @@ export default function Create() {
         else {
             if (path.includes('/salary/create')) handleSaveSalary(results);
             else {
-                const filteredResults = results
-                    .filter(({ id }) => id && id.trim() !== '')
-                    .map(({ id, salary }) => ({ id, salary }));
-                handleUpdateSalary(filteredResults);
+                const filteredResults = results.filter(({ id }) => id && id.trim() !== '').map(({ id, salary }) => ({ id, salary }));
+                handleSaveSalary(filteredResults, 'PUT');
             }
         }
     };
@@ -162,8 +141,7 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
                                     <div className={cx('card-body')}>
@@ -172,11 +150,7 @@ export default function Create() {
                                                 Họ tên<span className={cx('text-red')}> *</span>{' '}
                                             </label>
                                             <div className={cx('pc-8', 'm-8')}>
-                                                <select
-                                                    id="user_id"
-                                                    className={cx('form-control', 'select')}
-                                                    onChange={handleChangeSelect}
-                                                >
+                                                <select id="user_id" className={cx('form-control', 'select')} onChange={handleChangeSelect}>
                                                     {user.map((item) => (
                                                         <option key={item.id} value={item.employee.id}>
                                                             {item.employee.name}
@@ -188,10 +162,7 @@ export default function Create() {
                                         <h4 className={cx('title', 'text-center')}>
                                             <b>Các khoản lương cố định trong tháng</b>
                                         </h4>
-                                        <div
-                                            className={cx('row', 'no-gutters', 'text-center')}
-                                            style={{ justifyContent: 'center' }}
-                                        >
+                                        <div className={cx('row', 'no-gutters', 'text-center')} style={{ justifyContent: 'center' }}>
                                             <div className={cx('pc-8')}>
                                                 <table className={cx('table')}>
                                                     <tbody id="table-salary">
@@ -228,11 +199,7 @@ export default function Create() {
                                             </button>
                                         </div>
                                         <div className={cx('text-center')}>
-                                            <button
-                                                type="submit"
-                                                className={cx('btn', 'btn-success')}
-                                                onClick={saveSalary}
-                                            >
+                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={saveSalary}>
                                                 Cập nhật
                                             </button>
                                             <a href={routes.salary}>

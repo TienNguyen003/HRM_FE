@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
 
 const cx = classNames.bind(styles);
@@ -69,10 +69,10 @@ export default function Create() {
     }, []);
 
     const handleSave = async (name, officeId, shortName, method) => {
-        let url = '';
-        if (method == 'PUT') url = `?departmentId=${path}`;
+        let url = `${BASE_URL}structures`;
+        if (method == 'PUT') url += `?departmentId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}structures${url}`, {
+            const response = await fetch(`${url}`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
@@ -84,7 +84,12 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thành công');
-                reloadAfterDelay(500);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.log(error);
@@ -133,7 +138,7 @@ export default function Create() {
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>

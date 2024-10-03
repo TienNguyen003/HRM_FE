@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { handleAlert } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
-        decodeToken(token, 'CATG_ADD', true)
+        decodeToken(token, 'CATG_ADD', true);
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
@@ -34,9 +34,7 @@ export default function Create() {
             if (data.code === 303) {
                 document.querySelector('#name').value = data.result.name;
                 document.querySelector('#symbol').value = data.result.symbol;
-                document
-                    .querySelector('#type')
-                    .querySelector('option[value="' + data.result.salaryType + '"]').selected = true;
+                document.querySelector('#type').querySelector('option[value="' + data.result.salaryType + '"]').selected = true;
             }
         } catch (error) {
             console.log(error);
@@ -49,10 +47,12 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSaveCate = async (name, symbol, salaryType) => {
+    const handleSaveCate = async (name, symbol, salaryType, method = 'POST') => {
+        let url = `${BASE_URL}salary_categories`;
+        if (method == 'PUT') url += `?wageCateId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}salary_categories`, {
-                method: 'POST',
+            const response = await fetch(`${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -62,28 +62,13 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
-            } else handleAlert('alert-danger', data.message);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleUpdateCate = async (name, symbol, salaryType) => {
-        try {
-            const response = await fetch(`${BASE_URL}salary_categories?wageCateId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ name, symbol, salaryType }),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật dữ liệu thành công!');
-                reloadAfterDelay(500);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.log(error);
@@ -99,7 +84,7 @@ export default function Create() {
         else if (symbol === '') handleAlert('alert-danger', 'Ký hiệu không được để trống.');
         else {
             if (path.includes('/salary/categories/create')) handleSaveCate(name, symbol, type);
-            else handleUpdateCate(name, symbol, type);
+            else handleSaveCate(name, symbol, type, 'PUT');
         }
     };
 
@@ -129,12 +114,11 @@ export default function Create() {
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <p className={cx('card-title')}>
-                                                Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                                buộc
+                                                Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                             </p>
                                         </div>
 
-                                        <form onSubmit={(e) => handleSubmit(e)}>
+                                        <form onSubmit={(e) => handleSubmit(e)} id="formReset">
                                             <div className={cx('card-body')}>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
                                                     <label className={cx('pc-2', 'm-3')}>
@@ -163,24 +147,14 @@ export default function Create() {
                                                 </div>
                                                 <div className={cx('alert')}>
                                                     <ul className={cx('pc-11')}>
-                                                        <li className={cx('alert-content')}>
-                                                            Tên không được để trống.
-                                                        </li>
+                                                        <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                     </ul>
-                                                    <button
-                                                        type="button"
-                                                        className={cx('close', 'pc-1')}
-                                                        onClick={clickClose}
-                                                    >
+                                                    <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>
                                                         ×
                                                     </button>
                                                 </div>
                                                 <div className={cx('text-center')}>
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        onClick={saveCateSalary}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={saveCateSalary}>
                                                         Lưu
                                                     </button>
                                                     <button type="reset" className={cx('btn', 'btn-danger')}>

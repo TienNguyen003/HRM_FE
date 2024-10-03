@@ -71,10 +71,10 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSaveSalary = async (wageRequests) => {
+    const handleSaveSalary = async (wageRequests, method = 'POST') => {
         try {
             const response = await fetch(`${BASE_URL}salary_dynamic_values`, {
-                method: 'POST',
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -84,28 +84,10 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(1000);
-            }
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleUpdateSalary = async (wageRequests) => {
-        try {
-            const response = await fetch(`${BASE_URL}salary_dynamic_values`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify(wageRequests),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công');
-                reloadAfterDelay(500);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    clickClose();
+                }, 3000);
             }
         } catch (error) {
             console.log(error);
@@ -135,7 +117,7 @@ export default function Create() {
             if (path.includes('/salary/dynamic_values/create')) handleSaveSalary(results);
             else {
                 const filteredResults = results.filter(({ id }) => id && id.trim() !== '').map(({ id, salary }) => ({ id, salary }));
-                handleUpdateSalary(filteredResults);
+                handleSaveSalary(filteredResults, 'PUT');
             }
         }
     };

@@ -61,10 +61,12 @@ export default function Create() {
     }, []);
 
     // api them
-    const saveContract = async (hire_date, dismissal_date, employeeId, urlFile, linkFile) => {
+    const saveContract = async (hire_date, dismissal_date, employeeId, urlFile, linkFile, method = 'POST') => {
+        let url = `${BASE_URL}contracts`;
+        if (method == 'PUT') url += `?contractsId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}contracts`, {
-                method: 'POST',
+            const response = await fetch(`${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -81,34 +83,13 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(400);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', 'Thêm thất bại');
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const updateContract = async (hire_date, dismissal_date, employeeId, urlFile, linkFile) => {
-        try {
-            const response = await fetch(`${BASE_URL}contracts?contractsId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({
-                    urlFile,
-                    employeeId,
-                    linkFile,
-                    hire_date,
-                    dismissal_date,
-                }),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                reloadAfterDelay(400);
-                handleAlert('alert-success', 'Cập nhật thành công');
-            } else handleAlert('alert-danger', 'Cập nhật thất bại');
         } catch (error) {
             console.log(error);
         }
@@ -144,7 +125,7 @@ export default function Create() {
         if (start.value === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
         else if (end.value !== '' && end.value <= start.value) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else {
-            updateContract(start.value, end.value, user_id, file, linkFile);
+            saveContract(start.value, end.value, user_id, file, linkFile, 'PUT');
         }
     };
 
@@ -226,7 +207,7 @@ export default function Create() {
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>

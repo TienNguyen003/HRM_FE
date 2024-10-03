@@ -13,7 +13,7 @@ const cx = classNames.bind(styles);
 export default function Create() {
     (async function () {
         await isCheck();
-        decodeToken(token, 'LEAV_ADD', true)
+        decodeToken(token, 'LEAV_ADD', true);
     })();
 
     const token = localStorage.getItem('authorizationData') || '';
@@ -46,10 +46,12 @@ export default function Create() {
         })();
     }, []);
 
-    const handleSave = async (nameDay, timeDay) => {
+    const handleSave = async (nameDay, timeDay, method = 'POST') => {
+        let url = `${BASE_URL}day_off_categories`;
+        if (method == 'PUT') url += `?dayOffId=${path}`;
         try {
-            const response = await fetch(`${BASE_URL}day_off_categories`, {
-                method: 'POST',
+            const response = await fetch(`${url}`, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json',
                     Authorization: `Bearer ${token}`,
@@ -59,28 +61,13 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
-            } else handleAlert('alert-danger', data.message);
-        } catch (error) {
-            console.log(error);
-        }
-    };
-    const handleUpdate = async (nameDay, timeDay) => {
-        try {
-            const response = await fetch(`${BASE_URL}day_off_categories?dayOffId=${path}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
-                },
-                body: JSON.stringify({ nameDay, timeDay }),
-            });
-
-            const data = await response.json();
-            if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công!');
-                reloadAfterDelay(500);
+                handleAlert('alert-success', 'Thành công');
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.log(error);
@@ -95,7 +82,7 @@ export default function Create() {
         else if (time === '') handleAlert('alert-danger', 'Thời gian không được để trống, chỉ được chứa số.');
         else {
             if (path.includes('/holidays/day_off/create')) handleSave(name, time);
-            else handleUpdate(name, time);
+            else handleSave(name, time, 'PUT');
         }
     };
 
@@ -124,12 +111,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -156,11 +142,7 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={saveHoliday}
-                                                >
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
                                                     Lưu lại
                                                 </button>
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>

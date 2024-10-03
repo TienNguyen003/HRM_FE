@@ -44,7 +44,6 @@ function Role() {
 
     const handleClickAdd = () => {
         const selectedValues = getInput();
-
         saveRoles(selectedValues);
     };
 
@@ -72,7 +71,10 @@ function Role() {
                 alert.classList.remove(`${cx('alert-danger')}`);
                 alert.classList.remove(`${cx('hidden')}`);
                 alertCt.textContent = 'Thêm dữ liệu thành công';
-                reloadAfterDelay(400);
+                setTimeout(() => {
+                    document.querySelector('#formReset').reset();
+                    clickClose();
+                }, 3000);
             } else if (data.code === 502) {
                 alert.classList.add(`${cx('alert-danger')}`);
                 alert.classList.remove(`${cx('alert-success')}`);
@@ -83,9 +85,9 @@ function Role() {
             alert.classList.add(`${cx('alert-danger')}`);
             alertCt.textContent = 'Tên không được để trống';
         }
-    }
+    };
 
-    async function getRole() {
+    const getRole = async () => {
         if (path.includes('roles')) return '';
         const nameRole = document.querySelector('#name-role');
 
@@ -114,7 +116,7 @@ function Role() {
                 });
             }
         }
-    }
+    };
 
     useEffect(() => {
         (async function () {
@@ -127,7 +129,7 @@ function Role() {
         handleClickUpdate(selectedValues);
     };
 
-    async function handleClickUpdate(selectedValues) {
+    const handleClickUpdate = async (selectedValues) => {
         const nameRole = document.querySelector('#name-role');
         const alert = document.querySelector(`.${cx('alert')}`);
         const alertCt = document.querySelector(`.${cx('alert-content')}`);
@@ -154,7 +156,7 @@ function Role() {
             alert.classList.remove(`${cx('hidden')}`);
             alertCt.textContent = 'Cập nhật thất bại';
         }
-    }
+    };
 
     const clickClose = () => {
         const alert = document.querySelector(`.${cx('alert')}`);
@@ -183,20 +185,14 @@ function Role() {
                                     </p>
                                 </div>
 
-                                <form className={cx('form-horizontal')} onSubmit={(e) => handleSubmitForm(e)}>
+                                <form id="formReset" onSubmit={(e) => handleSubmitForm(e)}>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2', 'm-4', 'control-label')}>
                                                 Tên quyền<span className={cx('text-red')}> *</span>
                                             </label>
                                             <div className={cx('pc-8', 'm-8')}>
-                                                <input
-                                                    className={cx('form-control')}
-                                                    id="name-role"
-                                                    type="text"
-                                                    name="name"
-                                                    placeholder="VD: Quản lý"
-                                                />
+                                                <input className={cx('form-control')} id="name-role" type="text" name="name" placeholder="VD: Quản lý" />
                                             </div>
                                         </div>
                                         <div className={cx('well')}>
@@ -204,13 +200,7 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}></label>
                                                 <div className={cx('controls', 'pc-9', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="check_all"
-                                                            id="check_all"
-                                                            value="all"
-                                                            onClick={(e) => clickRole(e)}
-                                                        />
+                                                        <input type="checkbox" name="check_all" id="check_all" value="all" onClick={(e) => clickRole(e)} />
                                                         Toàn quyền
                                                     </label>
                                                 </div>
@@ -219,38 +209,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Bảng lương</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="sala_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="sala_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="sala_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="sala_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="sala_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="sala_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="sala_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="sala_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -260,11 +234,7 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Cài đặt chung</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="set_set"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="set_set" />
                                                         cài đặt
                                                     </label>
                                                     &emsp;
@@ -274,38 +244,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Cấu trúc công ty</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="comp_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="comp_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="comp_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="comp_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="comp_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="comp_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="comp_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="comp_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -315,38 +269,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Chấm công</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_delete" />
                                                         Xoá
                                                     </label>
                                                     {/* &emsp;
@@ -360,63 +298,37 @@ function Role() {
                                                     </label> */}
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_viewTime"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_viewTime" />
                                                         Bảng thời gian
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="attd_approvals"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="attd_approvals" />
                                                         Duyệt chấm công
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>
-                                                    Công thức tính lương
-                                                </label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Công thức tính lương</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="calc_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="calc_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="calc_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="calc_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="calc_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="calc_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="calc_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="calc_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -426,38 +338,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Danh mục lương</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="catg_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="catg_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="catg_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="catg_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="catg_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="catg_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="catg_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="catg_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -467,38 +363,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Danh mục nghỉ</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="leav_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="leav_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="leav_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="leav_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="leav_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="leav_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="leav_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="leav_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -508,47 +388,27 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Đơn xin nghỉ</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="req_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="req_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="req_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="req_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="req_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="req_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="req_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="req_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="req_approvals"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="req_approvals" />
                                                         Duyệt đơn xin nghỉ
                                                     </label>
                                                     &emsp;
@@ -558,38 +418,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Hợp đồng</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="cont_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="cont_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="cont_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="cont_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="cont_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="cont_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="cont_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="cont_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -599,54 +443,32 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Lịch sử nghỉ phép</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="hist_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="hist_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>
-                                                    Lương cập nhật theo tháng
-                                                </label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Lương cập nhật theo tháng</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="saup_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="saup_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="saup_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="saup_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="saup_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="saup_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="saup_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="saup_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -656,38 +478,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Lương cố định</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="safi_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="safi_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="safi_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="safi_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="safi_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="safi_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="safi_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="safi_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -697,90 +503,52 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Nghỉ lễ</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="holi_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="holi_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="holi_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="holi_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="holi_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="holi_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="holi_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="holi_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>
-                                                    Người dùng hệ thống
-                                                </label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Người dùng hệ thống</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="user_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="user_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="user_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="user_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="user_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="user_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="user_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="user_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="user_rspass"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="user_rspass" />
                                                         Reset password
                                                     </label>
                                                     &emsp;
@@ -790,81 +558,47 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Phân quyền</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="perm_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="perm_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="perm_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="perm_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="perm_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="perm_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="perm_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="perm_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>
-                                                    Tài khoản ngân hàng
-                                                </label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Tài khoản ngân hàng</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="bank_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="bank_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="bank_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="bank_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="bank_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="bank_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="bank_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="bank_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
@@ -874,47 +608,27 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Ứng lương</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="adv_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="adv_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="adv_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="adv_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="adv_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="adv_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="adv_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="adv_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="adv_approvals"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="adv_approvals" />
                                                         Duyệt ứng lương
                                                     </label>
                                                     &emsp;
@@ -924,38 +638,22 @@ function Role() {
                                                 <label className={cx('control-label', 'pc-2', 'm-4')}>Văn phòng</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="off_view"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="off_view" />
                                                         Danh sách
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="off_add"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="off_add" />
                                                         Thêm mới
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="off_edit"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="off_edit" />
                                                         Sửa
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
-                                                        <input
-                                                            type="checkbox"
-                                                            name="authorizations[]"
-                                                            value="off_delete"
-                                                        />
+                                                        <input type="checkbox" name="authorizations[]" value="off_delete" />
                                                         Xoá
                                                     </label>
                                                     &emsp;

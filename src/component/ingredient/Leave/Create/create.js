@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getAllUser, handleAlert, getUser } from '../../ingredient';
 
 const cx = classNames.bind(styles);
@@ -41,12 +41,8 @@ export default function Create() {
                 const dataRs = data.result;
                 setIsStatus(dataRs.status);
 
-                document
-                    .querySelector('#user_id')
-                    .querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
-                document
-                    .querySelector('#day_off_category_id')
-                    .querySelector('option[value="' + dataRs.dayOffCategories.id + '"]').selected = true;
+                document.querySelector('#user_id').querySelector('option[value="' + dataRs.employee.id + '"]').selected = true;
+                document.querySelector('#day_off_category_id').querySelector('option[value="' + dataRs.dayOffCategories.id + '"]').selected = true;
                 document.querySelector('#start').value = dataRs.startTime.split(' ')[0];
                 document.querySelector('#time_start').value = dataRs.startTime.split(' ')[1];
                 document.querySelector('#end').value = dataRs.endTime.split(' ')[0];
@@ -60,7 +56,7 @@ export default function Create() {
 
     useEffect(() => {
         (async function () {
-            await getDayOffCate(token).then((result) => setDayOff(result));            
+            await getDayOffCate(token).then((result) => setDayOff(result));
             if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
             else await getAllUser(token).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
@@ -97,7 +93,12 @@ export default function Create() {
             const data = await response.json();
             if (data.code === 303) {
                 handleAlert('alert-success', 'Thêm thành công');
-                reloadAfterDelay(500);
+                setTimeout(() => {
+                    if (method === 'POST') {
+                        document.querySelector('#formReset').reset();
+                    }
+                    clickClose();
+                }, 3000);
             } else handleAlert('alert-danger', 'Thêm thất bại');
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -124,36 +125,13 @@ export default function Create() {
         else if (end.value < start.value) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else if (timeStart.value === '') handleAlert('alert-danger', 'Thời gian bắt đầu không được để trống');
         else if (timeEnd.value === '') handleAlert('alert-danger', 'Thời gian kết thúc không được để trống');
-        else if (end.value == start.value && timeEnd.value <= timeStart.value)
-            handleAlert('alert-danger', 'Thời gian kết thúc phải lớn hơn thời gian bắt đầu');
+        else if (end.value == start.value && timeEnd.value <= timeStart.value) handleAlert('alert-danger', 'Thời gian kết thúc phải lớn hơn thời gian bắt đầu');
         else if (total > +selectedVacationHours)
-            handleAlert(
-                'alert-danger',
-                'Bạn đã hết thời gian nghỉ phép. Bạn còn ' + selectedVacationHours + 'h nghỉ phép',
-            );
+            handleAlert('alert-danger', 'Bạn đã hết thời gian nghỉ phép. Bạn còn ' + selectedVacationHours + 'h nghỉ phép');
         else {
             if (path.includes('/day_off_letters/create'))
-                saveLeave(
-                    day_off,
-                    start.value + ' ' + timeStart.value,
-                    end.value + ' ' + timeEnd.value,
-                    Math.floor(total),
-                    '',
-                    message,
-                    user.value,
-                    'POST',
-                );
-            else
-                saveLeave(
-                    day_off,
-                    start.value + ' ' + timeStart.value,
-                    end.value + ' ' + timeEnd.value,
-                    Math.floor(total),
-                    '',
-                    message,
-                    user.value,
-                    'PUT',
-                );
+                saveLeave(day_off, start.value + ' ' + timeStart.value, end.value + ' ' + timeEnd.value, Math.floor(total), '', message, user.value, 'POST');
+            else saveLeave(day_off, start.value + ' ' + timeStart.value, end.value + ' ' + timeEnd.value, Math.floor(total), '', message, user.value, 'PUT');
         }
     };
 
@@ -190,12 +168,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)}>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-12', 'm-12')}>
@@ -209,11 +186,7 @@ export default function Create() {
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
-                                                            <option
-                                                                data-vacationhours={item.employee.vacationHours}
-                                                                key={item.id}
-                                                                value={item.employee.id}
-                                                            >
+                                                            <option data-vacationhours={item.employee.vacationHours} key={item.id} value={item.employee.id}>
                                                                 {item.employee.name}
                                                             </option>
                                                         ))}
@@ -225,10 +198,7 @@ export default function Create() {
                                                     Loại nghỉ<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <select
-                                                        id="day_off_category_id"
-                                                        className={cx('form-control', 'select')}
-                                                    >
+                                                    <select id="day_off_category_id" className={cx('form-control', 'select')}>
                                                         {dayOff.map((item) => (
                                                             <option key={item.id} value={item.id}>
                                                                 {item.nameDay}
@@ -243,24 +213,12 @@ export default function Create() {
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5')}>
                                                     <div className={cx('input-group')}>
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="date"
-                                                            id="start"
-                                                            min="2024-01-01"
-                                                            max="3000-12-31"
-                                                        />
+                                                        <input className={cx('form-control')} type="date" id="start" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('pc-3', 'm-3')}>
                                                     <div className={cx('input-group', 'date')} id="timepicker_start">
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="time"
-                                                            id="time_start"
-                                                            min="2024-01-01"
-                                                            max="3000-12-31"
-                                                        />
+                                                        <input className={cx('form-control')} type="time" id="time_start" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                             </div>
@@ -270,35 +228,19 @@ export default function Create() {
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5')}>
                                                     <div className={cx('input-group')}>
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="date"
-                                                            id="end"
-                                                            min="2024-01-01"
-                                                            max="3000-12-31"
-                                                        />
+                                                        <input className={cx('form-control')} type="date" id="end" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('pc-3', 'm-3')}>
                                                     <div className={cx('input-group')} id="timepicker_end">
-                                                        <input
-                                                            className={cx('form-control')}
-                                                            type="time"
-                                                            id="time_end"
-                                                            min="2024-01-01"
-                                                            max="3000-12-31"
-                                                        />
+                                                        <input className={cx('form-control')} type="time" id="time_end" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>Lý do</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <textarea
-                                                        className={cx('form-control', 'message')}
-                                                        rows="6"
-                                                        placeholder=""
-                                                    ></textarea>
+                                                    <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
@@ -311,20 +253,11 @@ export default function Create() {
                                             </div>
                                             <div className={cx('text-center')}>
                                                 {path.includes('/day_off_letters/create') ? (
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        onClick={clickAddLeave}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddLeave}>
                                                         Thêm mới
                                                     </button>
                                                 ) : (
-                                                    <button
-                                                        type="submit"
-                                                        className={cx('btn', 'btn-success')}
-                                                        disabled={isStatus !== 0}
-                                                        onClick={updateLeave}
-                                                    >
+                                                    <button type="submit" className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={updateLeave}>
                                                         Lưu
                                                     </button>
                                                 )}
