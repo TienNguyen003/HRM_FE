@@ -1,13 +1,14 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
 import { formatter } from '../../ingredient';
-import { Pagination } from '../../../layout/pagination/pagination';
+import { Page } from '../../../layout/pagination/pagination';
 import { exportExcel } from '../../../layout/excel/excel';
 import { useAuth } from '../../../../untils/AuthContext';
 
@@ -18,6 +19,7 @@ export default function Salary() {
     const [checkStt, setCheck] = useState(false);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
+    const location = useLocation();
 
     const today = new Date();
 
@@ -70,7 +72,7 @@ export default function Salary() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [state.isAuthenticated, state.loading]);
+    }, [state.isAuthenticated, state.loading, location]);
 
     const handleExportExcel = async () => {
         const newArray = salary.map(({ status, advance, totalSalary, employee: { name, department }, bank: { owner, nameBank, numberBank }, ...rest }) => ({
@@ -455,14 +457,14 @@ export default function Salary() {
                                             </tbody>
                                         </table>
                                         <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-7')}>
                                                 <p>
                                                     Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng
                                                     <b> {page.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-2')}>
-                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+                                            <div className={cx('pc-5')}>
+                                                <Page style={{float: 'right'}} currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

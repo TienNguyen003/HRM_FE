@@ -24,6 +24,7 @@
         "react-router-dom": "^6.12.1",
         "react-scripts": "^5.0.1",
         "react-toastify": "^10.0.6",
+        "rsuite": "^5.73.1",
         "web-vitals": "^2.1.4",
         "xlsx": "^0.18.5"
     },

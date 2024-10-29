@@ -1,71 +1,44 @@
-import React from 'react';
-import classNames from 'classnames/bind';
-import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { Pagination } from 'rsuite';
+import 'rsuite/Pagination/styles/index.css';
+// import './Pagination.css';
 
-import styles from '../../ingredient/list.module.scss';
-
-const cx = classNames.bind(styles);
-
-export const Pagination = ({ currentPage, totalPages }) => {
+export const Page = ({ page, total, style }) => {
+    const [activePage, setActivePage] = useState(page);
     const navigate = useNavigate();
-    const location = useLocation();
-    const path = location.pathname;
-    const searchParams = new URLSearchParams(location.search);
 
-    const handlePageChange = (page) => {
-        searchParams.set('page', page);
-        navigate(`${path}?${searchParams.toString()}`);
+    const handleChangePage = (page) => {
+        setActivePage(page);
+        navigate(`?page=${page}`);
     };
 
-    const handlePrevious = () => {
-        if (currentPage > 1) {
-            handlePageChange(currentPage - 1);
-        }
-    };
-
-    const handleNext = () => {
-        if (currentPage < totalPages) {
-            handlePageChange(+currentPage + 1);
-        }
-    };
-
-    if (totalPages <= 1) {
-        return null;
-    }
-
-    const pages = [];
-    for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-    }
+    useEffect(() => {
+        console.log(page, total);
+        setActivePage(page);
+    }, [page]);
 
     return (
-        <ul className={cx('pagination')}>
-            {/* Nút trước */}
-            <li className={cx('page-item')}>
-                <a className={cx('page-link')} href={currentPage > 1 ? '' : undefined} onClick={handlePrevious}>
-                    &laquo;
-                </a>
-            </li>
-
-            {/* Nút cho từng trang */}
-            {pages.map((page) => (
-                <li key={page} className={cx('page-item')}>
-                    <a
-                        className={cx('page-link', { active: page === Number(currentPage) })}
-                        href={page === Number(currentPage) ? undefined : ''}
-                        onClick={() => handlePageChange(page)}
-                    >
-                        {page}
-                    </a>
-                </li>
-            ))}
-
-            {/* Nút sau */}
-            <li className={cx('page-item')}>
-                <a className={cx('page-link')} href={currentPage < totalPages ? '' : undefined} onClick={handleNext}>
-                    &raquo;
-                </a>
-            </li>
-        </ul>
+        <div style={style}>
+            {total ? (
+                <Pagination
+                    layout={['pager', 'skip']}
+                    size={'md'}
+                    prev
+                    next
+                    first
+                    last
+                    ellipsis
+                    boundaryLinks
+                    total={total}
+                    limit={30}
+                    maxButtons={5}
+                    activePage={activePage}
+                    onChangePage={handleChangePage}
+                />
+            ) : (
+                ''
+            )}
+        </div>
     );
 };

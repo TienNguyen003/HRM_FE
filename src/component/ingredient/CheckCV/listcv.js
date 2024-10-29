@@ -94,19 +94,23 @@ export default function Listcv() {
                                                         <td className={cx('text-center')}>{item.email}</td>
                                                         <td className={cx('text-center')}>{item.phone}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.dob}</td>
-                                                        <td className={cx('text-center', 'm-0')}><a target='blank' href={item.linkFile}>Link</a></td>
+                                                        <td className={cx('text-center', 'm-0')}>
+                                                            <a target="blank" href={item.linkFile}>
+                                                                Link
+                                                            </a>
+                                                        </td>
                                                     </tr>
                                                 ))}
                                             </tbody>
                                         </table>
                                         {/* <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng 
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+                                                <Page page={page.currentPage} total={page.totalPages} />
                                             </div>
                                         </div> */}
                                     </div>

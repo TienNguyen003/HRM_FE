@@ -1,12 +1,13 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import Status from '../../globalstyle/Status/status';
 import { BASE_URL } from '../../../config/config';
-import { Pagination } from '../../layout/pagination/pagination';
+import { Page } from '../../layout/pagination/pagination';
 import { formatter } from '../ingredient';
 import { useAuth } from '../../../untils/AuthContext';
 
@@ -17,6 +18,7 @@ export default function Advances() {
     const [advances, setAdvances] = useState([]);
     const [pages, setPages] = useState([]);
     const path = window.location.pathname.replace('/advances/approvals', 'approvals');
+    const location = useLocation();
 
     //lấy don ung luong
     const fetchData = async (id) => {
@@ -58,7 +60,7 @@ export default function Advances() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await fetchData(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [state.isAuthenticated, state.loading]);
+    }, [state.isAuthenticated, state.loading, location]);
 
     return (
         <>
@@ -154,13 +156,13 @@ export default function Advances() {
                                             </tbody>
                                         </table>
                                         <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-7')}>
                                                 <p>
                                                     Hiển thị <b>{pages.totalItemsPerPage}</b> dòng / tổng <b>{pages.totalItems}</b>
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-2')}>
-                                                <Pagination currentPage={pages.currentPage} totalPages={pages.totalPages} />
+                                            <div className={cx('pc-5')}>
+                                                <Page style={{ float: 'right' }} page={parseInt(pages.currentPage)} total={parseInt(pages.totalItems)} />
                                             </div>
                                         </div>
                                     </div>

@@ -226,7 +226,25 @@ function Home() {
                                             <div className={cx('alert', 'text-center', 'note-item', 'bg-green')}>Chấm công (vào)</div>
                                             <div className={cx('alert', 'text-center', 'note-item', 'bg-yellow')}>Chấm công (ra)</div>
                                             <div className={cx('alert', 'text-center', 'note-item', 'bg-blue')}>Nghỉ lễ</div>
-                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-grey')}>Xin nghỉ</div>
+                                            <div className={cx('text-center', 'note-item')} style={{ display: 'flex', justifyContent: 'space-between', padding: '0' }}>
+                                                <p
+                                                    style={{ flex: '0 0 50%', height: '100%', padding: '0.48rem 1.25rem', borderRadius: '0.25rem 0 0 0.25rem' }}
+                                                    className={cx('bg-grey')}
+                                                >
+                                                    Xin nghỉ
+                                                </p>
+                                                <p
+                                                    style={{
+                                                        flex: '0 0 50%',
+                                                        height: '100%',
+                                                        padding: '0.48rem 1.25rem',
+                                                        borderRadius: '0 0.25rem 0.25rem 0',
+                                                        backgroundColor: '#88C273',
+                                                    }}
+                                                >
+                                                    Xin nghỉ (Duyệt)
+                                                </p>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

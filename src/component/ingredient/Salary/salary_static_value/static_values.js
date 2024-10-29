@@ -1,11 +1,12 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
 import { formatter, getSalaryCate } from '../../ingredient';
-import { Pagination } from '../../../layout/pagination/pagination';
+import { Page } from '../../../layout/pagination/pagination';
 import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
@@ -16,6 +17,7 @@ function Static_values() {
     const [salary, setSalary] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const [page, setPage] = useState([]);
+    const location = useLocation();
 
     const getSalary = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -56,7 +58,7 @@ function Static_values() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [tableData, state.isAuthenticated, state.loading]);
+    }, [tableData, state.isAuthenticated, state.loading, location]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -167,13 +169,13 @@ function Static_values() {
                                             </tbody>
                                         </table>
                                         <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-2')}>
-                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+                                            <div className={cx('pc-5')}>
+                                                <Page style={{ float: 'right' }} page={parseInt(page.currentPage)} total={parseInt(page.totalItems)} />
                                             </div>
                                         </div>
                                     </div>

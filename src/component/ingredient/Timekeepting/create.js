@@ -80,13 +80,13 @@ export default function Create() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm thành công');
+                handleAlert('alert-success', data.result.type === 0 ? 'Checkin thành công' : 'Checkout thành công');
                 setTimeout(() => {
                     if (method === 'POST') {
                         document.querySelector('#formReset').reset();
                     }
                     clickClose();
-                }, 3000);
+                }, 2000);
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);

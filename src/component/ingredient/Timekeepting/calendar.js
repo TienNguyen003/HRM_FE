@@ -51,6 +51,7 @@ export default function Calendar() {
                         Subject: item.name,
                         StartTime: start.toLocaleString('en-US', options).replace(',', ''),
                         EndTime: end.toLocaleString('en-US', options).replace(',', ''),
+                        Color: '#007bff',
                     });
                 });
             }
@@ -60,7 +61,7 @@ export default function Calendar() {
 
         // Fetch leaves
         try {
-            const leaveResponse = await fetch(`${BASE_URL}day_off_letter?pageNumber=1&employeeId=${employeeId}`, {
+            const leaveResponse = await fetch(`${BASE_URL}day_off_letter/get?employeeId=${employeeId}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -78,6 +79,7 @@ export default function Calendar() {
                         Subject: item.dayOffCategories.nameDay,
                         StartTime: start.toLocaleString('en-US', options).replace(',', ''),
                         EndTime: end.toLocaleString('en-US', options).replace(',', ''),
+                        Color: item.status ? '#88C273' : '#6c757d',
                     });
                 });
             }
@@ -102,9 +104,10 @@ export default function Calendar() {
                     const end = new Date(start.getTime() + 60 * 1000);
                     arr.push({
                         Id: item.id,
-                        Subject: 'Chấm công',
+                        Subject: item.type == 1 ? 'Checkout' : 'Checkin',
                         StartTime: start,
                         EndTime: end,
+                        Color: item.type == 1 ? '#ffc107' : '#00a65a',
                     });
                 });
             }
@@ -126,6 +129,12 @@ export default function Calendar() {
 
     const handleChangeEmployee = (e) => {
         fetchData(e.target.value);
+    };
+
+    const eventRendered = (args) => {
+        if (args.data.Color) {
+            args.element.style.backgroundColor = args.data.Color;
+        }
     };
 
     return (
@@ -150,7 +159,7 @@ export default function Calendar() {
                                         </select>
                                     </div>
                                 </div>
-                                <ScheduleComponent width="100%" height="610px" eventSettings={{ dataSource: dataField }}>
+                                <ScheduleComponent width="100%" height="610px" eventSettings={{ dataSource: dataField }} eventRendered={eventRendered}>
                                     <ViewsDirective>
                                         <ViewDirective option="Month" readonly={true} />
                                     </ViewsDirective>

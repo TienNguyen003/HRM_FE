@@ -1,12 +1,12 @@
 import React from 'react';
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { checkRole } from '../../globalstyle/checkToken';
-import { Pagination } from '../../layout/pagination/pagination';
+import { Page } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
 import { useAuth } from '../../../untils/AuthContext';
 
@@ -16,6 +16,7 @@ function Holidays() {
     const { state, redirectLogin, checkRole } = useAuth();
     const [holiday, setHoliday] = useState([]);
     const [page, setPage] = useState([]);
+    const location = useLocation();
 
     const getHoliday = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -47,13 +48,13 @@ function Holidays() {
 
     useEffect(() => {
         if (!state.isAuthenticated) redirectLogin();
-        
+
         (async function () {
             await checkRole(state.account && state.account.role.permissions, 'LEAV_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, [state.isAuthenticated, state.loading]);
+    }, [state.isAuthenticated, state.loading, location]);
 
     const changeStatus = (e) => {
         let isCheck = e.target.checked ? 1 : 0;
@@ -162,13 +163,13 @@ function Holidays() {
                                             </tbody>
                                         </table>
                                         <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-10')}>
+                                            <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-2')}>
-                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
+                                            <div className={cx('pc-5')}>
+                                                <Page style={{ float: 'right' }} page={parseInt(page.currentPage)} total={parseInt(page.totalItems)} />
                                             </div>
                                         </div>
                                     </div>
