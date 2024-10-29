@@ -4,16 +4,7 @@ import routesConfig from '../config/routes';
 import Home from '../component/ingredient/home/home';
 import Login from '../component/ingredient/login/login';
 import { Role, CreateRole } from '../component/ingredient/Role/index';
-import {
-    User,
-    CreateUser,
-    RsPass,
-    Bank,
-    CreateBank,
-    Contract,
-    CreateContract,
-    ChangePass
-} from '../component/ingredient/User/index';
+import { User, CreateUser, RsPass, Bank, CreateBank, Contract, CreateContract, ChangePass } from '../component/ingredient/User/index';
 import { Leave, CreateLeave, ApproveLeave, HsLeave } from '../component/ingredient/Leave/index';
 import { Calendar, Checks, Create } from '../component/ingredient/Timekeepting/index';
 import { Advances, ApprovelsAd, CreateAd } from '../component/ingredient/Advances/index';
@@ -32,6 +23,7 @@ import {
 } from '../component/ingredient/Salary/index';
 import { Holidays, DayOff, CreateDayOff, CreateHolidays } from '../component/ingredient/Holidays/index';
 import { Office, Structures, Setups, CreateOffice, CreateStruct } from '../component/ingredient/Office/index';
+import { CheckCV, ListCV } from '../component/ingredient/CheckCV/index';
 
 // public routes
 const publicRoutes = [
@@ -102,6 +94,9 @@ const publicRoutes = [
     { path: routesConfig.officeStructuresCreate, component: CreateStruct },
     { path: routesConfig.officeStructuresEdit, component: CreateStruct },
     { path: routesConfig.officeSetup, component: Setups },
+
+    { path: routesConfig.checkcv, component: CheckCV },
+    { path: routesConfig.listcv, component: ListCV },
 ];
 const privateRoutes = [];
 

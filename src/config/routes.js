@@ -66,6 +66,9 @@ const routes = {
     officeStructuresCreate: '/offices/structures/create',
     officeStructuresEdit: '/offices/structures/edit/:name',
     officeSetup: '/offices/setup',
+
+    checkcv: '/check-cv',
+    listcv: '/list-cv'
 };
 
 export default routes;

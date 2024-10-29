@@ -1,0 +1,151 @@
+.check {
+    padding-right: 1.5rem;
+}
+.evaluation-form {
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    margin: 12px auto;
+}
+
+.form-title {
+    font-size: 1.5em;
+    color: #333;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #007bff;
+    padding-bottom: 8px;
+}
+
+.criteria-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style-type: none;
+    padding: 0;
+}
+
+.criteria-item {
+    width: calc(50% - 10px);
+    margin: 5px;
+    padding: 10px;
+    border: 1px solid #c9c7c7c7;
+    border-radius: 4px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #f1f8ff;
+    }
+}
+
+.sub-criteria-list {
+    list-style-type: none;
+    padding-left: 20px;
+
+    li {
+        margin-bottom: 4px;
+        padding: 0;
+    }
+
+    label {
+        cursor: pointer;
+    }
+}
+
+.checkbox {
+    margin-right: 10px;
+    vertical-align: middle;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .evaluation-form {
+        width: 90%;
+    }
+}
+
+.container {
+    margin-top: 20px;
+    width: 100%;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    background-color: #fcfcfc;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0 5px 10px 0 rgba(0, 0, 0, 0.3);
+    width: 600px;
+    height: 260px;
+    background-color: #ffffff;
+    padding: 10px 30px 40px;
+
+    h3 {
+        font-size: 22px;
+        font-weight: 600;
+    }
+}
+
+.drop_box {
+    margin: 10px 0;
+    padding: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border: 3px dotted #a3a3a3;
+    border-radius: 5px;
+
+    h4 {
+        font-size: 16px;
+        font-weight: 400;
+        color: #2e2e2e;
+    }
+    p {
+        margin-top: 10px;
+        margin-bottom: 20px;
+        font-size: 12px;
+        color: #a3a3a3;
+    }
+}
+
+.btn {
+    text-decoration: none;
+    background-color: #005af0;
+    color: #ffffff;
+    padding: 10px 20px;
+    border: none;
+    outline: none;
+    transition: 0.3s;
+
+    &:hover {
+        text-decoration: none;
+        background-color: #ffffff;
+        color: #005af0;
+        padding: 10px 20px;
+        border: none;
+        outline: 1px solid #010101;
+    }
+}
+
+.form {
+    input {
+        margin: 10px 0;
+        width: 100%;
+        background-color: #e2e2e2;
+        border: none;
+        outline: none;
+        padding: 12px 20px;
+        border-radius: 4px;
+    }
+}
+
+.text-center{
+    margin-top: 20px;
+    text-align: center;
+}
+.btn-success{
+    background-color: #28a745;
+    border-radius: 0.25rem;
+}

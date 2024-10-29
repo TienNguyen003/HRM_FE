@@ -4,22 +4,18 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, getRoles, getStructures, handleAlert } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Role() {
+    const { state, redirectLogin, checkRole } = useAuth();
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
     const [formula, setFormula] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/users/edit/', '');
-
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'USER_ADD');
-    })();
 
     const getUsers = async () => {
         if (path.includes('/user')) return '';
@@ -28,7 +24,7 @@ function Role() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -50,13 +46,10 @@ function Role() {
                 form.joined_date.value = dataEmp.joined_date;
                 form.timekeeper_id.value = dataEmp.vacationTime;
                 form.sabbatical.value = dataEmp.vacationHours;
-                if (decodeToken(token, 'ROLE_NHÂN')) {
+                if (checkRole(state.account.role.name, 'NHÂN VIÊN')) {
                     const opRole = new Option(dataRs.role.name, dataRs.role.name);
                     form.role_id.add(opRole);
-                    const opStruct = new Option(
-                        dataEmp.department.name + ' - ' + dataEmp.department.officeI.name,
-                        dataEmp.department.id,
-                    );
+                    const opStruct = new Option(dataEmp.department.name + ' - ' + dataEmp.department.officeI.name, dataEmp.department.id);
                     form.structure_id.add(opStruct);
                     const opFor = new Option(dataEmp.formula.name, dataEmp.formula.id);
                     form.salary_formula_id.add(opFor);
@@ -77,7 +70,7 @@ function Role() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -89,15 +82,17 @@ function Role() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (!decodeToken(token, 'ROLE_NHÂN')) {
+            await checkRole(state.account.role.permissions, 'USER_ADD');
+            if (!checkRole(state.account.role.name, 'NHÂN VIÊN')) {
                 await getFormula();
-                await getStructures(token).then((result) => setStructures(result));
-                await getRoles(token).then((result) => setRoles(result));
+                await getStructures(state.user).then((result) => setStructures(result));
+                await getRoles(state.user).then((result) => setRoles(result));
             }
             await getUsers();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     // regex
     const numberRegex = /[0-9]/;
@@ -115,7 +110,7 @@ function Role() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     username,
@@ -163,7 +158,7 @@ function Role() {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${state.user}`,
             },
             body: JSON.stringify({
                 name,
@@ -215,40 +210,29 @@ function Role() {
 
         if (form.username.value === '') handleAlert('alert-danger', 'Tên đăng nhập không được để trống');
         else if (form.username.value.length < 7) handleAlert('alert-danger', 'Tên đăng nhập phải nhiều hơn 6 ký tự');
-        else if (form.username.value.includes(' '))
-            handleAlert('alert-danger', 'Tên đăng nhập không được chứa khoảng trắng');
+        else if (form.username.value.includes(' ')) handleAlert('alert-danger', 'Tên đăng nhập không được chứa khoảng trắng');
         else if (startRgex.test(form.username.value) || endRegex.test(form.username.value))
             handleAlert('alert-danger', 'Đầu và cuối không được chứa kí tự đặc biệt');
         else if (form.email.value === '') handleAlert('alert-danger', 'Email không được để trống');
-        else if (startRgex.test(form.email.value) || endRegex.test(form.email.value))
-            handleAlert('alert-danger', 'Đầu và cuối không được chứa kí tự đặc biệt');
+        else if (startRgex.test(form.email.value) || endRegex.test(form.email.value)) handleAlert('alert-danger', 'Đầu và cuối không được chứa kí tự đặc biệt');
         else if (!emailRegex.test(form.email.value)) handleAlert('alert-danger', 'Email không đúng định dạng');
         else if (form.fullname.value.trim() === '') handleAlert('alert-danger', 'Tên không được để trống');
         else if (numberRegex.test(form.fullname.value)) handleAlert('alert-danger', 'Tên không được chứa số');
-        else if (specialRegex.test(form.fullname.value))
-            handleAlert('alert-danger', 'Tên không được chứa ký tự đặc biệt');
+        else if (specialRegex.test(form.fullname.value)) handleAlert('alert-danger', 'Tên không được chứa ký tự đặc biệt');
         else if (form.phone.value === '') handleAlert('alert-danger', 'Số điện thoại không được để trống');
-        else if (specialRegex.test(form.phone.value))
-            handleAlert('alert-danger', 'Số điện thoại không dược chứa ký tự đặc biệt');
-        else if (form.phone.value.includes(' '))
-            handleAlert('alert-danger', 'Số điện thoại không được chứa khoảng trắng');
+        else if (specialRegex.test(form.phone.value)) handleAlert('alert-danger', 'Số điện thoại không dược chứa ký tự đặc biệt');
+        else if (form.phone.value.includes(' ')) handleAlert('alert-danger', 'Số điện thoại không được chứa khoảng trắng');
         else if (form.address.value === '') handleAlert('alert-danger', 'Địa chỉ không được để trống');
         else if (form.birthday.value === '') handleAlert('alert-danger', 'Ngày sinh không được để trống');
         else if (form.joined_date.value === '') handleAlert('alert-danger', 'Ngày tham gia không được để trống');
         else if (form.timekeeper_id.value === '') handleAlert('alert-danger', 'Số giờ cần làm không được để trống');
-        else if (!numberRegex.test(form.timekeeper_id.value))
-            handleAlert('alert-danger', 'Số giờ cần làm chỉ được chứa số ');
-        else if (specialRegex.test(form.timekeeper_id.value))
-            handleAlert('alert-danger', 'Số giờ cần làm không được chứa ký tự đặc biệt');
-        else if (form.timekeeper_id.value.includes(' '))
-            handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
+        else if (!numberRegex.test(form.timekeeper_id.value)) handleAlert('alert-danger', 'Số giờ cần làm chỉ được chứa số ');
+        else if (specialRegex.test(form.timekeeper_id.value)) handleAlert('alert-danger', 'Số giờ cần làm không được chứa ký tự đặc biệt');
+        else if (form.timekeeper_id.value.includes(' ')) handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
         else if (form.sabbatical.value === '') handleAlert('alert-danger', 'Số giờ nghỉ phép không được để trống');
-        else if (!numberRegex.test(form.sabbatical.value))
-            handleAlert('alert-danger', 'Số giờ nghỉ phép chỉ được chứa số ');
-        else if (specialRegex.test(form.sabbatical.value))
-            handleAlert('alert-danger', 'Số giờ nghỉ phép không được chứa ký tự đặc biệt');
-        else if (form.sabbatical.value.includes(' '))
-            handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
+        else if (!numberRegex.test(form.sabbatical.value)) handleAlert('alert-danger', 'Số giờ nghỉ phép chỉ được chứa số ');
+        else if (specialRegex.test(form.sabbatical.value)) handleAlert('alert-danger', 'Số giờ nghỉ phép không được chứa ký tự đặc biệt');
+        else if (form.sabbatical.value.includes(' ')) handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
         else {
             if (form.username.value.includes(' ')) form.username.value = form.username.value.replace(/ /g, '');
             form.username.value = form.username.value
@@ -277,14 +261,7 @@ function Role() {
                 );
                 employeeId
                     .then((result) => {
-                        if (result)
-                            saveUser(
-                                result,
-                                form.username.value.trim(),
-                                form.password.value.trim(),
-                                form.role_id.value.trim(),
-                                'POST',
-                            );
+                        if (result) saveUser(result, form.username.value.trim(), form.password.value.trim(), form.role_id.value.trim(), 'POST');
                     })
                     .catch((error) => {
                         console.error('Error:', error);
@@ -329,7 +306,7 @@ function Role() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -358,8 +335,7 @@ function Role() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
@@ -370,90 +346,54 @@ function Role() {
                                                     Tên đăng nhập<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        id="username"
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        placeholder="tiennguyen"
-                                                    />
+                                                    <input id="username" className={cx('form-control')} type="text" placeholder="tiennguyen" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Email</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="email"
-                                                        id="email"
-                                                        placeholder="example@xxx.yyy"
-                                                    />
+                                                    <input className={cx('form-control')} type="email" id="email" placeholder="example@xxx.yyy" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Họ tên</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        placeholder="Nguyen Van A"
-                                                        id="fullname"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" placeholder="Nguyen Van A" id="fullname" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Số điện thoại</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        placeholder="0123456789"
-                                                        id="phone"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" placeholder="0123456789" id="phone" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày sinh</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
-                                                        <input
-                                                            type="date"
-                                                            className={cx('form-control')}
-                                                            id="birthday"
-                                                        />
+                                                        <input type="date" className={cx('form-control')} id="birthday" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Địa chỉ</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        placeholder="Berlin"
-                                                        id="address"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" placeholder="Berlin" id="address" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày gia nhập</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <div className={cx('input-group')}>
-                                                        <input
-                                                            type="date"
-                                                            className={cx('form-control')}
-                                                            id="joined_date"
-                                                            placeholder="12/07/2024"
-                                                        />
+                                                        <input type="date" className={cx('form-control')} id="joined_date" placeholder="12/07/2024" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
-                                                    Văn phòng làm việc
-                                                </label>
+                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Văn phòng làm việc</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <select id="structure_id" className={cx('form-control', 'select')}>
-                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                        {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             structures.map((item) => (
                                                                 <option key={item.id} value={item.id}>
                                                                     {item.name} - {item.officeI.name}
@@ -479,23 +419,14 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Số giờ nghỉ phép</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="text"
-                                                        name="sabbatical"
-                                                        id="sabbatical"
-                                                        defaultValue="0"
-                                                    />
+                                                    <input className={cx('form-control')} type="text" name="sabbatical" id="sabbatical" defaultValue="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Công thức lương</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <select
-                                                        id="salary_formula_id"
-                                                        className={cx('form-control', 'select')}
-                                                    >
-                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                    <select id="salary_formula_id" className={cx('form-control', 'select')}>
+                                                        {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             formula.map((item) => (
                                                                 <option key={item.id} value={item.id}>
                                                                     {item.name}
@@ -528,26 +459,15 @@ function Role() {
                                                                 onChange={(e) => changePassword(e)}
                                                                 style={{ marginBottom: 0, border: 'unset' }}
                                                             />
+                                                            <i className={cx('fa-solid fa-eye', 'pc-1')} id="iconShow" onClick={() => tooglePass(true)}></i>
                                                             <i
-                                                                className={cx('fa-solid fa-eye', 'pc-1')}
-                                                                id="iconShow"
-                                                                onClick={() => tooglePass(true)}
-                                                            ></i>
-                                                            <i
-                                                                className={cx(
-                                                                    'fa-solid fa-eye-slash',
-                                                                    'pc-1',
-                                                                    'hidden',
-                                                                )}
+                                                                className={cx('fa-solid fa-eye-slash', 'pc-1', 'hidden')}
                                                                 id="iconHidden"
                                                                 onClick={() => tooglePass(false)}
                                                             ></i>
                                                         </div>
                                                         <span className={cx('input-group-btn', 'pc-2')}>
-                                                            <button
-                                                                onClick={clickAutoPassword}
-                                                                className={cx('btn', 'btn-primary', 'button-2')}
-                                                            >
+                                                            <button onClick={clickAutoPassword} className={cx('btn', 'btn-primary', 'button-2')}>
                                                                 Tạo tự động
                                                             </button>
                                                         </span>
@@ -575,12 +495,7 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Nhập lại mật khẩu</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input
-                                                        className={cx('form-control')}
-                                                        type="password"
-                                                        readOnly
-                                                        id="comfirm_password"
-                                                    />
+                                                    <input className={cx('form-control')} type="password" readOnly id="comfirm_password" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -589,7 +504,7 @@ function Role() {
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <select id="role_id" className={cx('form-control', 'select')}>
-                                                        {!decodeToken(token, 'ROLE_NHÂN') &&
+                                                        {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             roles.map((item) => (
                                                                 <option key={item.name} value={item.name}>
                                                                     {item.name}
@@ -602,20 +517,12 @@ function Role() {
                                                 <ul className={cx('pc-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
-                                                <button
-                                                    type="button"
-                                                    className={cx('close', 'pc-1')}
-                                                    onClick={clickClose}
-                                                >
+                                                <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>
                                                     ×
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={handleClickAddUser}
-                                                >
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={handleClickAddUser}>
                                                     Lưu
                                                 </button>
                                                 <a href={routes.user}>

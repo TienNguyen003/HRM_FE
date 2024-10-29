@@ -4,24 +4,18 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { getStructures } from '../ingredient';
 import { Pagination } from '../../layout/pagination/pagination';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Checks() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'ATTD_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [time, setTime] = useState([]);
     const [structures, setStructures] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const getTime = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -49,7 +43,7 @@ function Checks() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -65,12 +59,14 @@ function Checks() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getStructures(token).then((result) => setStructures(result));
+            await checkRole(state.account.role.permissions, 'ATTD_VIEW', true);
+            await getStructures(state.user).then((result) => setStructures(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getTime(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getTime(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -83,7 +79,7 @@ function Checks() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -155,8 +151,8 @@ function Checks() {
                                                     <th className={cx('text-center', 'm-0')}>Văn phòng</th>
                                                     <th className={cx('text-center')}>Ngày</th>
                                                     <th className={cx('text-center')}>Giờ</th>
-                                                    {decodeToken(token, 'ATTD_EDIT') && <th className={cx('text-center')}>Sửa</th>}
-                                                    {decodeToken(token, 'ATTD_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'ATTD_EDIT') && <th className={cx('text-center')}>Sửa</th>}
+                                                    {checkRole(state.account.role.permissions, 'ATTD_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {time.map((item, index) => (
                                                     <tr key={index}>
@@ -167,14 +163,14 @@ function Checks() {
                                                         </td>
                                                         <td className={cx('text-center')}>{item.date}</td>
                                                         <td className={cx('text-center')}>{item.time}</td>
-                                                        {decodeToken(token, 'ATTD_EDIT') && (
+                                                        {checkRole(state.account.role.permissions, 'ATTD_EDIT') && (
                                                             <td className={cx('text-center')}>
                                                                 <a href={routes.checkEdit.replace(':name', item.id)} className={cx('edit-record')}>
                                                                     <i className={cx('fas fa-edit')}></i>
                                                                 </a>
                                                             </td>
                                                         )}
-                                                        {decodeToken(token, 'ATTD_DELETE') && (
+                                                        {checkRole(state.account.role.permissions, 'ATTD_DELETE') && (
                                                             <td className={cx('text-center')}>
                                                                 <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
                                                                     <i className={cx('far fa-trash-alt text-red')}></i>

@@ -4,19 +4,15 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
-import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
-import { getAllUser, getUser } from '../../ingredient';
 import TableSalary from './tablesalary';
+import { BASE_URL } from '../../../../config/config';
+import { getAllUser, getUser } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'SALA_ADD', true)
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [bank, setBank] = useState([]);
     const [recipe, setRecipe] = useState('');
     const [time, setTime] = useState('');
@@ -24,7 +20,6 @@ export default function Create() {
     const [bankId, setBankId] = useState('');
     const [employeeId, setEmployeeId] = useState('');
     const [user, setUser] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getBank = async (id) => {
         try {
@@ -32,7 +27,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -44,11 +39,13 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
+            await checkRole(state.account.role.permissions, 'SALA_ADD', true);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const saveSalaryTable = () => {
         const bank = document.querySelector('#bank').value;
@@ -95,8 +92,7 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
@@ -107,11 +103,7 @@ export default function Create() {
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <select
-                                                        id="user_name"
-                                                        className={cx('form-control', 'select')}
-                                                        onChange={saveSalaryTable}
-                                                    >
+                                                    <select id="user_name" className={cx('form-control', 'select')} onChange={saveSalaryTable}>
                                                         <option value="">--Chọn nhân viên--</option>
                                                         {user.map((item) => (
                                                             <option
@@ -131,11 +123,7 @@ export default function Create() {
                                                     Ngân hàng<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <select
-                                                        id="bank"
-                                                        className={cx('form-control', 'select')}
-                                                        onChange={saveSalaryTable}
-                                                    >
+                                                    <select id="bank" className={cx('form-control', 'select')} onChange={saveSalaryTable}>
                                                         <option value="">--Chọn ngân hàng--</option>
                                                         {bank.map((item) => (
                                                             <option key={item.id} value={item.id}>
@@ -169,11 +157,7 @@ export default function Create() {
                                                         <option value="11">11</option>
                                                         <option value="12">12</option>
                                                     </select>
-                                                    <select
-                                                        id="year"
-                                                        className={cx('form-control', 'select', 'pc-2')}
-                                                        onChange={saveSalaryTable}
-                                                    >
+                                                    <select id="year" className={cx('form-control', 'select', 'pc-2')} onChange={saveSalaryTable}>
                                                         <option value="2024">2024</option>
                                                         <option value="2025">2025</option>
                                                         <option value="2026">2026</option>

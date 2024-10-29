@@ -5,22 +5,17 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Formulas() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'CALC_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [formula, setFormula] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getFormula = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -36,7 +31,7 @@ export default function Formulas() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -51,11 +46,13 @@ export default function Formulas() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'CALC_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getFormula();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -68,7 +65,7 @@ export default function Formulas() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -90,7 +87,7 @@ export default function Formulas() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -142,11 +139,13 @@ export default function Formulas() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, "CALC_ADD") && <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.salaryFormulasCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
-                                                </a>
-                                            </div>}
+                                            {checkRole(state.account.role.permissions, 'CALC_ADD') && (
+                                                <div className={cx('pc-2', 'text-right')}>
+                                                    <a href={routes.salaryFormulasCreate} className={cx('btn')}>
+                                                        <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -157,20 +156,20 @@ export default function Formulas() {
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Tên công thức</th>
                                                     <th className={cx('text-center', 'm-0')}>Công thức tính</th>
-                                                    {decodeToken(token, 'CALC_EDIT') && (
+                                                    {checkRole(state.account.role.permissions, 'CALC_EDIT') && (
                                                         <>
                                                             <th className={cx('text-center')}>Trạng thái</th>
                                                             <th className={cx('text-center')}>Sửa</th>
                                                         </>
                                                     )}
-                                                    {decodeToken(token, 'CALC_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'CALC_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {formula.map((item, index) => (
                                                     <tr key={index}>
                                                         <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.name}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.salaryFormula}</td>
-                                                        {decodeToken(token, 'CALC_EDIT') && (
+                                                        {checkRole(state.account.role.permissions, 'CALC_EDIT') && (
                                                             <>
                                                                 <td
                                                                     style={{
@@ -186,7 +185,7 @@ export default function Formulas() {
                                                                 </td>
                                                             </>
                                                         )}
-                                                        {decodeToken(token, 'CALC_DELETE') && (
+                                                        {checkRole(state.account.role.permissions, 'CALC_DELETE') && (
                                                             <td className={cx('text-center')}>
                                                                 <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
                                                                     <i className={cx('far fa-trash-alt text-red')}></i>

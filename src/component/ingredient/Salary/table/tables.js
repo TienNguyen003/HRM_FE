@@ -4,26 +4,20 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
+import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { formatter } from '../../ingredient';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { exportExcel } from '../../../layout/excel/excel';
-import Load from '../../../globalstyle/Loading/load';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Salary() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'SALA_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [checkStt, setCheck] = useState(false);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const today = new Date();
 
@@ -53,7 +47,7 @@ export default function Salary() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -70,11 +64,13 @@ export default function Salary() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'SALA_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleExportExcel = async () => {
         const newArray = salary.map(({ status, advance, totalSalary, employee: { name, department }, bank: { owner, nameBank, numberBank }, ...rest }) => ({
@@ -140,7 +136,7 @@ export default function Salary() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify(arrIp),
             });
@@ -246,16 +242,12 @@ export default function Salary() {
     };
 
     const handleSendEmail = async (arrIp) => {
-        const modalLoad = document.querySelector('#modal-load');
-        const load = document.querySelector('#load');
         try {
-            load.classList.toggle(`${cx('hidden')}`);
-            modalLoad.classList.toggle(`${cx('hidden')}`);
             const response = await fetch(`${BASE_URL}salary_tables/email`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify(arrIp),
             });
@@ -263,8 +255,6 @@ export default function Salary() {
             const data = await response.json();
             if (data.code === 303) {
                 alert(data.result);
-                load.classList.toggle(`${cx('hidden')}`);
-                modalLoad.classList.toggle(`${cx('hidden')}`);
             }
         } catch (error) {
             console.log(error);
@@ -281,8 +271,7 @@ export default function Salary() {
 
     return (
         <>
-            <div className={cx('load', 'hidden')} id="modal-load"></div>
-            <Load className={cx('hidden')} id="load" />
+            <Load className={cx('hidden', 'load')} />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -332,7 +321,7 @@ export default function Salary() {
                                                 <button className={cx('btn', 'btn-success')} onClick={handleExportExcel}>
                                                     <i className={cx('fas fa-download')}></i> Xuất excel
                                                 </button>
-                                                {decodeToken(token, 'SALA_ADD') && (
+                                                {checkRole(state.account.role.permissions, 'SALA_ADD') && (
                                                     <a style={{ marginLeft: '5px' }} href={routes.salaryTableCreate} className={cx('btn')}>
                                                         <i className={cx('fa fa-plus')}></i> Tạo Bảng Lương
                                                     </a>
@@ -342,7 +331,7 @@ export default function Salary() {
                                     </div>
 
                                     <div className={cx('card-body')}>
-                                        {decodeToken(token, 'SALA_EDIT') && (
+                                        {checkRole(state.account.role.permissions, 'SALA_EDIT') && (
                                             <>
                                                 <button disabled={checkStt} className={cx('btn', 'salary-locked', 'btn-default')} onClick={clickCottar}>
                                                     <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;Chốt lương
@@ -406,7 +395,7 @@ export default function Salary() {
                                                     <th className={cx('text-center')}>Lương tháng</th>
                                                     <th className={cx('text-center')}>Tổng lương</th>
                                                     <th className={cx('text-center', 'm-0')}>Trạng thái</th>
-                                                    {decodeToken(token, 'SALA_EDIT') && <th className={cx('text-center')}>VietQR</th>}
+                                                    {checkRole(state.account.role.permissions, 'SALA_EDIT') && <th className={cx('text-center')}>VietQR</th>}
                                                     <th className={cx('text-center')}>Xem</th>
                                                 </tr>
                                                 {salary.map((item, index) => (
@@ -441,7 +430,7 @@ export default function Salary() {
                                                                 <i className="fas fa-lock" title="Chưa khoá"></i>
                                                             )}
                                                         </td>
-                                                        {decodeToken(token, 'SALA_EDIT') && (
+                                                        {checkRole(state.account.role.permissions, 'SALA_EDIT') && (
                                                             <td className={cx('text-center')} onClick={(e) => showQRCode(e)} style={{ cursor: 'pointer' }}>
                                                                 <a
                                                                     id="vietqr"

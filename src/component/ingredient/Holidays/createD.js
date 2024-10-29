@@ -5,18 +5,13 @@ import { useEffect } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'LEAV_ADD', true);
-    })();
-
-    const token = localStorage.getItem('authorizationData') || '';
+    const { state, redirectLogin, checkRole } = useAuth();
     const path = window.location.pathname.replace('/holidays/day_off/edit/', '');
 
     const getHoliday = async () => {
@@ -26,7 +21,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -41,10 +36,12 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'LEAV_ADD', true);
             await getHoliday();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleSave = async (nameDay, timeDay, method = 'POST') => {
         let url = `${BASE_URL}day_off_categories`;
@@ -54,7 +51,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({ nameDay, timeDay }),
             });

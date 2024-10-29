@@ -4,16 +4,15 @@ import { ScheduleComponent, Day, Week, Month, Inject, ViewsDirective, ViewDirect
 
 import styles from '../create.module.scss';
 import { BASE_URL } from '../../../config/config';
-import { decodeToken } from '../../globalstyle/checkToken';
 import { getAllUser, getUser } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Calendar() {
+    const { state, redirectLogin, checkRole } = useAuth();
     const [dataField, setDataField] = useState([]);
     const [user, setUser] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const options = {
         weekday: 'short',
@@ -36,7 +35,7 @@ export default function Calendar() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -65,7 +64,7 @@ export default function Calendar() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -92,7 +91,7 @@ export default function Calendar() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -117,12 +116,13 @@ export default function Calendar() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
-            await fetchData(employee.id);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
+            await fetchData(state.account.employee.id);
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleChangeEmployee = (e) => {
         fetchData(e.target.value);

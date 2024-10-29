@@ -4,23 +4,17 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Contract() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'CONT_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [contracts, setContracts] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     //lấy thông tin hợp đồng
     const fetchData = async (id) => {
@@ -37,7 +31,7 @@ function Contract() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -54,11 +48,13 @@ function Contract() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'CONT_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await fetchData(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await fetchData(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     // ấn xóa hop dong
     const clickDelete = async (event, id) => {
@@ -74,7 +70,7 @@ function Contract() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -101,7 +97,7 @@ function Contract() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -154,7 +150,7 @@ function Contract() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, 'CONT_ADD') && (
+                                            {checkRole(state.account.role.permissions, 'CONT_ADD') && (
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.userContractsCreate} className={cx('btn')}>
                                                         <i className={cx('fa fa-plus')}></i>
@@ -174,13 +170,13 @@ function Contract() {
                                                     <th className={cx('text-center', 'm-0')}>Ngày bắt đầu</th>
                                                     <th className={cx('text-center', 'm-0')}>Ngày kết thúc</th>
                                                     <th className={cx('text-center')}>Tệp đính kèm</th>
-                                                    {decodeToken(token, 'CONT_EDIT') && (
+                                                    {checkRole(state.account.role.permissions, 'CONT_EDIT') && (
                                                         <>
                                                             <th className={cx('text-center')}>Trạng thái</th>
                                                             <th className={cx('text-center')}>Sửa</th>
                                                         </>
                                                     )}
-                                                    {decodeToken(token, 'CONT_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'CONT_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {contracts.map((item, index) => (
                                                     <tr className={cx('record-data')} key={item.id}>
@@ -198,7 +194,7 @@ function Contract() {
                                                                 ''
                                                             )}
                                                         </td>
-                                                        {decodeToken(token, 'CONT_EDIT') && (
+                                                        {checkRole(state.account.role.permissions, 'CONT_EDIT') && (
                                                             <>
                                                                 <td>
                                                                     <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
@@ -210,7 +206,7 @@ function Contract() {
                                                                 </td>
                                                             </>
                                                         )}
-                                                        {decodeToken(token, 'CONT_DELETE') && (
+                                                        {checkRole(state.account.role.permissions, 'CONT_DELETE') && (
                                                             <td className={cx('text-center')}>
                                                                 <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.id)}>
                                                                     <i className={cx('far fa-trash-alt text-red')}></i>

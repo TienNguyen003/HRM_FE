@@ -6,17 +6,119 @@ import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
 import routes from '../../../config/routes';
-import { decodeToken, checkPermission } from '../../globalstyle/checkToken';
+import { checkRole, checkRolePermission } from '../../globalstyle/checkToken';
 import { BASE_URL } from '../../../config/config';
+import { Menu } from '../menu/menu';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Header({ onClick }) {
-    function redirectLogin() {
-        window.location.href = '/login';
-    }
+    const { state, logout } = useAuth();
 
-    function changeClass(dropMenu) {
+    const menuList = [
+        {
+            permission: ['PERM_ADD', 'PERM_VIEW'],
+            dataHref: routesConfig.role,
+            icon: 'fa fa-registered',
+            nameMenu: 'Phân Quyền',
+            listSubMenu: [
+                { title: 'Danh Sách', href: routesConfig.role, role: 'PERM_ADD' },
+                { title: 'Thêm Mới', href: routesConfig.roleCreate, role: 'PERM_VIEW' },
+            ],
+        },
+        {
+            permission: ['USER_ADD', 'USER_VIEW', 'BANK_VIEW', 'CONT_VIEW'],
+            dataHref: routesConfig.user,
+            icon: 'fa fa-users',
+            nameMenu: 'Nhân Viên',
+            listSubMenu: [
+                { title: 'Thêm Mới', href: routesConfig.userCreate, role: 'USER_ADD' },
+                { title: 'Danh Sách', href: routesConfig.user, role: 'USER_VIEW' },
+                { title: 'TK Ngân Hàng', href: routesConfig.userBank, role: 'BANK_VIEW' },
+                { title: 'TT Hợp Đồng', href: routesConfig.userContracts, role: 'CONT_VIEW' },
+            ],
+        },
+        {
+            permission: ['REQ_VIEW', 'REQ_APPROVALS', 'HIST_VIEW'],
+            dataHref: routesConfig.leave,
+            icon: 'fa fa-envelope-open-text',
+            nameMenu: 'Đơn Xin Nghỉ',
+            listSubMenu: [
+                { title: 'Danh Sách', href: routesConfig.leave, role: 'REQ_VIEW' },
+                { title: 'Duyệt Đơn Xin Nghỉ', href: routesConfig.leaveApprovals, role: 'REQ_APPROVALS' },
+                { title: 'Lịch Sử Nghỉ Phép', href: routesConfig.leaveHs, role: 'HIST_VIEW' },
+            ],
+        },
+        {
+            permission: ['ATTD_ADD', 'ATTD_VIEW'],
+            dataHref: routesConfig.checks,
+            icon: 'fa fa-calendar-check',
+            nameMenu: 'Chấm Công',
+            listSubMenu: [
+                { title: 'Thêm Mới', href: routesConfig.checkCreate, role: 'ATTD_ADD' },
+                { title: 'Danh Sách', href: routesConfig.checks, role: 'ATTD_VIEW' },
+                { title: 'Bảng Thời Gian', href: routesConfig.checkCalendar },
+            ],
+        },
+        {
+            permission: ['ADV_ADD', 'ADV_VIEW', 'ADV_APPROVALS'],
+            dataHref: routesConfig.advances,
+            icon: 'fa fa-hand-holding-usd',
+            nameMenu: 'Ứng Lương',
+            listSubMenu: [
+                { title: 'Tạo Yêu Cầu', href: routesConfig.advanceCreate, role: 'ADV_ADD' },
+                { title: 'Danh Sách', href: routesConfig.advances, role: 'ADV_VIEW' },
+                { title: 'Duyệt Yêu Cầu', href: routesConfig.advanceApprovals, role: 'ADV_APPROVALS' },
+            ],
+        },
+        {
+            permission: ['SAFI_VIEW', 'SAUP_VIEW', 'SALA_VIEW', 'CATG_VIEW', 'CALC_VIEW'],
+            dataHref: routesConfig.salary,
+            icon: 'fa fa-dollar-sign',
+            nameMenu: 'Quản Lý Lương',
+            listSubMenu: [
+                { title: 'Lương Cố Định', href: routesConfig.salary, role: 'SAFI_VIEW' },
+                { title: 'Lương Theo Tháng', href: routesConfig.salaryDynamic, role: 'SAUP_VIEW' },
+                { title: 'Bảng Lương', href: routesConfig.salaryTable, role: 'SALA_VIEW' },
+                { title: 'Danh Mục Lương', href: routesConfig.salaryCategories, role: 'CATG_VIEW' },
+                { title: 'Công Thức Tính Lương', href: routesConfig.salaryFormulas, role: 'CALC_VIEW' },
+            ],
+        },
+        {
+            permission: ['HOLI_VIEW', 'LEAV_VIEW'],
+            dataHref: routesConfig.holidays,
+            icon: 'fa fa-umbrella-beach',
+            nameMenu: 'Quản Lý Ngày Nghỉ',
+            listSubMenu: [
+                { title: 'Lịch Nghỉ Lễ', href: routesConfig.holidays, role: 'HOLI_VIEW' },
+                { title: 'Danh Mục Ngày Nghỉ', href: routesConfig.holidayDayOff, role: 'LEAV_VIEW' },
+            ],
+        },
+        {
+            permission: ['COMP_VIEW', 'OFF_VIEW'],
+            dataHref: routesConfig.offices,
+            icon: 'fa fa-cogs',
+            nameMenu: 'Thiết Lập Chung',
+            listSubMenu: [
+                { title: 'Thông Tin Văn Phòng', href: routesConfig.offices, role: 'COMP_VIEW' },
+                { title: 'Cấu Trúc Công Ty', href: routesConfig.officeStructures, role: 'OFF_VIEW' },
+                { title: 'Cài Đặt', href: routesConfig.officeSetup },
+            ],
+        },
+        {
+            permission: '',
+            dataHref: routesConfig.checkcv,
+            icon: 'fa fa-file',
+            nameMenu: 'Lọc CV ứng viên',
+            listSubMenu: [
+                { title: 'Danh Sách', href: routesConfig.listcv, role: '' },
+                { title: 'Lọc CV', href: routesConfig.checkcv, role: '' },
+            ],
+        },
+    ];
+
+    const changeClass = (dropMenu) => {
         const subMenu = dropMenu.querySelector(`.${cx('submenu')}`);
         const iconLeft = dropMenu.querySelector(`.${cx('iconLeft')}`);
         const linkActive = dropMenu.querySelector(`.${cx('link-active')}`);
@@ -24,28 +126,7 @@ function Header({ onClick }) {
         if (iconLeft) iconLeft.classList.toggle(`${cx('icon-rotate')}`);
         if (linkActive) linkActive.classList.toggle(`${cx('change-bg')}`);
         if (subMenu) subMenu.classList.toggle(`${cx('showBlock')}`);
-    }
-
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
-    const idU = localStorage.getItem('idU');
-
-    async function logout() {
-        const response = await fetch(`${BASE_URL}auth/logout`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-                token: token,
-            }),
-        });
-
-        localStorage.setItem('authorizationData', '');
-        localStorage.setItem('employee', '');
-        localStorage.setItem('idU', '');
-        redirectLogin();
-    }
+    };
 
     const clickLanguage = () => {
         const language = document.querySelector(`.${cx('language')}`);
@@ -74,23 +155,19 @@ function Header({ onClick }) {
             dropMenu.classList.remove(`${cx('active')}`);
             if (location === '/' && dropMenu.getAttribute('data-href') === '/') {
                 dropMenu.classList.add(`${cx('active')}`);
-            } else if (
-                location.includes(dropMenu.getAttribute('data-href')) &&
-                dropMenu.getAttribute('data-href') != '/'
-            ) {
+            } else if (location.includes(dropMenu.getAttribute('data-href')) && dropMenu.getAttribute('data-href') != '/') {
                 dropMenu.classList.add(`${cx('active')}`);
                 changeClass(dropMenu);
             }
-
+            
             dropMenu.addEventListener('click', (e) => {
                 changeClass(dropMenu);
             });
         });
 
-        document.querySelector(`.${cx('hidden-xs')}`).textContent = employee.name;
-        if (employee.image != '')
-            document.querySelector(`.${cx('img-circle')}`).src = document.querySelector(`.${cx('user-image')}`).src =
-                employee.image;
+        document.querySelector(`.${cx('hidden-xs')}`).textContent = state.account && state.account.employee.name;
+        if (state.account && state.account.employee.image != '')
+            document.querySelector(`.${cx('img-circle')}`).src = document.querySelector(`.${cx('user-image')}`).src = state.account.employee.image;
 
         const menu = document.querySelector(`.${cx('jquery-accordion-menu')}`);
         const nav = document.querySelector(`.${cx('nav-wrapper')}`);
@@ -98,7 +175,7 @@ function Header({ onClick }) {
             menu.classList.add(`${cx('menu-click')}`);
             nav.classList.add(`${cx('nav-click')}`);
         }
-    }, []);
+    }, [state.user]);
 
     return (
         <div>
@@ -129,30 +206,19 @@ function Header({ onClick }) {
 
                     <li className={cx('user-menu')}>
                         <a className={cx('dropdown-toggle')} onClick={clickUser}>
-                            <img
-                                src="https://demo.hrm.one/img/no-avatar.jpg"
-                                className={cx('user-image')}
-                                alt="User Image"
-                            />
+                            <img src="https://demo.hrm.one/img/no-avatar.jpg" className={cx('user-image')} alt="User Image" />
                             <span className={cx('hidden-xs')}></span>
                         </a>
                         <ul className={cx('dropdown-menu', 'user')}>
                             <li className={cx('user-header')}>
                                 <a>
-                                    <img
-                                        src="https://demo.hrm.one/img/no-avatar.jpg"
-                                        className={cx('img-circle')}
-                                        alt="User Image"
-                                    />
+                                    <img src="https://demo.hrm.one/img/no-avatar.jpg" className={cx('img-circle')} alt="User Image" />
                                 </a>
                             </li>
 
                             <li className={cx('user-footer')}>
                                 <div className={cx('pull-bottom')}>
-                                    <a
-                                        href={routes.userEdit.replace(':name', idU)}
-                                        className={cx('btn-success', 'btn')}
-                                    >
+                                    <a href={routes.userEdit.replace(':name', state.account && state.account.employee.id)} className={cx('btn-success', 'btn')}>
                                         Sửa hồ sơ
                                     </a>
                                 </div>
@@ -181,226 +247,16 @@ function Header({ onClick }) {
                             </div>
                         </a>
                     </li>
-                    {checkPermission(token, ['PERM_ADD', 'PERM_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.role}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fa fa-registered"></i>&nbsp;&nbsp;<p>Phân Quyền</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'PERM_ADD', false) && (
-                                        <a href={routesConfig.role}>Danh Sách </a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'PERM_VIEW', false) && (
-                                        <a href={routesConfig.roleCreate}>Thêm Mới</a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['USER_ADD', 'USER_VIEW', 'BANK_VIEW', 'CONT_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.user}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fa fa-users"></i>&nbsp;&nbsp;<p>Nhân Viên</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'USER_ADD', false) && (
-                                        <a href={routesConfig.userCreate}>Thêm Mới</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'USER_VIEW', false) && (
-                                        <a href={routesConfig.user}>Danh Sách</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'BANK_VIEW', false) && (
-                                        <a href={routesConfig.userBank}>TK Ngân Hàng</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'CONT_VIEW', false) && (
-                                        <a href={routesConfig.userContracts}>TT Hợp Đồng</a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['REQ_VIEW', 'REQ_APPROVALS', 'HIST_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.leave}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fas fa-envelope-open-text"></i>&nbsp;&nbsp;
-                                    <p>Đơn Xin Nghỉ</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'REQ_VIEW', false) && (
-                                        <a href={routesConfig.leave}>Danh Sách </a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'REQ_APPROVALS', false) && (
-                                        <a href={routesConfig.leaveApprovals}>Duyệt Đơn Xin Nghỉ </a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'HIST_VIEW', false) && (
-                                        <a href={routesConfig.leaveHs}>Lịch Sử Nghỉ Phép </a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['ATTD_ADD', 'ATTD_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.checks}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="far fa-calendar-check"></i>&nbsp;&nbsp;<p>Chấm Công</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'ATTD_ADD', false) && (
-                                        <a href={routesConfig.checkCreate}>Thêm Mới</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'ATTD_VIEW', false) && (
-                                        <a href={routesConfig.checks}>Danh Sách </a>
-                                    )}
-                                </li>
-                                <li>
-                                    <a href={routesConfig.checkCalendar}>Bảng Thời Gian</a>
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['ADV_ADD', 'ADV_VIEW', 'ADV_APPROVALS']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.advances}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fas fa-hand-holding-usd"></i>&nbsp;&nbsp;
-                                    <p>Ứng Lương</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'ADV_ADD', false) && (
-                                        <a href={routesConfig.advanceCreate}>Tạo Yêu Cầu</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'ADV_VIEW', false) && (
-                                        <a href={routesConfig.advances}>Danh Sách</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'ADV_APPROVALS', false) && (
-                                        <a href={routesConfig.advanceApprovals}>Duyệt Yêu Cầu</a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['SAFI_VIEW', 'SAUP_VIEW', 'SALA_VIEW', 'CATG_VIEW', 'CALC_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.salary}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fas fa-dollar-sign"></i>&nbsp;&nbsp;<p>Quản Lý Lương</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'SAFI_VIEW', false) && (
-                                        <a href={routesConfig.salary}>Lương Cố Định</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'SAUP_VIEW', false) && (
-                                        <a href={routesConfig.salaryDynamic}>Lương Theo Tháng</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'SALA_VIEW', false) && (
-                                        <a href={routesConfig.salaryTable}>Bảng Lương</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'CATG_VIEW', false) && (
-                                        <a href={routesConfig.salaryCategories}>Danh Mục Lương</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'CALC_VIEW', false) && (
-                                        <a href={routesConfig.salaryFormulas}>Công Thức Tính Lương</a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['HOLI_VIEW', 'LEAV_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.holidays}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fas fa-umbrella-beach"></i>&nbsp;&nbsp;
-                                    <p>Quản Lý Ngày Nghỉ</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'HOLI_VIEW', false) && (
-                                        <a href={routesConfig.holidays}>Lịch Nghỉ Lễ</a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'LEAV_VIEW', false) && (
-                                        <a href={routesConfig.holidayDayOff}>Danh Mục Ngày Nghỉ</a>
-                                    )}
-                                </li>
-                            </ul>
-                        </li>
-                    )}
-                    {checkPermission(token, ['COMP_VIEW', 'OFF_VIEW']) && (
-                        <li className={cx('drop-menu')} data-href={routesConfig.offices}>
-                            <a className={cx('link-active')}>
-                                <div className={cx('nav-link')}>
-                                    <i className="fas fa-cogs"></i>&nbsp;&nbsp;<p>Thiết Lập Chung</p>
-                                </div>
-                                <FontAwesomeIcon className={cx('iconLeft')} icon={faChevronLeft}></FontAwesomeIcon>
-                            </a>
-                            <ul className={cx('submenu')}>
-                                <li>
-                                    {decodeToken(token, 'COMP_VIEW', false) && (
-                                        <a href={routesConfig.offices}>Thông Tin Văn Phòng </a>
-                                    )}
-                                </li>
-                                <li>
-                                    {decodeToken(token, 'OFF_VIEW', false) && (
-                                        <a href={routesConfig.officeStructures}>Cấu Trúc Công Ty</a>
-                                    )}
-                                </li>
-                                <li>
-                                    <a href={routesConfig.officeSetup}>Cài Đặt</a>
-                                </li>
-                            </ul>
-                        </li>
-                    )}
+                    {menuList.map((menu, index) => (
+                        <Menu
+                            key={index}
+                            permission={menu.permission}
+                            dataHref={menu.dataHref}
+                            icon={menu.icon}
+                            nameMenu={menu.nameMenu}
+                            listSubMenu={menu.listSubMenu}
+                        />
+                    ))}
                 </ul>
             </div>
         </div>

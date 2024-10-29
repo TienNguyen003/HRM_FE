@@ -4,21 +4,17 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
+import { checkRole } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getAllUser, handleAlert, getUser } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'REQ_ADD', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [isStatus, setIsStatus] = useState(0);
     const [user, setUser] = useState([]);
     const [dayOff, setDayOff] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/day_off_letters/edit/', '');
 
     const getLeave = async () => {
@@ -28,7 +24,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -55,14 +51,16 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getDayOffCate(token).then((result) => setDayOff(result));
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
+            await checkRole(state.account.role.permissions, 'REQ_ADD', true);
+            await getDayOffCate(state.user).then((result) => setDayOff(result));
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getLeave();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const saveLeave = async (dayOff, startTime, endTime, totalTime, approved, reason, employeeId, method) => {
         let url = `${BASE_URL}day_off_letter`;
@@ -73,7 +71,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     dayOff,

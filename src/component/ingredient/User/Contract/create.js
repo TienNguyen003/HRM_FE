@@ -5,19 +5,15 @@ import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import { getAllUser, handleAlert, getUser } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'CONT_ADD', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [user, setUser] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
+
     const path = window.location.pathname.replace('/users/contracts/edit/', '');
 
     const getContract = async () => {
@@ -33,7 +29,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -53,23 +49,25 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
+            await checkRole(state.account.role.permissions, 'CONT_ADD', true);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
             await getContract();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     // api them
     const saveContract = async (hire_date, dismissal_date, employeeId, urlFile, linkFile, method = 'POST') => {
         let url = `${BASE_URL}contracts`;
-        if (method == 'PUT') url += `?contractsId=${path}`;
+        if (method === 'PUT') url += `?contractsId=${path}`;
         try {
             const response = await fetch(`${url}`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     urlFile,
@@ -121,7 +119,7 @@ export default function Create() {
         const linkFile = document.getElementById('linkFile').value;
         const start = document.querySelector('#start');
         const end = document.querySelector('#end');
-        if (file == 'Choose File') file = '';
+        if (file === 'Choose File') file = '';
         if (start.value === '') handleAlert('alert-danger', 'Ngày bắt đầu không được để trống');
         else if (end.value !== '' && end.value <= start.value) handleAlert('alert-danger', 'Ngày kết thúc phải lớn hơn ngày bắt đầu');
         else {
@@ -188,8 +186,7 @@ export default function Create() {
 
     return (
         <>
-            <div className={cx('load', 'hidden')} id="modal-load"></div>
-            <Load className={cx('hidden')} id="load" />
+            <Load />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -207,7 +204,7 @@ export default function Create() {
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>

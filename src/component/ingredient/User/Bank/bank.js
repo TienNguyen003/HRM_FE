@@ -1,28 +1,20 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Bank() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'BANK_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [bank, setBank] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     //lấy thông tin ngân hàng
     async function fetchData(id) {
@@ -45,7 +37,7 @@ function Bank() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -61,12 +53,14 @@ function Bank() {
     }
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'BANK_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
-            if (decodeToken(token, 'ROLE_NHÂN')) await fetchData(employee.id);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) await fetchData(state.account.employee.id);
             else await fetchData('');
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     // ấn xóa tài khoản ngân hàng
     const clickDelete = async (event, id) => {
@@ -82,7 +76,7 @@ function Bank() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -96,7 +90,7 @@ function Bank() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     const changeStatus = (e) => {
         let isCheck = e.target.checked ? 1 : 0;
@@ -109,7 +103,7 @@ function Bank() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -167,15 +161,14 @@ function Bank() {
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <FontAwesomeIcon icon={faSearch} />
-                                                                    &ensp;Tìm Kiếm
+                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
                                                             </div>
                                                         </div>
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, 'BANK_ADD') && (
+                                            {checkRole(state.account.role.permissions, 'BANK_ADD') && (
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.userBankCreate} className={cx('btn')}>
                                                         <i className={cx('fa fa-plus')}></i>
@@ -196,13 +189,13 @@ function Bank() {
                                                     <th className={cx('text-center', 'm-0')}>Chủ tài khoản</th>
                                                     <th className={cx('text-center', 'm-0')}>Số tài khoản</th>
                                                     <th className={cx('text-center', 'm-0')}>Độ ưu tiên</th>
-                                                    {decodeToken(token, 'BANK_EDIT') && (
+                                                    {checkRole(state.account.role.permissions, 'BANK_EDIT') && (
                                                         <>
                                                             <th className={cx('text-center')}>Trạng thái</th>
                                                             <th className={cx('text-center')}>Sửa</th>
                                                         </>
                                                     )}
-                                                    {decodeToken(token, 'BANK_DELETE') && <th className={cx('text-center')}>Xoá</th>}
+                                                    {checkRole(state.account.role.permissions, 'BANK_DELETE') && <th className={cx('text-center')}>Xoá</th>}
                                                 </tr>
                                                 {bank.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
@@ -212,22 +205,22 @@ function Bank() {
                                                         <td className={cx('text-center', 'm-0')}>{item.owner}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.numberBank}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.priority}</td>
-                                                        {decodeToken(token, 'BANK_EDIT') && (
+                                                        {checkRole(state.account.role.permissions, 'BANK_EDIT') && (
                                                             <>
                                                                 <td>
                                                                     <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
                                                                 </td>
                                                                 <td className={cx('text-center')}>
                                                                     <a href={routes.userBankEdit.replace(':name', item.id)} className={cx('edit-record')}>
-                                                                        <FontAwesomeIcon icon={faEdit} />
+                                                                        <i className={cx('fas fa-edit')}></i>
                                                                     </a>
                                                                 </td>
                                                             </>
                                                         )}
-                                                        {decodeToken(token, 'BANK_DELETE') && (
+                                                        {checkRole(state.account.role.permissions, 'BANK_DELETE') && (
                                                             <td className={cx('text-center')}>
                                                                 <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.id)}>
-                                                                    <FontAwesomeIcon icon={faTrash} />
+                                                                    <i className={cx('far fa-trash-alt text-red')}></i>
                                                                 </a>
                                                             </td>
                                                         )}

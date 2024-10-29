@@ -5,23 +5,17 @@ import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import Status from '../../globalstyle/Status/status';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken, checkPermission } from '../../globalstyle/checkToken';
 import { getDayOffCate } from '../ingredient';
 import { Pagination } from '../../layout/pagination/pagination';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Leave() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'REQ_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole, checkRolePermission } = useAuth();
     const [leave, setLeave] = useState([]);
     const [dayOff, setDayOff] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
     const path = window.location.pathname.replace('/day_off_letters/approvals', 'approvals');
 
     // danh sach don xin nghi
@@ -44,7 +38,7 @@ function Leave() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -60,12 +54,14 @@ function Leave() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getDayOffCate(token).then((result) => setDayOff(result));
+            await checkRole(state.account.role.permissions, 'REQ_VIEW', true);
+            await getDayOffCate(state.user).then((result) => setDayOff(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getLeave(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getLeave(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     return (
         <>
@@ -87,20 +83,10 @@ function Leave() {
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'post-form', 'm-5')}>
-                                                                <input
-                                                                    type="text"
-                                                                    className={cx('form-control')}
-                                                                    name="name"
-                                                                    id="name"
-                                                                    placeholder="Họ tên"
-                                                                />
+                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
                                                             </div>
                                                             <div className={cx('pc-3', 'post-form', 'm-5')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="dayOff"
-                                                                    id="dayOff"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="dayOff" id="dayOff">
                                                                     <option value="">-- Loại nghỉ --</option>
                                                                     {dayOff.map((item) => (
                                                                         <option key={item.id} value={item.id}>
@@ -110,11 +96,7 @@ function Leave() {
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-3', 'post-form', 'm-5')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                    id="status"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="status" id="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="0">Đang chờ duyệt</option>
                                                                     <option value="1">Đã phê duyệt</option>
@@ -132,10 +114,12 @@ function Leave() {
                                                 </div>
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.leaveCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i>
-                                                    &nbsp;Thêm mới
-                                                </a>
+                                                {checkRole(state.account.role.permissions, 'REQ_ADD') && (
+                                                    <a href={routes.leaveCreate} className={cx('btn')}>
+                                                        <i className={cx('fa fa-plus')}></i>
+                                                        &nbsp;Thêm mới
+                                                    </a>
+                                                )}
                                             </div>
                                         </div>
                                     </div>
@@ -152,19 +136,13 @@ function Leave() {
                                                     <th className={cx('text-center', 'm-0')}>Tổng số giờ nghỉ</th>
                                                     <th className={cx('text-center', 'm-0')}>Người duyệt</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>
-                                                    {decodeToken(token, 'REQ_APPROVALS') && (
-                                                        <th className={cx('text-center')}>Sửa</th>
-                                                    )}
+                                                    {checkRole(state.account.role.permissions, 'REQ_APPROVALS') && <th className={cx('text-center')}>Sửa</th>}
                                                 </tr>
                                                 {leave.map((item, index) => (
                                                     <tr key={item.id} className={cx('record-data')}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
-                                                        <td className={cx('text-center')}>
-                                                            {item.dayOffCategories.nameDay}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{item.dayOffCategories.nameDay}</td>
                                                         <td className={cx('text-center')}>{item.startTime}</td>
                                                         <td className={cx('text-center')}>{item.endTime}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.totalTime}h</td>
@@ -172,26 +150,16 @@ function Leave() {
                                                         <td className={cx('text-center')}>
                                                             <Status status={item.status} />
                                                         </td>
-                                                        {checkPermission(token, ['REQ_APPROVALS', 'REQ_EDIT']) && (
+                                                        {checkRolePermission(state.account.role.permissions, ['REQ_APPROVALS', 'REQ_EDIT']) && (
                                                             <td className={cx('text-center')}>
                                                                 {path.includes('approvals') ? (
-                                                                    decodeToken(token, 'REQ_APPROVALS') && (
-                                                                        <a
-                                                                            href={routes.leaveApprovalsEdit.replace(
-                                                                                ':name',
-                                                                                item.id,
-                                                                            )}
-                                                                        >
+                                                                    checkRole(state.account.role.permissions, 'REQ_APPROVALS') && (
+                                                                        <a href={routes.leaveApprovalsEdit.replace(':name', item.id)}>
                                                                             <i className={cx('fas fa-eye')}></i>
                                                                         </a>
                                                                     )
                                                                 ) : (
-                                                                    <a
-                                                                        href={routes.leaveEdit.replace(
-                                                                            ':name',
-                                                                            item.id,
-                                                                        )}
-                                                                    >
+                                                                    <a href={routes.leaveEdit.replace(':name', item.id)}>
                                                                         <i className={cx('fas fa-edit')}></i>
                                                                     </a>
                                                                 )}
@@ -204,15 +172,11 @@ function Leave() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10', 'm-9')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2', 'm-3')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

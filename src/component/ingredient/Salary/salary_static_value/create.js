@@ -5,24 +5,18 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { getAllUser, getSalaryCate, handleAlert, getUser } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'SAFI_ADD', true);
-    })();
-
-    const numberRegex = /[0-9]/;
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [user, setUser] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
     const path = window.location.pathname.replace('/salary/edit/', '');
+
+    const numberRegex = /[0-9]/;
 
     const getSalary = async (id) => {
         id = numberRegex.test(path) ? path : id;
@@ -32,7 +26,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -58,14 +52,16 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
-            await getSalaryCate('Lương cố định ', token).then((result) => setSalaryCate(result));
+            await checkRole(state.account.role.permissions, 'SAFI_ADD', true);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
+            await getSalaryCate('Lương cố định ', state.user).then((result) => setSalaryCate(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(employee.id);
+            await getSalary(state.account.employee.id);
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleSaveSalary = async (wageRequests, method = 'POST') => {
         try {
@@ -73,7 +69,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify(wageRequests),
             });

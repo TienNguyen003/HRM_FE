@@ -5,22 +5,17 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Structures() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'COMP_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [structures, setStructures] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getStructures = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -38,7 +33,7 @@ function Structures() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -53,11 +48,13 @@ function Structures() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'COMP_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getStructures();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -70,7 +67,7 @@ function Structures() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -92,7 +89,7 @@ function Structures() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {

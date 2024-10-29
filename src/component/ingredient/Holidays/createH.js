@@ -5,18 +5,13 @@ import { useEffect } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'HOLI_ADD', true)
-    })();
-
-    const token = localStorage.getItem('authorizationData') || '';
+    const { state, redirectLogin, checkRole } = useAuth();
     const path = window.location.pathname.replace('/holidays/edit/', '');
 
     const getHoliday = async () => {
@@ -26,7 +21,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -42,20 +37,22 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'HOLI_ADD', true);
             await getHoliday();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
-    const handleSave = async (name, startTime, endTime, totalTime, method = "POST") => {
+    const handleSave = async (name, startTime, endTime, totalTime, method = 'POST') => {
         let url = `${BASE_URL}holidays`;
-        if(method == "PUT") url += `?holidayId=${path}`
+        if (method == 'PUT') url += `?holidayId=${path}`;
         try {
             const response = await fetch(`${url}`, {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({ name, startTime, endTime, totalTime }),
             });
@@ -73,7 +70,7 @@ export default function Create() {
         } catch (error) {
             console.log(error);
         }
-    };    
+    };
 
     const saveHoliday = () => {
         const name = document.querySelector('#name').value;
@@ -87,7 +84,7 @@ export default function Create() {
         else {
             const totalTime = (new Date(end) - new Date(start)) / (1000 * 3600);
             if (path.includes('/holidays/create')) handleSave(name, start, end, totalTime);
-            else handleSave(name, start, end, totalTime, "PUT");
+            else handleSave(name, start, end, totalTime, 'PUT');
         }
     };
 
@@ -116,12 +113,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -160,11 +156,7 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={saveHoliday}
-                                                >
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
                                                     Lưu lại
                                                 </button>
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>

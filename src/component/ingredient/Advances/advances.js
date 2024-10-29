@@ -6,23 +6,17 @@ import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import Status from '../../globalstyle/Status/status';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { formatter } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Advances() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'ADV_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [advances, setAdvances] = useState([]);
     const [pages, setPages] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/advances/approvals', 'approvals');
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     //lấy don ung luong
     const fetchData = async (id) => {
@@ -39,7 +33,7 @@ export default function Advances() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -58,11 +52,13 @@ export default function Advances() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'ADV_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await fetchData(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await fetchData(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     return (
         <>

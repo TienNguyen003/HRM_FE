@@ -5,19 +5,14 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'COMP_ADD', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [office, setOffice] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/offices/structures/edit/', '');
 
     const getStructure = async () => {
@@ -27,7 +22,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -35,9 +30,7 @@ export default function Create() {
             if (data.code === 303) {
                 document.querySelector('#name').value = data.result.name;
                 document.querySelector('#short').value = data.result.shortName;
-                document
-                    .querySelector('#belong')
-                    .querySelector('option[value="' + data.result.officeI.id + '"]').selected = true;
+                document.querySelector('#belong').querySelector('option[value="' + data.result.officeI.id + '"]').selected = true;
             }
         } catch (error) {
             console.log(error);
@@ -50,7 +43,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -62,11 +55,13 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'COMP_ADD', true);
             await getOfc();
             await getStructure();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleSave = async (name, officeId, shortName, method) => {
         let url = `${BASE_URL}structures`;
@@ -76,7 +71,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({ name, officeId, shortName }),
             });
@@ -133,12 +128,11 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
 
-                                    <form onSubmit={(e) => handleSubmitForm(e)} id='formReset'>
+                                    <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
@@ -179,11 +173,7 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    type="submit"
-                                                    className={cx('btn', 'btn-success')}
-                                                    onClick={saveOffices}
-                                                >
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveOffices}>
                                                     Lưu lại
                                                 </button>
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>

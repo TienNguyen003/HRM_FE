@@ -4,23 +4,18 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { getAllUser, getAdvances, handleAlert, getUser } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'ADV_ADD', true);
-    })();
-
     const specialRegex = /[!@#$%^&*()_+{}\[\]:;<>,.?\/\\~-]/;
     const numberRegex = /[0-9]/;
 
+    const { state, redirectLogin, checkRole } = useAuth();
     const [isStatus, setIsStatus] = useState(0);
     const [user, setUser] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/advances/edit/', '');
 
     const handleAdvances = (advance) => {
@@ -31,14 +26,16 @@ function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
+            await checkRole(state.account && state.account.role.permissions, 'ADV_ADD', true);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             if (path.includes('/advances/create')) return;
-            await getAdvances(path, token).then((result) => handleAdvances(result));
+            await getAdvances(path, state.user).then((result) => handleAdvances(result));
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleSaveAdvances = async (employeeId, money, note, method = 'POST') => {
         let url = `${BASE_URL}advances`;
@@ -48,7 +45,7 @@ function Create() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     money,
@@ -115,7 +112,7 @@ function Create() {
                                     </div>
 
                                     <div className={cx('card-body')}>
-                                        <form onSubmit={(e) => submitForm(e)} id='formReset'>
+                                        <form onSubmit={(e) => submitForm(e)} id="formReset">
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>{' '}

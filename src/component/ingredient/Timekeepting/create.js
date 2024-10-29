@@ -5,24 +5,19 @@ import { useEffect, useState } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { getAllUser, handleAlert, getUser } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'ATTD_ADD', true);
-    })();
+    const { state, redirectLogin, checkRole } = useAuth();
+    const [user, setUser] = useState([]);
+    const path = window.location.pathname.replace('/checks/edit/', '');
 
     const date = new Date();
     const day = date.toISOString().split('T')[0];
     const time = date.toLocaleTimeString('vi-VN');
-
-    const [user, setUser] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const path = window.location.pathname.replace('/checks/edit/', '');
 
     const getTimeKeeping = async () => {
         if (path.includes('/checks/create')) return;
@@ -31,7 +26,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -54,13 +49,15 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            if (decodeToken(token, 'ROLE_NHÂN')) getUser(token).then((result) => setUser([result]));
-            else await getAllUser(token).then((result) => setUser(result));
+            await checkRole(state.account.role.permissions, 'ATTD_ADD', true);
+            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) getUser(state.user, state.account.id).then((result) => setUser([result]));
+            else await getAllUser(state.user).then((result) => setUser(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getTimeKeeping();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const saveTimeKeeping = async (employeeId, date, time, reason, method) => {
         let url = `${BASE_URL}checks`;
@@ -71,7 +68,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     time,
@@ -151,11 +148,20 @@ export default function Create() {
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
-                                                        {user.map((item) => (
-                                                            <option data-vacationhours={item.employee.vacationHours} key={item.id} value={item.employee.id}>
-                                                                {item.employee.name}
-                                                            </option>
-                                                        ))}
+                                                        {user.map(
+                                                            (item) => (
+                                                                console.log(item),
+                                                                (
+                                                                    <option
+                                                                        data-vacationhours={item.employee.vacationHours}
+                                                                        key={item.id}
+                                                                        value={item.employee.id}
+                                                                    >
+                                                                        {item.employee.name}
+                                                                    </option>
+                                                                )
+                                                            ),
+                                                        )}
                                                     </select>
                                                 </div>
                                             </div>

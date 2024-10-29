@@ -4,24 +4,18 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { formatter, getSalaryCate } from '../../ingredient';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Static_values() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'SAFI_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const getSalary = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -39,7 +33,7 @@ function Static_values() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -55,37 +49,36 @@ function Static_values() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getSalaryCate('Lương cố định', token).then((result) => setSalaryCate(result));
+            await checkRole(state.account.role.permissions, 'SAFI_VIEW', true);
+            await getSalaryCate('Lương cố định', state.user).then((result) => setSalaryCate(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
-    const clickDelete = async (id) => {        
+    const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
-        if (result) handleClickDelete(id);        
-    }
+        if (result) handleClickDelete(id);
+    };
 
     const handleClickDelete = async (id) => {
         try {
-            const response = await fetch(
-                `${BASE_URL}salary_static_values?wageId=${id}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}salary_static_values?wageId=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <>
@@ -107,23 +100,15 @@ function Static_values() {
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input
-                                                                    type="text"
-                                                                    className={cx('form-control')}
-                                                                    name="name"
-                                                                    id="name"
-                                                                    placeholder="Họ tên"
-                                                                />
+                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="category_id"
-                                                                    id="category_id"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="category_id" id="category_id">
                                                                     <option value="">-- Danh mục lương --</option>
                                                                     {salaryCate.map((item) => (
-                                                                        <option key={item.id} value={item.id}>{item.name}</option>
+                                                                        <option key={item.id} value={item.id}>
+                                                                            {item.name}
+                                                                        </option>
                                                                     ))}
                                                                 </select>
                                                             </div>
@@ -136,12 +121,13 @@ function Static_values() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, "SAFI_ADD") && <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.salaryCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i>
-                                                    {' '}Thêm mới
-                                                </a>
-                                            </div>}
+                                            {checkRole(state.account.role.permissions, 'SAFI_ADD') && (
+                                                <div className={cx('pc-2', 'text-right')}>
+                                                    <a href={routes.salaryCreate} className={cx('btn')}>
+                                                        <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -153,31 +139,29 @@ function Static_values() {
                                                     <th className={cx('text-center')}>Họ tên</th>
                                                     <th className={cx('text-center')}>Danh mục lương</th>
                                                     <th className={cx('text-center')}>Giá trị</th>
-                                                    {decodeToken(token, "SAFI_EDIT") && <th className={cx('text-center')}>Sửa</th>}
-                                                    {decodeToken(token, "SAFI_DELETE") && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'SAFI_EDIT') && <th className={cx('text-center')}>Sửa</th>}
+                                                    {checkRole(state.account.role.permissions, 'SAFI_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.employee.name}</td>
-                                                        <td className={cx('text-center')}>
-                                                            {item.wageCategories.name}
-                                                        </td>
-                                                        <td className={cx('text-center')}>
-                                                            {formatter.format(item.salary)}
-                                                        </td>
-                                                        {decodeToken(token, "SAFI_EDIT") && <td className={cx('text-center')}>
-                                                            <a href={routes.salaryEdit.replace(':name', item.employee.id)} className={cx('edit-record')}>
-                                                                <i className={cx('fas fa-edit')}></i>
-                                                            </a>
-                                                        </td>}
-                                                        {decodeToken(token, "SAFI_DELETE") && <td className={cx('text-center')}>
-                                                            <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
-                                                                <i className={cx('far fa-trash-alt text-red')}></i>
-                                                            </a>
-                                                        </td>}
+                                                        <td className={cx('text-center')}>{item.wageCategories.name}</td>
+                                                        <td className={cx('text-center')}>{formatter.format(item.salary)}</td>
+                                                        {checkRole(state.account.role.permissions, 'SAFI_EDIT') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a href={routes.salaryEdit.replace(':name', item.employee.id)} className={cx('edit-record')}>
+                                                                    <i className={cx('fas fa-edit')}></i>
+                                                                </a>
+                                                            </td>
+                                                        )}
+                                                        {checkRole(state.account.role.permissions, 'SAFI_DELETE') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
+                                                                    <i className={cx('far fa-trash-alt text-red')}></i>
+                                                                </a>
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))}
                                             </tbody>
@@ -185,15 +169,11 @@ function Static_values() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

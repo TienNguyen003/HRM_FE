@@ -1,21 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
-import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
 import Load from '../../../globalstyle/Loading/load';
+import { BASE_URL } from '../../../../config/config';
+import { reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, handleAlert } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function ChangePass() {
-    (async function () {
-        await isCheck();
-    })();
-
-    const token = localStorage.getItem('authorizationData') || '';
+    const { state, redirectLogin } = useAuth();
 
     const handleChangePass = async (id, new_pass, old_pass) => {
         try {
@@ -23,7 +19,7 @@ export default function ChangePass() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     id,
@@ -57,7 +53,7 @@ export default function ChangePass() {
         else if (password.length < 6) handleAlert('alert-danger', 'Mật khẩu mới ít nhất 6 ký tự');
         else if (comfirm_pass === '') handleAlert('alert-danger', 'Mật khẩu nhập lại không được trống');
         else if (comfirm_pass.length < 6) handleAlert('alert-danger', 'Mật khẩu nhập lại ít nhất 6 ký tự');
-        else if (comfirm_pass != password) handleAlert('alert-danger', 'Mật khẩu không khớp');
+        else if (comfirm_pass !== password) handleAlert('alert-danger', 'Mật khẩu không khớp');
         else handleChangePass(idU, password, old_pass);
     };
 
@@ -67,10 +63,13 @@ export default function ChangePass() {
         alert.classList.add(`${cx('hidden')}`);
     };
 
+    useEffect(() => {
+        if (!state.isAuthenticated) redirectLogin();
+    }, [state.isAuthenticated, state.loading]);
+
     return (
         <>
-            <div className={cx('load', 'hidden')} id="modal-load"></div>
-            <Load className={cx('hidden')} id="load" />
+            <Load />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -82,8 +81,7 @@ export default function ChangePass() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
                                     <div className={cx('card-body')}>
@@ -117,11 +115,7 @@ export default function ChangePass() {
                                                             onChange={(e) => changePassword(e)}
                                                             style={{ marginBottom: 0, border: 'unset' }}
                                                         />
-                                                        <i
-                                                            className={cx('fa-solid fa-eye', 'pc-1')}
-                                                            id="iconShow"
-                                                            onClick={() => tooglePass(true)}
-                                                        ></i>
+                                                        <i className={cx('fa-solid fa-eye', 'pc-1')} id="iconShow" onClick={() => tooglePass(true)}></i>
                                                         <i
                                                             className={cx('fa-solid fa-eye-slash', 'pc-1', 'hidden')}
                                                             id="iconHidden"
@@ -129,10 +123,7 @@ export default function ChangePass() {
                                                         ></i>
                                                     </div>
                                                     <span className={cx('input-group-btn', 'pc-2')}>
-                                                        <button
-                                                            onClick={clickAutoPassword}
-                                                            className={cx('btn', 'btn-primary', 'button-2')}
-                                                        >
+                                                        <button onClick={clickAutoPassword} className={cx('btn', 'btn-primary', 'button-2')}>
                                                             Tạo tự động
                                                         </button>
                                                     </span>
@@ -160,11 +151,7 @@ export default function ChangePass() {
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2', 'control-label')}>Nhập lại mật khẩu</label>
                                             <div className={cx('pc-8')}>
-                                                <input
-                                                    className={cx('form-control')}
-                                                    type="password"
-                                                    id="comfirm_pass"
-                                                />
+                                                <input className={cx('form-control')} type="password" id="comfirm_pass" />
                                             </div>
                                         </div>
                                         <div className={cx('alert')}>
@@ -176,11 +163,7 @@ export default function ChangePass() {
                                             </button>
                                         </div>
                                         <div className={cx('box-footer', 'text-center')}>
-                                            <button
-                                                type="submit"
-                                                className={cx('btn', 'btn-success')}
-                                                onClick={changePass}
-                                            >
+                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={changePass}>
                                                 Cập nhật mật khẩu
                                             </button>
                                             &nbsp;

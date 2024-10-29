@@ -3,33 +3,29 @@ import { useEffect, useState } from 'react';
 
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
-import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
-import { getAdvances, handleAlert, formatter } from '../ingredient';
 import Status from '../../globalstyle/Status/status';
+import { BASE_URL } from '../../../config/config';
+import { getAdvances, formatter } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Approvals() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'ADV_APPROVALS', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [isStatus, setIsStatus] = useState(0);
     const [advances, setAdvances] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const approvedBy = JSON.parse(localStorage.getItem('employee')).name || '';
     const path = window.location.pathname.replace('/advances/approvals/edit/', '');
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getAdvances(path, token).then((result) => {
+            await checkRole(state.account.role.permissions, 'ADV_APPROVALS', true);;
+            await getAdvances(path, state.user).then((result) => {
                 setAdvances([result]);
                 setIsStatus(result.status);
             });
         })();
-    }, []);
+    }, [isStatus, state.isAuthenticated, state.loading]);
 
     const updateSttAdvances = async () => {
         const status = document.querySelector('#status').value;
@@ -39,18 +35,18 @@ function Approvals() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
-                    approvedBy,
+                    approvedBy: state.account.employee.name,
                     status,
                 }),
             });
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Cập nhật thành công!');
-                reloadAfterDelay(400);
+                alert('Cập nhật thành công!');
+                setIsStatus((pre) => !pre);
             }
         } catch (error) {
             console.log(error);
@@ -113,10 +109,7 @@ function Approvals() {
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
                                                 <label className={cx('pc-2', 'm-3')}>Bình luận:</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <textarea
-                                                        className={cx('form-control', 'message')}
-                                                        rows="6"
-                                                    ></textarea>
+                                                    <textarea className={cx('form-control', 'message')} rows="6"></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>

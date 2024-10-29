@@ -4,24 +4,18 @@ import { useEffect, useState } from 'react';
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { formatter, getSalaryCate } from '../../ingredient';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Static_values() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'SAUP_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     const getSalary = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -41,7 +35,7 @@ function Static_values() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -57,12 +51,14 @@ function Static_values() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getSalaryCate('Lương theo tháng', token).then((result) => setSalaryCate(result));
+            await checkRole(state.account.role.permissions, 'SAUP_VIEW', true);
+            await getSalaryCate('Lương theo tháng', state.user).then((result) => setSalaryCate(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-            await getSalary(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -75,7 +71,7 @@ function Static_values() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -130,11 +126,13 @@ function Static_values() {
                                                     </form>
                                                 </div>
                                             </div>
-                                            {decodeToken(token, "SAUP_ADD") && <div className={cx('pc-2', 'text-right')}>
-                                                <a href={routes.salaryDynamiCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
-                                                </a>
-                                            </div>}
+                                            {checkRole(state.account.role.permissions, 'SAUP_ADD') && (
+                                                <div className={cx('pc-2', 'text-right')}>
+                                                    <a href={routes.salaryDynamiCreate} className={cx('btn')}>
+                                                        <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    </a>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
 
@@ -147,8 +145,8 @@ function Static_values() {
                                                     <th className={cx('text-center')}>Tháng</th>
                                                     <th className={cx('text-center')}>Danh mục lương</th>
                                                     <th className={cx('text-center')}>Giá trị</th>
-                                                    {decodeToken(token, "SAUF_EDIT") && <th className={cx('text-center')}>Sửa</th>}
-                                                    {decodeToken(token, "SAUF_DELETE") && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'SAUP_EDIT') && <th className={cx('text-center')}>Sửa</th>}
+                                                    {checkRole(state.account.role.permissions, 'SAUP_DELETE') && <th className={cx('text-center')}>Xóa</th>}
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
@@ -157,16 +155,23 @@ function Static_values() {
                                                         <td className={cx('text-center')}>{item.time}</td>
                                                         <td className={cx('text-center')}>{item.wageCategories.name}</td>
                                                         <td className={cx('text-center')}>{formatter.format(item.salary)}</td>
-                                                        {decodeToken(token, "SAUF_EDIT") && <td className={cx('text-center')}>
-                                                            <a href={routes.salaryDynamiEdit.replace(':name', item.employee.id)} className={cx('edit-record')}>
-                                                                <i className={cx('fas fa-edit')}></i>
-                                                            </a>
-                                                        </td>}
-                                                        {decodeToken(token, "SAUF_DELETE") && <td className={cx('text-center')}>
-                                                            <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
-                                                                <i className={cx('far fa-trash-alt text-red')}></i>
-                                                            </a>
-                                                        </td>}
+                                                        {checkRole(state.account.role.permissions, 'SAUP_EDIT') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a
+                                                                    href={routes.salaryDynamiEdit.replace(':name', item.employee.id)}
+                                                                    className={cx('edit-record')}
+                                                                >
+                                                                    <i className={cx('fas fa-edit')}></i>
+                                                                </a>
+                                                            </td>
+                                                        )}
+                                                        {checkRole(state.account.role.permissions, 'SAUP_DELETE') && (
+                                                            <td className={cx('text-center')}>
+                                                                <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
+                                                                    <i className={cx('far fa-trash-alt text-red')}></i>
+                                                                </a>
+                                                            </td>
+                                                        )}
                                                     </tr>
                                                 ))}
                                             </tbody>

@@ -5,21 +5,16 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Holidays() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'HOLI_VIEW', true)
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [holiday, setHoliday] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getHoliday = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -33,7 +28,7 @@ function Holidays() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -48,11 +43,13 @@ function Holidays() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'HOLI_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -61,23 +58,20 @@ function Holidays() {
 
     const handleClickDelete = async (id) => {
         try {
-            const response = await fetch(
-                `${BASE_URL}holidays?holidayId=${id}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}holidays?holidayId=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <>
@@ -107,7 +101,7 @@ function Holidays() {
                                                                     placeholder="Tên ngày nghỉ"
                                                                 />
                                                             </div>
-                                                            <div className={cx('pc-2', 'post-form')}  style={{ height: '36.6px' }}>
+                                                            <div className={cx('pc-2', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
                                                                     <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
@@ -138,26 +132,18 @@ function Holidays() {
                                                 </tr>
                                                 {holiday.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.name}</td>
                                                         <td className={cx('text-center')}>{item.startTime}</td>
                                                         <td className={cx('text-center')}>{item.endTime}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.totalTime}h</td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                href={routes.holidaysEdit.replace(':name', item.id)}
-                                                                className={cx('edit-record')}
-                                                            >
+                                                            <a href={routes.holidaysEdit.replace(':name', item.id)} className={cx('edit-record')}>
                                                                 <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={() => clickDelete(item.id)}
-                                                            >
+                                                            <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
                                                                 <i className={cx('far fa-trash-alt text-red')}></i>
                                                             </a>
                                                         </td>
@@ -168,15 +154,11 @@ function Holidays() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

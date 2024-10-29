@@ -1,21 +1,18 @@
 import classNames from 'classnames/bind';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 import styles from '../../create.module.scss';
 import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
-import { decodeToken, isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, handleAlert } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function RsPass() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, "USER_RSPASS", true)
-    })();
+    const { state, redirectLogin, checkRole } = useAuth();
 
-    const token = localStorage.getItem('authorizationData') || '';
     let path = window.location.pathname.replace('/users/reset-password/', '');
     let search = new URLSearchParams(window.location.search).get('token');
     search = search ? search.split('hrm') : '';
@@ -26,7 +23,7 @@ function RsPass() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -52,7 +49,7 @@ function RsPass() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -69,19 +66,20 @@ function RsPass() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'USER_RSPASS', true);
             await getUsers();
             await updatePass();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const resetPass = () => {
         const email = document.querySelector('#email').textContent;
         const id = document.querySelector(`.${cx('employee_name')}`).textContent;
         const pass = document.querySelector('#password').value;
 
-        if (path === '' || pass.length < 6)
-            handleAlert('alert-danger', 'Mật khẩu không được để trống và phải lớn hơn 6 ký tự');
+        if (path === '' || pass.length < 6) handleAlert('alert-danger', 'Mật khẩu không được để trống và phải lớn hơn 6 ký tự');
         else if (!path.includes('token')) handleRsPass(path, pass, email);
     };
 
@@ -95,7 +93,7 @@ function RsPass() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     id,
@@ -109,7 +107,7 @@ function RsPass() {
                 load.classList.toggle(`${cx('hidden')}`);
                 modalLoad.classList.toggle(`${cx('hidden')}`);
                 alert(data.result);
-                reloadAfterDelay(400)
+                reloadAfterDelay(400);
             }
         } catch (error) {
             console.error('Error fetching offices:', error.message);
@@ -124,8 +122,7 @@ function RsPass() {
 
     return (
         <>
-            <div className={cx('load', 'hidden')} id="modal-load"></div>
-            <Load className={cx('hidden')} id="load" />
+            <Load />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -137,8 +134,7 @@ function RsPass() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt
-                                            buộc
+                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
                                         </p>
                                     </div>
                                     <div className={cx('card-body')}>
@@ -173,11 +169,7 @@ function RsPass() {
                                                             onChange={(e) => changePassword(e)}
                                                             style={{ marginBottom: 0, border: 'unset' }}
                                                         />
-                                                        <i
-                                                            className={cx('fa-solid fa-eye', 'pc-1')}
-                                                            id="iconShow"
-                                                            onClick={() => tooglePass(true)}
-                                                        ></i>
+                                                        <i className={cx('fa-solid fa-eye', 'pc-1')} id="iconShow" onClick={() => tooglePass(true)}></i>
                                                         <i
                                                             className={cx('fa-solid fa-eye-slash', 'pc-1', 'hidden')}
                                                             id="iconHidden"
@@ -185,10 +177,7 @@ function RsPass() {
                                                         ></i>
                                                     </div>
                                                     <span className={cx('input-group-btn', 'pc-2')}>
-                                                        <button
-                                                            onClick={clickAutoPassword}
-                                                            className={cx('btn', 'btn-primary', 'button-2')}
-                                                        >
+                                                        <button onClick={clickAutoPassword} className={cx('btn', 'btn-primary', 'button-2')}>
                                                             Tạo tự động
                                                         </button>
                                                     </span>
@@ -222,11 +211,7 @@ function RsPass() {
                                             </button>
                                         </div>
                                         <div className={cx('box-footer', 'text-center')}>
-                                            <button
-                                                type="submit"
-                                                className={cx('btn', 'btn-success')}
-                                                onClick={resetPass}
-                                            >
+                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={resetPass}>
                                                 Cập nhật mật khẩu
                                             </button>
                                             &nbsp;

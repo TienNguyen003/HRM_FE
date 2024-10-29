@@ -3,22 +3,16 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
-import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
 import Status from '../../../globalstyle/Status/status';
+import { BASE_URL } from '../../../../config/config';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Leave() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'REQ_APPROVALS', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [isStatus, setIsStatus] = useState(0);
     const [leave, setLeave] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employeeName = JSON.parse(localStorage.getItem('employee')).name || '';
     const path = window.location.pathname.replace('/day_off_letters/approval/', '');
 
     // danh sach don xin nghi
@@ -28,7 +22,7 @@ function Leave() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -43,10 +37,12 @@ function Leave() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'REQ_APPROVALS', true);
             await getLeave();
         })();
-    }, []);
+    }, [isStatus, state.isAuthenticated, state.loading]);
 
     // cap nhat trang thai don
     const handleUpdateStt = async (status, employeeId, time) => {
@@ -55,11 +51,11 @@ function Leave() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     status,
-                    nameApproval: employeeName,
+                    nameApproval: state.account.employee.name,
                     employeeId,
                     time,
                 }),
@@ -68,7 +64,7 @@ function Leave() {
             const data = await response.json();
             if (data.code === 303) {
                 alert('Cập nhật thành công!');
-                reloadAfterDelay(400);
+                setIsStatus((pre) => !pre);
             } else alert(data.messages);
         } catch (error) {
             console.log(error);
@@ -83,14 +79,14 @@ function Leave() {
             3: ' đã hủy đơn xin nghỉ',
         };
 
-        const content = messages[status] ? employeeName + messages[status] : '';
+        const content = messages[status] ? state.account.employee.name + messages[status] : '';
 
         try {
             const response = await fetch(`${BASE_URL}sabbatical_leave_logs`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     content,
@@ -157,11 +153,7 @@ function Leave() {
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
                                                         <label className={cx('pc-5', 'm-4')}>Họ tên:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
-                                                            <p
-                                                                id="employeeId"
-                                                                data-employee={item.employee.id}
-                                                                data-remaining={item.employee.vacationHours}
-                                                            >
+                                                            <p id="employeeId" data-employee={item.employee.id} data-remaining={item.employee.vacationHours}>
                                                                 {item.employee.name}
                                                             </p>
                                                         </div>
@@ -183,12 +175,7 @@ function Leave() {
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
                                                         <label className={cx('pc-5', 'm-4')}>Thời gian tạo:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
-                                                            <p>
-                                                                {new Date(item.creationTime)
-                                                                    .toISOString()
-                                                                    .replace('T', ' ')
-                                                                    .slice(0, 16)}
-                                                            </p>
+                                                            <p>{new Date(item.creationTime).toISOString().replace('T', ' ').slice(0, 16)}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
@@ -221,17 +208,10 @@ function Leave() {
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
                                                 <label className={cx('pc-2')}>Bình luận</label>
-                                                <textarea
-                                                    className={cx('form-control', 'message', 'pc-8')}
-                                                    rows="6"
-                                                ></textarea>
+                                                <textarea className={cx('form-control', 'message', 'pc-8')} rows="6"></textarea>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button
-                                                    disabled={isStatus !== 0}
-                                                    className={cx('btn', 'btn-default')}
-                                                    onClick={updateStatusLeave}
-                                                >
+                                                <button disabled={isStatus !== 0} className={cx('btn', 'btn-default')} onClick={updateStatusLeave}>
                                                     Lưu
                                                 </button>
                                                 <a href={routes.leaveApprovals}>

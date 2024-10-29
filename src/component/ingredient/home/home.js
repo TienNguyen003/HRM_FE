@@ -6,24 +6,19 @@ import routesConfig from '../../../config/routes';
 import styles from './home.module.scss';
 import '../../globalstyle/LibaralyLayout/grid.css';
 import Status from '../../globalstyle/Status/status';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
+import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
 import { getDayOffCate, getTotalTimeHoliday } from '../ingredient';
-import routes from '../../../config/routes';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Home() {
-    (async function () {
-        await isCheck();
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [dayOff, setDayOff] = useState([]);
     const [totalTime, setTime] = useState(0);
     const [leave, setLeave] = useState([]);
     const [dateCalendar, setDateCalendar] = useState([]);
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
-    const token = localStorage.getItem('authorizationData') || '';
     const date = new Date();
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -34,7 +29,7 @@ function Home() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -51,7 +46,7 @@ function Home() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -63,14 +58,15 @@ function Home() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
             const formattedDate = `${year}-${month}`;
-            await getDayOffCate(token).then((result) => setDayOff(result));
-            await getTotalTimeHoliday(token, formattedDate).then((result) => setTime(result || 0));
-            await getLeave(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await getDayOffCate(state.user).then((result) => setDayOff(result));
+            await getTotalTimeHoliday(state.user, formattedDate).then((result) => setTime(result || 0));
+            await getLeave(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
             await getShift();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const caculateDate = async (workHours) => {
         const daysOfWeek = {
@@ -101,6 +97,10 @@ function Home() {
                 const startTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(HHStart, 10), parseInt(mmStart, 10));
 
                 const endTime = new Date(date.getFullYear(), date.getMonth(), date.getDate(), parseInt(HHEnd, 10), parseInt(mmEnd, 10));
+
+                if (endTime <= startTime) {
+                    endTime.setDate(endTime.getDate() + 1);
+                }
 
                 result.push({
                     Id: id,
@@ -175,8 +175,8 @@ function Home() {
                                                 Nghỉ phép
                                             </a>
                                         </h5>
-                                        <span className={cx('info-box-text')}>Đã dùng: {employee.hourOff} giờ</span>
-                                        <span className={cx('info-box-text')}>Còn lại: {employee.vacationHours} giờ</span>
+                                        <span className={cx('info-box-text')}>Đã dùng: {state.account && state.account.employee.hourOff} giờ</span>
+                                        <span className={cx('info-box-text')}>Còn lại: {state.account && state.account.employee.vacationHours} giờ</span>
                                     </div>
                                 </div>
                             </div>
@@ -193,11 +193,11 @@ function Home() {
                                                 <tbody>
                                                     <tr>
                                                         <td>Giờ cần làm việc</td>
-                                                        <td className={cx('text-right')}>{employee.vacationTime}</td>
+                                                        <td className={cx('text-right')}>{state.account && state.account.employee.vacationTime}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Giờ cần chấm công</td>
-                                                        <td className={cx('text-right')}>{employee.timekeeping}</td>
+                                                        <td className={cx('text-right')}>{state.account && state.account.employee.timekeeping}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Giờ nghỉ lễ</td>
@@ -211,7 +211,7 @@ function Home() {
                                                     ))}
                                                     <tr>
                                                         <td>Số lần đi muộn</td>
-                                                        <td className={cx('text-right')}>{employee.lateness}</td>
+                                                        <td className={cx('text-right')}>{state.account && state.account.employee.lateness}</td>
                                                     </tr>
                                                     <tr>
                                                         <td>Số lần quên chấm công</td>
@@ -234,7 +234,7 @@ function Home() {
                             <div className={cx('pc-9', 'm-12')}>
                                 <ScheduleComponent width="100%" height="610px" eventSettings={{ dataSource: dateCalendar }}>
                                     <ViewsDirective>
-                                        <ViewDirective option="Day" readonly={true} />
+                                        <ViewDirective option="Day" readonly={true} timeScale={{ interval: 60, slotCount: 1 }} />
                                         <ViewDirective option="Week" readonly={true} />
                                         <ViewDirective option="Month" readonly={true} />
                                     </ViewsDirective>

@@ -1,25 +1,20 @@
-import React from 'react'
+import React from 'react';
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Categories() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'CATG_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getSalary = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -33,16 +28,13 @@ export default function Categories() {
         document.querySelector('#type').querySelector('option[value="' + type + '"]').selected = true;
 
         try {
-            const response = await fetch(
-                `${BASE_URL}salary_categories?pageNumber=${page}&name=${name}&symbol=${symbol}&salaryType=${type}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}salary_categories?pageNumber=${page}&name=${name}&symbol=${symbol}&salaryType=${type}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) {
@@ -55,36 +47,35 @@ export default function Categories() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'CATG_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getSalary();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
-    const clickDelete = async (id) => {        
+    const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
-        if (result) handleClickDelete(id);        
-    }
+        if (result) handleClickDelete(id);
+    };
 
     const handleClickDelete = async (id) => {
         try {
-            const response = await fetch(
-                `${BASE_URL}salary_categories?dayOffId=${id}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}salary_categories?dayOffId=${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) setTableData((prevData) => prevData.filter((item) => item.id !== id));
         } catch (error) {
             console.log(error);
         }
-    }
+    };
 
     return (
         <>
@@ -124,16 +115,10 @@ export default function Categories() {
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="type"
-                                                                    id="type"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="type" id="type">
                                                                     <option value="">-- Loại lương --</option>
                                                                     <option value="Lương cố định">Lương cố định</option>
-                                                                    <option value="Lương theo tháng">
-                                                                        Lương theo tháng
-                                                                    </option>
+                                                                    <option value="Lương theo tháng">Lương theo tháng</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2', 'm-5', 'post-form')} style={{ height: '36.6px' }}>
@@ -166,9 +151,7 @@ export default function Categories() {
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.name}</td>
                                                         <td className={cx('text-center')}>{item.symbol}</td>
                                                         <td className={cx('text-center')}>{item.salaryType}</td>
@@ -189,15 +172,11 @@ export default function Categories() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>
@@ -210,4 +189,3 @@ export default function Categories() {
         </>
     );
 }
-

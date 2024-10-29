@@ -1,13 +1,12 @@
 import { BASE_URL } from '../../config/config';
-import { jwtDecode } from 'jwt-decode';
 
-function redirectLogin() {
+const redirectLogin = () => {
     return (window.location.href = '/login');
-}
+};
 
-export const isCheck = async function checkToken() {
+export const isCheck = async () => {
     const token = localStorage.getItem('authorizationData') || '';
-    if (token != '') {
+    if (token) {
         const response = await fetch(`${BASE_URL}auth/introspect`, {
             method: 'POST',
             headers: {
@@ -27,23 +26,62 @@ export const isCheck = async function checkToken() {
     }
 };
 
+export const introspect = async (token) => {
+    if (token) {
+        const response = await fetch(`${BASE_URL}auth/introspect`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                token: token,
+            }),
+        });
+
+        const data = await response.json();
+        return data;
+    }
+};
+
+export const getMyInfo = async (token) => {
+    if (token) {
+        const response = await fetch(`${BASE_URL}users/myInfo`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+        });
+
+        const data = await response.json();
+        return data.result;
+    }
+};
+
 export const reloadAfterDelay = (delay) => {
     setTimeout(() => {
         window.location.reload();
     }, delay);
 };
 
-export const decodeToken = (token, permission, isCheck) => {
-    let flag = false;
-    const scope = jwtDecode(token).scope.split(' ');
-    flag = scope.includes(permission.trim()) ? true : false;
-    if (isCheck) if (!flag) window.location.href = window.location.href + '/404';
-    return flag;
-};
+export const refreshToken = async (token) => {
+    try {
+        const response = await fetch(`${BASE_URL}auth/refresh`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+                token,
+            }),
+        });
 
-export const checkPermission = (token, permission) => {
-    let flag = false;
-    const scope = jwtDecode(token).scope.split(' ');
-    flag = permission.some(p => scope.includes(p.trim()));
-    return flag;
+        const data = await response.json();
+        if (data.code === 303) {
+            return data.result.token;
+        }
+    } catch (error) {
+        console.error('Error fetching roles:', error.message);
+    }
 };

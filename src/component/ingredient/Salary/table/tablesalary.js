@@ -4,16 +4,13 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../list.module.scss';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay } from '../../../globalstyle/checkToken';
+import { reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getTotalTimeHoliday, formatter } from '../../ingredient';
 
 const cx = classNames.bind(styles);
 
 export default function TableSalary({ isFlag, recipe, className, employeeId, time, id, vacationTime, bank }) {
-    (async function () {
-        await isCheck();
-    })();
-
+    // const { state, redirectLogin } = useAuth();
     const [formulas, setFormula] = useState();
     const [salaryD, setSalaryD] = useState([]);
     const [dayOff, setDayOff] = useState([]);
@@ -214,7 +211,7 @@ export default function TableSalary({ isFlag, recipe, className, employeeId, tim
         }
     }
 
-    console.clear();
+    // console.clear();
 
     return (
         <div className={cx('row', 'no-gutters', className)} id={id}>

@@ -5,21 +5,17 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
+import { checkRole } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Holidays() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'LEAV_VIEW', true)
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [holiday, setHoliday] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getHoliday = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -31,16 +27,13 @@ function Holidays() {
         document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
 
         try {
-            const response = await fetch(
-                `${BASE_URL}day_off_categories/search?pageNumber=${page}&nameDay=${name}&status=${status}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
-                    },
+            const response = await fetch(`${BASE_URL}day_off_categories/search?pageNumber=${page}&nameDay=${name}&status=${status}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) {
@@ -53,11 +46,14 @@ function Holidays() {
     };
 
     useEffect(() => {
+        if (!state.isAuthenticated) redirectLogin();
+        
         (async function () {
+            await checkRole(state.account && state.account.role.permissions, 'LEAV_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const changeStatus = (e) => {
         let isCheck = e.target.checked ? 1 : 0;
@@ -70,7 +66,7 @@ function Holidays() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -107,11 +103,7 @@ function Holidays() {
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                    id="status"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="status" id="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="1">Hoạt động</option>
                                                                     <option value="0">Không hoạt động</option>
@@ -147,34 +139,21 @@ function Holidays() {
                                                 </tr>
                                                 {holiday.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.nameDay}</td>
                                                         <td className={cx('text-center')}>{item.timeDay}h</td>
                                                         <td className={cx('text-center')}>
-                                                            {item.timeUpdate.slice(0, 10)}{' '}
-                                                            {item.timeUpdate.slice(11, 16)}
+                                                            {item.timeUpdate.slice(0, 10)} {item.timeUpdate.slice(11, 16)}
                                                         </td>
                                                         <td
                                                             style={{
                                                                 width: '120px',
                                                             }}
                                                         >
-                                                            <Status
-                                                                id={item.id}
-                                                                isStatus={item.status}
-                                                                handleChange={(e) => changeStatus(e)}
-                                                            />
+                                                            <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                href={routes.holidayDayOffEdit.replace(
-                                                                    ':name',
-                                                                    item.id,
-                                                                )}
-                                                                className={cx('edit-record')}
-                                                            >
+                                                            <a href={routes.holidayDayOffEdit.replace(':name', item.id)} className={cx('edit-record')}>
                                                                 <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>
@@ -185,15 +164,11 @@ function Holidays() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

@@ -4,17 +4,12 @@ import { useEffect } from 'react';
 import styles from './create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../../globalstyle/checkToken';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Role() {
-    (async function checkToken() {
-        await isCheck();
-        decodeToken(token, 'PERM_ADD', true);
-    })();
-
-    const token = localStorage.getItem('authorizationData') || '';
+    const { state, redirectLogin, refresh, checkRole } = useAuth();
     const path = window.location.pathname.replace('/roles/edit/', '');
 
     const handleClickRole = (isCheck) => {
@@ -57,7 +52,7 @@ function Role() {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
                     name: nameRole.value.toUpperCase(),
@@ -97,7 +92,7 @@ function Role() {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${state.user}`,
             },
         });
         const data = await response.json();
@@ -119,10 +114,12 @@ function Role() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'PERM_ADD', true);
             await getRole();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const clickUpdate = () => {
         const selectedValues = getInput();
@@ -138,7 +135,7 @@ function Role() {
             method: 'PUT',
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
+                Authorization: `Bearer ${state.user}`,
             },
             body: JSON.stringify({
                 des: nameRole.value,
@@ -150,7 +147,7 @@ function Role() {
             alert.classList.add(`${cx('alert-success')}`);
             alert.classList.remove(`${cx('hidden')}`);
             alertCt.textContent = 'Cập nhật dữ liệu thành công';
-            reloadAfterDelay(400);
+            refresh(state.user);
         } else if (data.code === 502) {
             alert.classList.add(`${cx('alert-danger')}`);
             alert.classList.remove(`${cx('hidden')}`);

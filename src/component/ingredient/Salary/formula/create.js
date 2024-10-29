@@ -5,21 +5,16 @@ import { useEffect, useState } from 'react';
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getSalaryCate, handleAlert } from '../../ingredient';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'CALC_ADD', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [dayOff, setDayOff] = useState([]);
     const [salaryDefault, setSalaryD] = useState([]);
     const [salaryMonth, setSalaryM] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
     const path = window.location.pathname.replace('/salary/formulas/edit/', '');
 
     const getFormulas = async () => {
@@ -29,7 +24,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -44,13 +39,15 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
-            await getDayOffCate(token).then((result) => setDayOff(result));
-            await getSalaryCate('Lương cố định', token).then((result) => setSalaryD(result));
-            await getSalaryCate('Lương theo tháng', token).then((result) => setSalaryM(result));
+            await checkRole(state.account.role.permissions, 'CALC_ADD', true);
+            await getDayOffCate(state.user).then((result) => setDayOff(result));
+            await getSalaryCate('Lương cố định', state.user).then((result) => setSalaryD(result));
+            await getSalaryCate('Lương theo tháng', state.user).then((result) => setSalaryM(result));
             await getFormulas();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     //đóng alert
     const clickClose = () => {
@@ -78,7 +75,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({ name, salaryFormula }),
             });
@@ -180,7 +177,7 @@ export default function Create() {
                                     <div className={cx('pc-7')}>
                                         <div className={cx('d-flex justify-content-end')}>
                                             <div className={cx('pc-11')}>
-                                                <form onSubmit={(e) => handleSubmit(e)} id='formReset'>
+                                                <form onSubmit={(e) => handleSubmit(e)} id="formReset">
                                                     <div className={cx('card-body')}>
                                                         <div className={cx('form-group')}>
                                                             <label>

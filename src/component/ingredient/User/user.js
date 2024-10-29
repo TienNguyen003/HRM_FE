@@ -1,30 +1,23 @@
 import classNames from 'classnames/bind';
 import { useEffect, useState } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-icons';
 
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { getRoles, getStructures } from '../ingredient';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function User() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'USER_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
     const [user, setUsers] = useState([]);
     const [pages, setPages] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     //lấy thông tin user
     const fetchData = async () => {
@@ -55,7 +48,7 @@ function User() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        Authorization: `Bearer ${token}`,
+                        Authorization: `Bearer ${state.user}`,
                     },
                 },
             );
@@ -75,15 +68,15 @@ function User() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getStructures(token).then((result) => setStructures(result));
-            await getRoles(token).then((result) => setRoles(result));
-
+            await checkRole(state.account.role.permissions, 'USER_VIEW', true);
+            await getStructures(state.user).then((result) => setStructures(result));
+            await getRoles(state.user).then((result) => setRoles(result));
             await new Promise((resolve) => setTimeout(resolve, 1));
-
             await fetchData();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     // sự kiện xóa người dùng
     const clickDelete = async (event, name) => {
@@ -99,7 +92,7 @@ function User() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -109,7 +102,7 @@ function User() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     const changeStatus = (e) => {
         let isCheck = e.target.checked ? 1 : 0;
@@ -122,7 +115,7 @@ function User() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -188,10 +181,9 @@ function User() {
                                                                     ))}
                                                                 </select>
                                                             </div>
-                                                            <div className={cx('pc-2')}  style={{ height: '36.6px' }}>
+                                                            <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <FontAwesomeIcon icon={faSearch} />
-                                                                    &ensp;Tìm Kiếm
+                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -200,8 +192,7 @@ function User() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a className={cx('btn')} href={routes.userCreate}>
-                                                    <FontAwesomeIcon icon={faPlus} />
-                                                    &ensp;Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
                                                 </a>
                                             </div>
                                         </div>
@@ -242,12 +233,12 @@ function User() {
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a className={cx('edit-record')} href={routes.userEdit.replace(':name', item.id)}>
-                                                                <FontAwesomeIcon icon={faEdit} />
+                                                                <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.id)}>
-                                                                <FontAwesomeIcon icon={faTrash} className={cx('text-red')} />
+                                                                <i className={cx('far fa-trash-alt text-red')}></i>
                                                             </a>
                                                         </td>
                                                     </tr>

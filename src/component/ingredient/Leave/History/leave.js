@@ -3,26 +3,20 @@ import { useEffect, useState } from 'react';
 
 import styles from '../../list.module.scss';
 import { BASE_URL } from '../../../../config/config';
-import { isCheck, decodeToken } from '../../../globalstyle/checkToken';
 import { Pagination } from '../../../layout/pagination/pagination';
+import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Leave() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'HIST_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [logs, setLogs] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
-    const employee = JSON.parse(localStorage.getItem('employee')) || '';
 
     // lay lich su
     const getLeaveLogs = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
-        const pageNumber = urlParams.get('search') || 1;
+        const pageNumber = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
 
         document.querySelector('#name').value = name;
@@ -32,7 +26,7 @@ function Leave() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -47,10 +41,12 @@ function Leave() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
-            await getLeaveLogs(decodeToken(token, 'ROLE_NHÂN') ? employee.id : '');
+            await checkRole(state.account.role.permissions, 'HIST_VIEW', true);
+            await getLeaveLogs(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     return (
         <>

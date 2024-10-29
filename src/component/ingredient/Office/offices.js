@@ -5,22 +5,17 @@ import { useEffect, useState } from 'react';
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
 import { Status } from '../../layout/status/status';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Offices() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'OFF_VIEW', true)
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [offices, setOffices] = useState([]);
     const [page, setPage] = useState([]);
-    const token = localStorage.getItem('authorizationData') || '';
 
     const getHoliday = async () => {
         const urlParams = new URLSearchParams(window.location.search);
@@ -36,7 +31,7 @@ function Offices() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -51,11 +46,13 @@ function Offices() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'OFF_VIEW', true);
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getHoliday();
         })();
-    }, [tableData]);
+    }, [tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (id) => {
         const result = window.confirm('Bạn có chắc chắn muốn xóa?');
@@ -68,7 +65,7 @@ function Offices() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -90,7 +87,7 @@ function Offices() {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
         } catch (error) {
@@ -127,11 +124,7 @@ function Offices() {
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select
-                                                                    className={cx('form-control', 'select')}
-                                                                    name="status"
-                                                                    id="status"
-                                                                >
+                                                                <select className={cx('form-control', 'select')} name="status" id="status">
                                                                     <option value="">-- Trạng thái --</option>
                                                                     <option value="1">Hoạt động</option>
                                                                     <option value="0">Không hoạt động</option>
@@ -169,9 +162,7 @@ function Offices() {
                                                 </tr>
                                                 {offices.map((item, index) => (
                                                     <tr key={index}>
-                                                        <td className={cx('text-center')}>
-                                                            {(+page.currentPage - 1) * 30 + index + 1}
-                                                        </td>
+                                                        <td className={cx('text-center')}>{(+page.currentPage - 1) * 30 + index + 1}</td>
                                                         <td className={cx('text-center')}>{item.name}</td>
                                                         <td className={cx('text-center', 'm-0')}>{item.address}</td>
                                                         <td className={cx('text-center')}>{item.email}</td>
@@ -181,25 +172,15 @@ function Offices() {
                                                                 width: '120px',
                                                             }}
                                                         >
-                                                            <Status
-                                                                id={item.id}
-                                                                isStatus={item.status}
-                                                                handleChange={(e) => changeStatus(e)}
-                                                            />
+                                                            <Status id={item.id} isStatus={item.status} handleChange={(e) => changeStatus(e)} />
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                href={routes.officesEdit.replace(':name', item.id)}
-                                                                className={cx('edit-record')}
-                                                            >
+                                                            <a href={routes.officesEdit.replace(':name', item.id)} className={cx('edit-record')}>
                                                                 <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
-                                                            <a
-                                                                className={cx('delete-record')}
-                                                                onClick={() => clickDelete(item.id)}
-                                                            >
+                                                            <a className={cx('delete-record')} onClick={() => clickDelete(item.id)}>
                                                                 <i className={cx('far fa-trash-alt text-red')}></i>
                                                             </a>
                                                         </td>
@@ -210,15 +191,11 @@ function Offices() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-10')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng{' '}
-                                                    <b>{page.totalItems}</b>
+                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng <b>{page.totalItems}</b>
                                                 </p>
                                             </div>
                                             <div className={cx('pc-2')}>
-                                                <Pagination
-                                                    currentPage={page.currentPage}
-                                                    totalPages={page.totalPages}
-                                                />
+                                                <Pagination currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

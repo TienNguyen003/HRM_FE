@@ -6,22 +6,17 @@ import { faPlus, faSearch, faTrash, faEdit } from '@fortawesome/free-solid-svg-i
 import styles from '../list.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, decodeToken } from '../../globalstyle/checkToken';
 import { Pagination } from '../../layout/pagination/pagination';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Role() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'PERM_VIEW', true);
-    })();
-
+    const { state, redirectLogin, checkRole } = useAuth();
     const [tableData, setTableData] = useState([]);
     const [roles, setRoles] = useState([]);
     const [page, setPage] = useState([]);
     const [nameParam, setNameParam] = useState('');
-    const token = localStorage.getItem('authorizationData') || '';
 
     // lấy role
     const fetchData = async () => {
@@ -35,7 +30,7 @@ function Role() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -51,13 +46,15 @@ function Role() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async function () {
+            await checkRole(state.account.role.permissions, 'PERM_VIEW', true);
             await fetchData();
         })();
-    }, [token, tableData]);
+    }, [state.user, tableData, state.isAuthenticated, state.loading]);
 
     const clickDelete = async (event, name) => {
         event.preventDefault();
@@ -71,7 +68,7 @@ function Role() {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -85,7 +82,7 @@ function Role() {
         } catch (error) {
             console.error('Error fetching roles:', error.message);
         }
-    }
+    };
 
     return (
         <>
@@ -118,8 +115,7 @@ function Role() {
                                                             </div>
                                                             <div className={cx('pc-2')}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <FontAwesomeIcon icon={faSearch} />
-                                                                    &ensp;Tìm Kiếm
+                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -128,8 +124,7 @@ function Role() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a className={cx('btn')} href={routes.roleCreate}>
-                                                    <FontAwesomeIcon icon={faPlus} />
-                                                    &ensp;Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
                                                 </a>
                                             </div>
                                         </div>
@@ -158,12 +153,12 @@ function Role() {
                                                         <td>{item.des}</td>
                                                         <td className={cx('text-center')}>
                                                             <a className={cx('edit-record')} href={routes.roleEdit.replace(':name', item.name)}>
-                                                                <FontAwesomeIcon icon={faEdit} />
+                                                                <i className={cx('fas fa-edit')}></i>
                                                             </a>
                                                         </td>
                                                         <td className={cx('text-center')}>
                                                             <a className={cx('delete-record')} onClick={(e) => clickDelete(e, item.name)}>
-                                                                <FontAwesomeIcon icon={faTrash} className={cx('text-red')} />
+                                                                <i className={cx('far fa-trash-alt text-red')}></i>
                                                             </a>
                                                         </td>
                                                     </tr>

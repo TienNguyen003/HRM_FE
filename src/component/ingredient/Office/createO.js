@@ -5,18 +5,13 @@ import { useEffect } from 'react';
 import styles from '../create.module.scss';
 import routes from '../../../config/routes';
 import { BASE_URL } from '../../../config/config';
-import { isCheck, reloadAfterDelay, decodeToken } from '../../globalstyle/checkToken';
 import { handleAlert } from '../ingredient';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function Create() {
-    (async function () {
-        await isCheck();
-        decodeToken(token, 'OFF_ADD', true);
-    })();
-
-    const token = localStorage.getItem('authorizationData') || '';
+    const { state, redirectLogin, checkRole } = useAuth();
     const path = window.location.pathname.replace('/offices/edit/', '');
 
     const getOffices = async () => {
@@ -26,7 +21,7 @@ export default function Create() {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
             });
 
@@ -43,10 +38,12 @@ export default function Create() {
     };
 
     useEffect(() => {
+        !state.isAuthenticated && redirectLogin();
         (async () => {
+            await checkRole(state.account.role.permissions, 'OFF_ADD', true);
             await getOffices();
         })();
-    }, []);
+    }, [state.isAuthenticated, state.loading]);
 
     const handleSave = async (name, address, phone, email, method) => {
         let url = `${BASE_URL}offices`;
@@ -56,7 +53,7 @@ export default function Create() {
                 method: method,
                 headers: {
                     'Content-Type': 'application/json',
-                    Authorization: `Bearer ${token}`,
+                    Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({ name, address, phone, email }),
             });

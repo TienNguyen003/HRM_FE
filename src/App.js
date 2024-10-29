@@ -4,11 +4,12 @@ import { useEffect, useState } from 'react';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { jwtDecode } from 'jwt-decode';
 
-import { publicRoutes } from '../src/routes/routes';
 import styles from './App.module.scss';
 import Header from '../src/component/layout/header/header';
 import Error from './component/layout/404/404.js';
+import { publicRoutes } from '../src/routes/routes';
 import { BASE_URL } from './config/config.js';
+import { AuthProvider } from './untils/AuthContext.js';
 
 import '../node_modules/@syncfusion/ej2-base/styles/material.css';
 import '../node_modules/@syncfusion/ej2-buttons/styles/material.css';
@@ -21,7 +22,7 @@ import '../node_modules/@syncfusion/ej2-react-schedule/styles/material.css';
 
 const cx = classNames.bind(styles);
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1NpR2VGfV5ycEVFallQTnZdUiweQnxTdEFjUH1YcHdQR2BYUUVxXQ==');
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1JpR3xbf1x0ZFZMZFlbRnJPMyBoS35RckRjW3lec3BQRGRbVkB1');
 
 function App() {
     const [userActive, setUserActive] = useState(false);
@@ -69,15 +70,15 @@ function App() {
     };
 
     useEffect(() => {
-        document.addEventListener('mousemove', handleUserActivity);
-        document.addEventListener('keypress', handleUserActivity);
-        document.addEventListener('scroll', handleUserActivity);
-        document.addEventListener('click', handleUserActivity);
-
-        const time = jwtDecode(token).exp;
+        let time;
+        if (token) time = jwtDecode(token).exp;
 
         setTimeout(() => {
-            userActive && refreshToken();
+            document.addEventListener('mousemove', handleUserActivity);
+            document.addEventListener('keypress', handleUserActivity);
+            document.addEventListener('scroll', handleUserActivity);
+            document.addEventListener('click', handleUserActivity);
+            userActive && window.location.pathname != '/login' && refreshToken();
         }, time - 300);
 
         return () => {
@@ -88,10 +89,10 @@ function App() {
         };
     }, [userActive]);
 
-    console.log('cài đặt, bảng tg chấm công, "Phân quyền người dùng vào web", "check trong db", "response"');
+    console.log('cài đặt, message, jira, toi uu code');
 
     return (
-        <>
+        <AuthProvider>
             <BrowserRouter>
                 {!isLoginPage && isValidPath(window.location.pathname) && <Header onClick={handleHeaderClick} />}
                 <div className={cx('app', { 'header-clicked': headerClicked })}>
@@ -104,7 +105,7 @@ function App() {
                     </Routes>
                 </div>
             </BrowserRouter>
-        </>
+        </AuthProvider>
     );
 }
 

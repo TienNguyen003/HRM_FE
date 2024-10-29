@@ -5,11 +5,14 @@ import { faLock, faUser } from '@fortawesome/free-solid-svg-icons';
 
 import styles from './login.module.scss';
 import { BASE_URL } from '../../../config/config';
+import { useAuth } from '../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 function Login() {
-    async function checkLogin(username, password) {
+    const {login} = useAuth();
+
+    const checkLogin = async (username, password) => {
         const response = await fetch(`${BASE_URL}auth/token`, {
             method: 'POST',
             headers: {
@@ -23,37 +26,20 @@ function Login() {
 
         const data = await response.json();
         if (data.code === 303) {
-            localStorage.setItem('authorizationData', data.result.token);
-            getDataUser(data.result.token);
+            login(data.result);
         } else {
             const message = document.querySelector(`.${cx('text-danger')}`);
             message.textContent = data.message;
         }
     }
 
-    async function getDataUser(token) {
-        const response = await fetch(`${BASE_URL}users/myInfo`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        const data = await response.json();
-        if (data.code === 303) {
-            localStorage.setItem('employee', JSON.stringify(data.result.employee));
-            localStorage.setItem('idU', data.result.id);
-            window.location.href = '/';
-        }
-    }
-
-    const login = () => {
+    const handleLogin = () => {
         const alert = document.querySelector(`.${cx('text-danger')}`);
         const username = document.querySelector(`.${cx('username')}`).value;
         const password = document.querySelector(`.${cx('password')}`).value;
-        if (username === '') alert.textContent = 'Tên đăng nhập không được để trống!';
-        else if (password === '') alert.textContent = 'Mật khẩu không được để trống!';
-        else checkLogin(username, password);
+        if (username.trim() === '') alert.textContent = 'Tên đăng nhập không được để trống!';
+        else if (password.trim() === '') alert.textContent = 'Mật khẩu không được để trống!';
+        else checkLogin(username.trim(), password.trim());
     };
 
     return (
@@ -115,7 +101,7 @@ function Login() {
                                     </div>
                                 </div>
                                 <div className={cx('col-6')}>
-                                    <button type="button" onClick={login} className={cx('button', 'button-login')}>
+                                    <button type="button" onClick={handleLogin} className={cx('button', 'button-login')}>
                                         Đăng nhập
                                     </button>
                                 </div>
@@ -126,10 +112,10 @@ function Login() {
                             <p className={cx('text-center')}>- Thông tin -</p>
                             <p className={cx('mt-1')}>Quản trị:</p>
                             <p>&emsp;-&emsp;User: admin</p>
-                            <p>&emsp;-&emsp;Pass: 123</p>
+                            <p>&emsp;-&emsp;Pass: 123321</p>
                             <p className={cx('mt-1')}>Người dùng:</p>
-                            <p>&emsp;-&emsp;User: nhanvien</p>
-                            <p>&emsp;-&emsp;Pass: 123456</p>
+                            <p>&emsp;-&emsp;User: demo.nhanvien</p>
+                            <p>&emsp;-&emsp;Pass: 123321</p>
                         </div>
                     </div>
                 </div>

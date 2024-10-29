@@ -205,8 +205,7 @@ export async function getAllUser(token) {
     }
 }
 
-export const getUser = async (token) => {
-    const userId = localStorage.getItem('idU') || '';
+export const getUser = async (token, userId) => {
     try {
         const response = await fetch(`${BASE_URL}users/user?userId=${userId}`, {
             method: 'GET',
