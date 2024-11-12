@@ -84,11 +84,9 @@ function RsPass() {
     };
 
     const handleRsPass = async (id, new_pass, email) => {
-        const modalLoad = document.querySelector('#modal-load');
         const load = document.querySelector('#load');
         try {
             load.classList.toggle(`${cx('hidden')}`);
-            modalLoad.classList.toggle(`${cx('hidden')}`);
             const response = await fetch(`${BASE_URL}users/rs-pass`, {
                 method: 'PUT',
                 headers: {
@@ -105,7 +103,6 @@ function RsPass() {
             const data = await response.json();
             if (data.code === 303) {
                 load.classList.toggle(`${cx('hidden')}`);
-                modalLoad.classList.toggle(`${cx('hidden')}`);
                 alert(data.result);
                 reloadAfterDelay(400);
             }
@@ -122,7 +119,7 @@ function RsPass() {
 
     return (
         <>
-            <Load />
+            <Load className={cx('hidden')} id="load" />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>

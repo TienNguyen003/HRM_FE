@@ -144,10 +144,7 @@ export default function Salary() {
             });
 
             const data = await response.json();
-            if (data.code === 303) {
-                alert(data.result);
-                window.location.reload();
-            }
+            if (data.code === 303) alert(data.result);
         } catch (error) {
             console.log(error);
         }
@@ -273,7 +270,7 @@ export default function Salary() {
 
     return (
         <>
-            <Load className={cx('hidden', 'load')} />
+            {/* <Load className={cx('hidden')} id="load" /> */}
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -464,7 +461,7 @@ export default function Salary() {
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>
-                                                <Page style={{float: 'right'}} currentPage={page.currentPage} totalPages={page.totalPages} />
+                                                <Page style={{ float: 'right' }} currentPage={page.currentPage} totalPages={page.totalPages} />
                                             </div>
                                         </div>
                                     </div>

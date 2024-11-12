@@ -254,7 +254,7 @@ function User() {
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>
-                                                <Page style={{ float: 'right' }} page={pages.currentPage} total={pages.totalPages} />
+                                                <Page style={{ float: 'right' }} page={+pages.currentPage} total={+pages.totalPages} />
                                             </div>
                                         </div>
                                     </div>

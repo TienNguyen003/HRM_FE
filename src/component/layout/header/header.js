@@ -1,13 +1,9 @@
 import classNames from 'classnames/bind';
 import { useEffect } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronLeft } from '@fortawesome/free-solid-svg-icons';
 
 import routesConfig from '../../../config/routes';
 import styles from './header.module.scss';
 import routes from '../../../config/routes';
-import { checkRole, checkRolePermission } from '../../globalstyle/checkToken';
-import { BASE_URL } from '../../../config/config';
 import { Menu } from '../menu/menu';
 import { useAuth } from '../../../untils/AuthContext';
 
@@ -159,7 +155,7 @@ function Header({ onClick }) {
                 dropMenu.classList.add(`${cx('active')}`);
                 changeClass(dropMenu);
             }
-            
+
             dropMenu.addEventListener('click', (e) => {
                 changeClass(dropMenu);
             });
@@ -187,14 +183,14 @@ function Header({ onClick }) {
                 <ul className={cx('list-group')}>
                     <li className={cx('nav-item')}>
                         <a className="nav-link" onClick={clickLanguage}>
-                            <img src="https://demo.hrm.one/img/ensign_vi.png" alt="" />
+                            <img src="" alt="" />
                         </a>
                         <div className={cx('dropdown-menu', 'language')}>
                             <a className={cx('dropdown-item')}>
-                                <img src="https://demo.hrm.one/img/ensign_vi.png" alt="" /> Tiếng Việt
+                                <img src="" alt="" /> Tiếng Việt
                             </a>
                             <a className={cx('dropdown-item')}>
-                                <img src="https://demo.hrm.one/img/ensign_en.png" alt="" /> English
+                                <img src="https://res.cloudinary.com/dwn20guz0/image/upload/v1726558584/avatarUser/ensign_en_z1brlr.png" alt="" /> English
                             </a>
                         </div>
                     </li>

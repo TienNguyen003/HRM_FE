@@ -179,7 +179,7 @@ function Role() {
 
         const data = await response.json();
         if (data.code === 303) return data.result.id;
-        else handleAlert('alert-danger', 'Tên đăng nhập đã tồn tại');
+        else handleAlert('alert-danger', data.message);
     };
 
     // lấy input
@@ -318,6 +318,18 @@ function Role() {
         }
     };
 
+    // ip username
+    const changeUsername = (e) => {
+        let username = e.target.value;
+        if (username.includes(' ')) username = username.replace(/ /g, '');
+        username = username
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .replace(/đ/g, 'd')
+            .replace(/Đ/g, 'D');
+        e.target.value = username;
+    };
+
     return (
         <>
             <div>
@@ -346,7 +358,13 @@ function Role() {
                                                     Tên đăng nhập<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input id="username" className={cx('form-control')} type="text" placeholder="tiennguyen" />
+                                                    <input
+                                                        id="username"
+                                                        className={cx('form-control')}
+                                                        type="text"
+                                                        placeholder="tiennguyen"
+                                                        onChange={(e) => changeUsername(e)}
+                                                    />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -364,7 +382,7 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Số điện thoại</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input className={cx('form-control')} type="text" placeholder="0123456789" id="phone" />
+                                                    <input className={cx('form-control')} type="number" placeholder="0123456789" id="phone" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -409,7 +427,7 @@ function Role() {
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <input
                                                         className={cx('form-control')}
-                                                        type="text"
+                                                        type="number"
                                                         name="timekeeper_id"
                                                         id="timekeeper_id"
                                                         defaultValue="0"
@@ -419,7 +437,7 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 'control-label')}>Số giờ nghỉ phép</label>
                                                 <div className={cx('pc-8', 'm-8')}>
-                                                    <input className={cx('form-control')} type="text" name="sabbatical" id="sabbatical" defaultValue="0" />
+                                                    <input className={cx('form-control')} type="number" name="sabbatical" id="sabbatical" defaultValue="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>

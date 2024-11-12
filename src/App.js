@@ -22,7 +22,7 @@ import '../node_modules/@syncfusion/ej2-react-schedule/styles/material.css';
 
 const cx = classNames.bind(styles);
 
-registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1JpR3xbf1x0ZFZMZFlbRnJPMyBoS35RckRjW3lec3BQRGRbVkB1');
+registerLicense('Ngo9BigBOggjHTQxAR8/V1NDaF5cWGtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH5edHZVQmVZUEZ0V0U=');
 
 function App() {
     const [userActive, setUserActive] = useState(false);

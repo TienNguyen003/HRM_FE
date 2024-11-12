@@ -4,16 +4,17 @@ import classNames from 'classnames/bind';
 import styles from '../../create.module.scss';
 import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
-import { reloadAfterDelay } from '../../../globalstyle/checkToken';
 import { tooglePass, changePassword, clickAutoPassword, handleAlert } from '../../ingredient';
 import { useAuth } from '../../../../untils/AuthContext';
 
 const cx = classNames.bind(styles);
 
 export default function ChangePass() {
-    const { state, redirectLogin } = useAuth();
+    const { state, redirectLogin, logout } = useAuth();
 
     const handleChangePass = async (id, new_pass, old_pass) => {
+        const load = document.querySelector('#load');
+        load.classList.remove('hidden');
         try {
             const response = await fetch(`${BASE_URL}users/change-pass`, {
                 method: 'PUT',
@@ -30,11 +31,9 @@ export default function ChangePass() {
 
             const data = await response.json();
             if (data.code === 303) {
+                load.classList.add('hidden');
                 handleAlert('alert-success', 'Thêm dữ liệu thành công');
-                localStorage.setItem('authorizationData', '');
-                localStorage.setItem('employee', '');
-                localStorage.setItem('idU', '');
-                reloadAfterDelay(500);
+                logout();
             } else handleAlert('alert-danger', data.message);
         } catch (error) {
             console.error('Error fetching roles:', error.message);
@@ -45,7 +44,6 @@ export default function ChangePass() {
         const old_pass = document.querySelector('#old_pass').value;
         const password = document.querySelector('#password').value;
         const comfirm_pass = document.querySelector('#comfirm_pass').value;
-        const idU = localStorage.getItem('idU');
 
         if (old_pass === '') handleAlert('alert-danger', 'Vui lòng nhập mật khẩu cũ');
         else if (password === '') handleAlert('alert-danger', 'Mật khẩu mới không được để trống');
@@ -54,7 +52,7 @@ export default function ChangePass() {
         else if (comfirm_pass === '') handleAlert('alert-danger', 'Mật khẩu nhập lại không được trống');
         else if (comfirm_pass.length < 6) handleAlert('alert-danger', 'Mật khẩu nhập lại ít nhất 6 ký tự');
         else if (comfirm_pass !== password) handleAlert('alert-danger', 'Mật khẩu không khớp');
-        else handleChangePass(idU, password, old_pass);
+        else handleChangePass(state.account.id, password, old_pass);
     };
 
     //đóng alert
@@ -69,7 +67,7 @@ export default function ChangePass() {
 
     return (
         <>
-            <Load />
+            <Load className={cx('hidden')} id="load"/>
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>

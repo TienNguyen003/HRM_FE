@@ -10,7 +10,7 @@ import { useAuth } from '../../../untils/AuthContext';
 const cx = classNames.bind(styles);
 
 function Login() {
-    const {login} = useAuth();
+    const { login } = useAuth();
 
     const checkLogin = async (username, password) => {
         const response = await fetch(`${BASE_URL}auth/token`, {
@@ -31,7 +31,7 @@ function Login() {
             const message = document.querySelector(`.${cx('text-danger')}`);
             message.textContent = data.message;
         }
-    }
+    };
 
     const handleLogin = () => {
         const alert = document.querySelector(`.${cx('text-danger')}`);
@@ -56,25 +56,24 @@ function Login() {
                         <form>
                             <div className={cx('input-group', 'mb-3')}>
                                 <select id="language" className={cx('form-control')}>
-                                    <option defaultValue="vi" data-href="https://demo.hrm.one/img/ensign_vi.png">
+                                    <option defaultValue="vi" data-href="https://hnue.edu.vn/Portals/_default/skins/hnue_skin/img/VN.png">
                                         Tiếng Việt
                                     </option>
-                                    <option defaultValue="en" data-href="https://demo.hrm.one/img/ensign_en.png">
+                                    <option
+                                        defaultValue="en"
+                                        data-href="https://res.cloudinary.com/dwn20guz0/image/upload/v1726558584/avatarUser/ensign_en_z1brlr.png"
+                                    >
                                         English
                                     </option>
                                 </select>
                                 <div className={cx('input-group-append')}>
                                     <div className={cx('input-group-text')}>
-                                        <img src="https://demo.hrm.one/img/ensign_vi.png" className={cx('mr-2')} />
+                                        <img src="https://hnue.edu.vn/Portals/_default/skins/hnue_skin/img/VN.png" className={cx('mr-2')} />
                                     </div>
                                 </div>
                             </div>
                             <div className={cx('input-group', 'mb-3')}>
-                                <input
-                                    type="text"
-                                    className={cx('form-control', 'username')}
-                                    placeholder="Tên đăng nhập"
-                                />
+                                <input type="text" className={cx('form-control', 'username')} placeholder="Tên đăng nhập" />
                                 <div className={cx('input-group-append')}>
                                     <div className={cx('input-group-text')}>
                                         <FontAwesomeIcon icon={faUser} className={cx('icon-location')} />
@@ -82,11 +81,7 @@ function Login() {
                                 </div>
                             </div>
                             <div className={cx('input-group', 'mb-3')}>
-                                <input
-                                    type="password"
-                                    className={cx('form-control', 'password')}
-                                    placeholder="Mật khẩu"
-                                />
+                                <input type="password" className={cx('form-control', 'password')} placeholder="Mật khẩu" />
                                 <div className={cx('input-group-append')}>
                                     <div className={cx('input-group-text')}>
                                         <FontAwesomeIcon icon={faLock} className={cx('icon-location')} />

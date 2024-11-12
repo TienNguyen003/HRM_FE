@@ -14,7 +14,6 @@ export const Page = ({ page, total, style }) => {
     };
 
     useEffect(() => {
-        console.log(page, total);
         setActivePage(page);
     }, [page]);
 

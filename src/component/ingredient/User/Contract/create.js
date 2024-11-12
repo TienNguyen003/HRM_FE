@@ -161,10 +161,8 @@ export default function Create() {
                     body: formData,
                 });
                 const data = await response.json();
-                const modalLoad = document.querySelector('#modal-load');
                 const load = document.querySelector('#load');
                 load.classList.toggle(`${cx('hidden')}`);
-                modalLoad.classList.toggle(`${cx('hidden')}`);
                 return data.url;
             } catch (error) {
                 console.log(error);
@@ -186,7 +184,7 @@ export default function Create() {
 
     return (
         <>
-            <Load />
+            <Load className={cx('hidden')} id='load' />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
