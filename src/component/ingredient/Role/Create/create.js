@@ -174,7 +174,7 @@ function Role() {
                         </h1>
                     </section>
                     <div className={cx('row', 'no-gutters')}>
-                        <div className={cx('pc-12', 'm-12')}>
+                        <div className={cx('pc-12', 'm-12', 't-12')}>
                             <div className={cx('card')}>
                                 <div className={cx('card-header', 'with-border')}>
                                     <p className={cx('card-title')}>
@@ -185,16 +185,16 @@ function Role() {
                                 <form id="formReset" onSubmit={(e) => handleSubmitForm(e)}>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2', 'm-4', 'control-label')}>
+                                            <label className={cx('pc-2', 'm-4', 't-4', 'control-label')}>
                                                 Tên quyền<span className={cx('text-red')}> *</span>
                                             </label>
-                                            <div className={cx('pc-8', 'm-8')}>
+                                            <div className={cx('pc-8', 'm-8', 't-8')}>
                                                 <input className={cx('form-control')} id="name-role" type="text" name="name" placeholder="VD: Quản lý" />
                                             </div>
                                         </div>
                                         <div className={cx('well')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}></label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}></label>
                                                 <div className={cx('controls', 'pc-9', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="check_all" id="check_all" value="all" onClick={(e) => clickRole(e)} />
@@ -203,8 +203,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Bảng lương</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Bảng lương</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="sala_view" />
                                                         Danh sách
@@ -228,8 +228,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Cài đặt chung</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Cài đặt chung</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="set_set" />
                                                         cài đặt
@@ -238,8 +238,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Cấu trúc công ty</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Cấu trúc công ty</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="comp_view" />
                                                         Danh sách
@@ -263,8 +263,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Chấm công</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Chấm công</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_view" />
                                                         Danh sách
@@ -307,8 +307,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Công thức tính lương</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Công thức tính lương</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="calc_view" />
                                                         Danh sách
@@ -332,8 +332,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Danh mục lương</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Danh mục lương</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="catg_view" />
                                                         Danh sách
@@ -357,8 +357,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Danh mục nghỉ</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Danh mục nghỉ</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="leav_view" />
                                                         Danh sách
@@ -382,8 +382,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Đơn xin nghỉ</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Đơn xin nghỉ</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_view" />
                                                         Danh sách
@@ -412,8 +412,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Hợp đồng</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Hợp đồng</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="cont_view" />
                                                         Danh sách
@@ -437,8 +437,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Lịch sử nghỉ phép</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lịch sử nghỉ phép</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="hist_view" />
                                                         Danh sách
@@ -447,8 +447,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Lương cập nhật theo tháng</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lương cập nhật theo tháng</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="saup_view" />
                                                         Danh sách
@@ -472,8 +472,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Lương cố định</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lương cố định</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="safi_view" />
                                                         Danh sách
@@ -497,8 +497,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Nghỉ lễ</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Nghỉ lễ</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="holi_view" />
                                                         Danh sách
@@ -522,8 +522,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Người dùng hệ thống</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Người dùng hệ thống</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="user_view" />
                                                         Danh sách
@@ -552,8 +552,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Phân quyền</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Phân quyền</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="perm_view" />
                                                         Danh sách
@@ -577,8 +577,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Tài khoản ngân hàng</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Tài khoản ngân hàng</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="bank_view" />
                                                         Danh sách
@@ -602,8 +602,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Ứng lương</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Ứng lương</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_view" />
                                                         Danh sách
@@ -632,8 +632,8 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4')}>Văn phòng</label>
-                                                <div className={cx('controls', 'pc-10', 'm-8', 'list-role')}>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Văn phòng</label>
+                                                <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="off_view" />
                                                         Danh sách
@@ -658,7 +658,7 @@ function Role() {
                                             </div>
                                         </div>
                                         <div className={cx('alert')}>
-                                            <ul className={cx('pc-11')}>
+                                            <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                 <li className={cx('alert-content')}>Tên không được để trống.</li>
                                             </ul>
                                             <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

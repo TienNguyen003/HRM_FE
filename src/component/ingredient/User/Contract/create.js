@@ -194,7 +194,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -205,10 +205,10 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select name="user_id" id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
                                                             <option key={item.id} value={item.employee.id}>
@@ -219,26 +219,26 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Bắt đầu<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="start"></input>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>Kết thúc</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>Kết thúc</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="end"></input>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>Tệp đính kèm</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>Tệp đính kèm</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('custom-file')}>
                                                         <input type="file" className={cx('custom-file-input')} id="attach" onChange={(e) => changeFile(e)} />
                                                         <input type="text" id="linkFile" hidden defaultValue="" />
@@ -249,7 +249,7 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11', 'm-11')}>
+                                                <ul className={cx('pc-11', 'm-11', 't-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                                 <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

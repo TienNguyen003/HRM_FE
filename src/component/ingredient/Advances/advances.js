@@ -23,7 +23,7 @@ export default function Advances() {
     //lấy don ung luong
     const fetchData = async (id) => {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search') || 1;
+        const searchParam = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
         const status = urlParams.get('status') || '';
 

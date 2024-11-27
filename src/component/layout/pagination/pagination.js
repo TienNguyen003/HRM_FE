@@ -10,7 +10,11 @@ export const Page = ({ page, total, style }) => {
 
     const handleChangePage = (page) => {
         setActivePage(page);
-        navigate(`?page=${page}`);
+        const url = new URL(window.location.href);
+        const params = new URLSearchParams(url.search);
+        params.set('page', page);
+        url.search = params.toString();
+        navigate(url.pathname + url.search);
     };
 
     useEffect(() => {

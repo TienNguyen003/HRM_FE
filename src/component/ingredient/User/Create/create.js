@@ -222,6 +222,7 @@ function Role() {
         else if (form.phone.value === '') handleAlert('alert-danger', 'Số điện thoại không được để trống');
         else if (specialRegex.test(form.phone.value)) handleAlert('alert-danger', 'Số điện thoại không dược chứa ký tự đặc biệt');
         else if (form.phone.value.includes(' ')) handleAlert('alert-danger', 'Số điện thoại không được chứa khoảng trắng');
+        else if (form.phone.value.length !== 10) handleAlert('alert-danger', 'Số điện thoại phải có 10 chữ số');
         else if (form.address.value === '') handleAlert('alert-danger', 'Địa chỉ không được để trống');
         else if (form.birthday.value === '') handleAlert('alert-danger', 'Ngày sinh không được để trống');
         else if (form.joined_date.value === '') handleAlert('alert-danger', 'Ngày tham gia không được để trống');
@@ -338,12 +339,12 @@ function Role() {
                         <div className={cx('container-fluid')}>
                             <section className={cx('content-header')}>
                                 <h1>
-                                    Người dùng hệ thống <small>Thêm mới</small>
+                                    Người dùng hệ thống <small>{path.includes('/users/create') ? 'Thêm mới' : 'Sửa thông tin'}</small>
                                 </h1>
                             </section>
                         </div>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -354,10 +355,10 @@ function Role() {
                                     <div className={cx('form-horizontal')}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     Tên đăng nhập<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input
                                                         id="username"
                                                         className={cx('form-control')}
@@ -368,48 +369,48 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Email</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Email</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="email" id="email" placeholder="example@xxx.yyy" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Họ tên</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Họ tên</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" placeholder="Nguyen Van A" id="fullname" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Số điện thoại</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Số điện thoại</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" placeholder="0123456789" id="phone" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày sinh</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Ngày sinh</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="birthday" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Địa chỉ</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Địa chỉ</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" placeholder="Berlin" id="address" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Ngày gia nhập</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Ngày gia nhập</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="joined_date" placeholder="12/07/2024" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Văn phòng làm việc</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Văn phòng làm việc</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="structure_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             structures.map((item) => (
@@ -421,10 +422,10 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     Số giờ cần làm<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input
                                                         className={cx('form-control')}
                                                         type="number"
@@ -435,14 +436,14 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Số giờ nghỉ phép</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Số giờ nghỉ phép</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" name="sabbatical" id="sabbatical" defaultValue="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Công thức lương</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Công thức lương</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="salary_formula_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             formula.map((item) => (
@@ -454,13 +455,13 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     Mật khẩu<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group', 'row', 'no-gutters')}>
                                                         <div
-                                                            className={cx('pc-10', 'm-12', 'input-10')}
+                                                            className={cx('pc-10', 'm-12', 't-9', 'input-10')}
                                                             style={{
                                                                 border: '1px solid #ced4da',
                                                                 display: 'flex',
@@ -511,16 +512,16 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>Nhập lại mật khẩu</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Nhập lại mật khẩu</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="password" readOnly id="comfirm_password" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 'control-label')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     Phân quyền<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="role_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
                                                             roles.map((item) => (
@@ -532,7 +533,7 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                                 <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

@@ -19,7 +19,7 @@ function Approvals() {
     useEffect(() => {
         !state.isAuthenticated && redirectLogin();
         (async function () {
-            await checkRole(state.account.role.permissions, 'ADV_APPROVALS', true);;
+            await checkRole(state.account.role.permissions, 'ADV_APPROVALS', true);
             await getAdvances(path, state.user).then((result) => {
                 setAdvances([result]);
                 setIsStatus(result.status);
@@ -113,7 +113,7 @@ function Approvals() {
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                             </div>

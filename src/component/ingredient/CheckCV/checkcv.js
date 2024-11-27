@@ -67,7 +67,7 @@ export default function CheckCV() {
                 body: file,
             });
             const data = await response.json();
-            if (data.code === 303) console.log(data);
+            if (data.code === 303) alert("Lọc thành công");
         } catch (error) {
             console.error('Error uploading file:', error.message);
         }

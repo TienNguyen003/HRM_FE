@@ -21,7 +21,7 @@ function Bank() {
     //lấy thông tin ngân hàng
     async function fetchData(id) {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search') || 1;
+        const page = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
         const prioritize = urlParams.get('priority') || '';
         const bank = urlParams.get('nameBank') || '';
@@ -34,7 +34,7 @@ function Bank() {
 
         try {
             const response = await fetch(
-                `${BASE_URL}bank_accounts?pageNumber=${searchParam}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}&id=${id}`,
+                `${BASE_URL}bank_accounts?pageNumber=${page}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}&id=${id}`,
                 {
                     method: 'GET',
                     headers: {

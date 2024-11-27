@@ -95,16 +95,13 @@ export default function Create() {
 
     const handleCheck = () => {
         const user = document.querySelector('#user_id').value;
-        const start = document.querySelector('#start').value;
-        const time = document.querySelector('#time').value;
+        const date = new Date();
+        const day = date.toISOString().split('T')[0];
+        const time = date.toLocaleTimeString('vi-VN');
         const message = document.querySelector(`.${cx('message')}`).value;
 
-        if (start === '') handleAlert('alert-danger', 'Ngày không được để trống');
-        else if (time === '') handleAlert('alert-danger', 'Thời gian không được để trống');
-        else {
-            if (path.includes('/checks/create')) saveTimeKeeping(user, start, time, message, 'POST');
-            else saveTimeKeeping(user, start, time, message, 'PUT');
-        }
+        if (path.includes('/checks/create')) saveTimeKeeping(user, day, time, message, 'POST');
+        else saveTimeKeeping(user, day, time, message, 'PUT');
     };
 
     const clickAddTimeKeeping = async () => {
@@ -132,7 +129,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -143,51 +140,42 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
-                                                        {user.map(
-                                                            (item) => (
-                                                                console.log(item),
-                                                                (
-                                                                    <option
-                                                                        data-vacationhours={item.employee.vacationHours}
-                                                                        key={item.id}
-                                                                        value={item.employee.id}
-                                                                    >
-                                                                        {item.employee.name}
-                                                                    </option>
-                                                                )
-                                                            ),
-                                                        )}
+                                                        {user.map((item) => (
+                                                            <option data-vacationhours={item.employee.vacationHours} key={item.id} value={item.employee.id}>
+                                                                {item.employee.name}
+                                                            </option>
+                                                        ))}
                                                     </select>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Thời gian<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-5', 'm-5')}>
+                                                <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
                                                         <input className={cx('form-control')} type="date" id="start" defaultValue={day} disabled />
                                                     </div>
                                                 </div>
-                                                <div className={cx('pc-3', 'm-3')}>
+                                                <div className={cx('pc-3', 'm-3', 't-3')}>
                                                     <div className={cx('input-group', 'date')}>
                                                         <input className={cx('form-control')} type="text" id="time" defaultValue={time} disabled />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>Ghi chú</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>Ghi chú</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                     <li className={cx('alert-content')}></li>
                                                 </ul>
                                                 <button type="button" className={cx('close')} onClick={clickClose}>

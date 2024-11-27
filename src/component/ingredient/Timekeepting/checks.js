@@ -103,7 +103,7 @@ function Checks() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
@@ -183,13 +183,13 @@ function Checks() {
                                                 ))}
                                             </tbody>
                                         </table>
-                                        <div className={cx('pagination', 'pc-12')}>
-                                            <div className={cx('pc-7')}>
+                                        <div className={cx('pagination', 'pc-12', 'm-12', 't-12')}>
+                                            <div className={cx('pc-7', 'm-4', 't-7')}>
                                                 <p>
                                                     Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
                                                 </p>
                                             </div>
-                                            <div className={cx('pc-5')}>
+                                            <div className={cx('pc-5', 'm-8', 't-5')}>
                                                 <Page style={{ float: 'right' }} page={parseInt(page.currentPage)} total={parseInt(page.totalItems)} />
                                             </div>
                                         </div>

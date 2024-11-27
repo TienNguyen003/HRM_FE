@@ -51,6 +51,10 @@
     width: 100%;
     overflow-x: auto;
     border-bottom: 2px solid #dee2e6;
+
+    &::-webkit-scrollbar{
+        display: none;
+    }
 }
 .table thead th {
     vertical-align: bottom;

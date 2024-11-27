@@ -104,7 +104,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -115,23 +115,23 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Tên danh mục nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" id="name" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Giới hạn giờ nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" id="time" />
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                                 <button type="button" className={cx('close')} onClick={clickClose}>

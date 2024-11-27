@@ -162,7 +162,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -173,15 +173,15 @@ export default function Create() {
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-12', 'm-12')}>
+                                                <label className={cx('pc-12', 'm-12', 't-12')}>
                                                     {isStatus !== 0 ? `Chỉ đơn chưa duyệt mới được phép chỉnh sửa` : ''}
                                                 </label>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Họ tên<span className={cx('text-red')}> *</span>
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
                                                         {user.map((item) => (
                                                             <option data-vacationhours={item.employee.vacationHours} key={item.id} value={item.employee.id}>
@@ -192,10 +192,10 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Loại nghỉ<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="day_off_category_id" className={cx('form-control', 'select')}>
                                                         {dayOff.map((item) => (
                                                             <option key={item.id} value={item.id}>
@@ -206,43 +206,43 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Thời gian bắt đầu<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-5', 'm-5')}>
+                                                <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
                                                         <input className={cx('form-control')} type="date" id="start" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
-                                                <div className={cx('pc-3', 'm-3')}>
+                                                <div className={cx('pc-3', 'm-3', 't-3')}>
                                                     <div className={cx('input-group', 'date')} id="timepicker_start">
                                                         <input className={cx('form-control')} type="time" id="time_start" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>
                                                     Thời gian kết thúc<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
-                                                <div className={cx('pc-5', 'm-5')}>
+                                                <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
                                                         <input className={cx('form-control')} type="date" id="end" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
-                                                <div className={cx('pc-3', 'm-3')}>
+                                                <div className={cx('pc-3', 'm-3', 't-3')}>
                                                     <div className={cx('input-group')} id="timepicker_end">
                                                         <input className={cx('form-control')} type="time" id="time_end" min="2024-01-01" max="3000-12-31" />
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3')}>Lý do</label>
-                                                <div className={cx('pc-8', 'm-8')}>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>Lý do</label>
+                                                <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
                                             </div>
                                             <div className={cx('alert')}>
-                                                <ul className={cx('pc-11')}>
+                                                <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                     <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                 </ul>
                                                 <button type="button" className={cx('close')} onClick={clickClose}>

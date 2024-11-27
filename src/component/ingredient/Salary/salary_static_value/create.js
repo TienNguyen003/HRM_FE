@@ -133,7 +133,7 @@ export default function Create() {
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-12', 'm-12')}>
+                            <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
@@ -142,10 +142,10 @@ export default function Create() {
                                     </div>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2', 'm-3')}>
+                                            <label className={cx('pc-2', 'm-3', 't-4')}>
                                                 Họ tên<span className={cx('text-red')}> *</span>{' '}
                                             </label>
-                                            <div className={cx('pc-8', 'm-8')}>
+                                            <div className={cx('pc-8', 'm-8', 't-8')}>
                                                 <select id="user_id" className={cx('form-control', 'select')} onChange={handleChangeSelect}>
                                                     {user.map((item) => (
                                                         <option key={item.id} value={item.employee.id}>
@@ -159,7 +159,7 @@ export default function Create() {
                                             <b>Các khoản lương cố định trong tháng</b>
                                         </h4>
                                         <div className={cx('row', 'no-gutters', 'text-center')} style={{ justifyContent: 'center' }}>
-                                            <div className={cx('pc-8')}>
+                                            <div className={cx('pc-8', 't-12', 'm-12')}>
                                                 <table className={cx('table')}>
                                                     <tbody id="table-salary">
                                                         <tr>
@@ -187,7 +187,7 @@ export default function Create() {
                                             </div>
                                         </div>
                                         <div className={cx('alert')}>
-                                            <ul className={cx('pc-11')}>
+                                            <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                 <li className={cx('alert-content')}>Tên không được để trống.</li>
                                             </ul>
                                             <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

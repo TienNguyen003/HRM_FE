@@ -109,7 +109,7 @@ export default function Create() {
                         </h1>
                     </section>
                     <div className={cx('row', 'no-gutters')}>
-                        <div className={cx('pc-12')}>
+                        <div className={cx('pc-12', 't-12', 'm-12')}>
                             <div className={cx('card')}>
                                 <div className={cx('card-header')}>
                                     <p className={cx('card-title')}>
@@ -117,7 +117,7 @@ export default function Create() {
                                     </p>
                                 </div>
                                 <div className={cx('row', 'no-gutters')}>
-                                    <div className={cx('pc-4')}>
+                                    <div className={cx('pc-4', 't-5', 'm-12')}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('list_formula_categories')}>
                                                 <div className={cx('formula_categories')}>
@@ -174,7 +174,7 @@ export default function Create() {
                                             </div>
                                         </div>
                                     </div>
-                                    <div className={cx('pc-7')}>
+                                    <div className={cx('pc-8', 't-7', 'm-12')}>
                                         <div className={cx('d-flex justify-content-end')}>
                                             <div className={cx('pc-11')}>
                                                 <form onSubmit={(e) => handleSubmit(e)} id="formReset">
@@ -198,7 +198,7 @@ export default function Create() {
                                                             ></textarea>
                                                         </div>
                                                         <div className={cx('alert')}>
-                                                            <ul className={cx('pc-10')}>
+                                                            <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                                 <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                             </ul>
                                                             <button type="button" className={cx('close', 'pc-2')} onClick={clickClose}>

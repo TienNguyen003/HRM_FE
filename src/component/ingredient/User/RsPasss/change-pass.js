@@ -67,7 +67,7 @@ export default function ChangePass() {
 
     return (
         <>
-            <Load className={cx('hidden')} id="load"/>
+            <Load className={cx('hidden')} id="load" />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -153,7 +153,7 @@ export default function ChangePass() {
                                             </div>
                                         </div>
                                         <div className={cx('alert')}>
-                                            <ul className={cx('pc-11')}>
+                                            <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                 <li className={cx('alert-content')}></li>
                                             </ul>
                                             <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

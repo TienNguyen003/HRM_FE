@@ -24,7 +24,7 @@ function User() {
     //lấy thông tin user
     const fetchData = async () => {
         const urlParams = new URLSearchParams(window.location.search);
-        const searchParam = urlParams.get('search') || 1;
+        const searchParam = urlParams.get('page') || 1;
         const name = urlParams.get('name') || '';
         const department = urlParams.get('department') || '';
         const username = urlParams.get('username') || '';

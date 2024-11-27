@@ -107,7 +107,7 @@ export default function Create() {
                                 </h1>
                             </section>
                             <div className={cx('row', 'no-gutters')}>
-                                <div className={cx('pc-12', 'm-12')}>
+                                <div className={cx('pc-12', 'm-12', 't-12')}>
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <p className={cx('card-title')}>
@@ -118,24 +118,24 @@ export default function Create() {
                                         <form onSubmit={(e) => handleSubmit(e)} id="formReset">
                                             <div className={cx('card-body')}>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2', 'm-3')}>
+                                                    <label className={cx('pc-2', 'm-3', 't-4')}>
                                                         Tên loại lương<span className={cx('text-red')}> *</span>
                                                     </label>
-                                                    <div className={cx('pc-8', 'm-8')}>
+                                                    <div className={cx('pc-8', 'm-8', 't-8')}>
                                                         <input className={cx('form-control')} type="text" id="name" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2', 'm-3')}>
+                                                    <label className={cx('pc-2', 'm-3', 't-4')}>
                                                         Ký hiệu<span className={cx('text-red')}> *</span>
                                                     </label>
-                                                    <div className={cx('pc-8', 'm-8')}>
+                                                    <div className={cx('pc-8', 'm-8', 't-8')}>
                                                         <input className={cx('form-control')} type="text" id="symbol" />
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2', 'm-3')}>Loại lương</label>
-                                                    <div className={cx('pc-8', 'm-8')}>
+                                                    <label className={cx('pc-2', 'm-3', 't-4')}>Loại lương</label>
+                                                    <div className={cx('pc-8', 'm-8', 't-8')}>
                                                         <select id="type" className={cx('form-control', 'select')}>
                                                             <option value="Lương cố định">Lương cố định</option>
                                                             <option value="Lương theo tháng">Lương theo tháng</option>
@@ -143,7 +143,7 @@ export default function Create() {
                                                     </div>
                                                 </div>
                                                 <div className={cx('alert')}>
-                                                    <ul className={cx('pc-11')}>
+                                                    <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                         <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                     </ul>
                                                     <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>

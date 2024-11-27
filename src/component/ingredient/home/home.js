@@ -120,7 +120,7 @@ function Home() {
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
                         <div className={cx('row', 'dashboard', 'no-gutters')}>
-                            <div className={cx('pc-9')}>
+                            <div className={cx('pc-9', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <h3 className={cx('card-title')}> Danh sách đơn</h3>
@@ -164,7 +164,7 @@ function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={cx('pc-3', 'm-12')}>
+                            <div className={cx('pc-3', 'm-12', 't-12')}>
                                 <div className={cx('card', 'info-box', 'day-off-item')}>
                                     <span className={cx('info-box-icon', 'bg-danger')}>
                                         <i className="far fa-calendar-alt"></i>
@@ -182,8 +182,8 @@ function Home() {
                             </div>
                         </div>
                         <div className={cx('row', 'no-gutters')}>
-                            <div className={cx('pc-3', 'm-12')}>
-                                <div className={cx('sticky-top', 'pc-12')}>
+                            <div className={cx('pc-3', 'm-12', 't-12')}>
+                                <div className={cx('sticky-top', 'pc-12', 't-12')}>
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <h4 className={cx('card-title', 'text-center')}>Thông tin tháng {month + ' - ' + year} (giờ)</h4>
@@ -249,7 +249,7 @@ function Home() {
                                     </div>
                                 </div>
                             </div>
-                            <div className={cx('pc-9', 'm-12')}>
+                            <div className={cx('pc-9', 'm-12', 't-12')}>
                                 <ScheduleComponent width="100%" height="610px" eventSettings={{ dataSource: dateCalendar }}>
                                     <ViewsDirective>
                                         <ViewDirective option="Day" readonly={true} timeScale={{ interval: 60, slotCount: 1 }} />

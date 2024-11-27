@@ -57,8 +57,8 @@ function RsPass() {
             if (data.code === 303) {
                 alert('Cập nhật thành công');
                 reloadAfterDelay(500);
-                localStorage.setItem('authorizationData', '');
-                localStorage.setItem('employee', '');
+                // localStorage.setItem('authorizationData', '');
+                // localStorage.setItem('employee', '');
             } else alert(data.message);
         } catch (error) {
             console.error('Error fetching offices:', error.message);
@@ -200,7 +200,7 @@ function RsPass() {
                                             </div>
                                         </div>
                                         <div className={cx('alert')}>
-                                            <ul className={cx('pc-11')}>
+                                            <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                 <li className={cx('alert-content')}>Tên không được để trống.</li>
                                             </ul>
                                             <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>
