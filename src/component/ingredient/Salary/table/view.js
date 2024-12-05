@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 
 import styles from '../../list.module.scss';
 import TableSalary from './tablesalary';
@@ -9,6 +10,7 @@ const cx = classNames.bind(styles);
 
 export default function View() {
     const { state, redirectLogin } = useAuth();
+    const { t } = useTranslation();
 
     useEffect(() => {
         !state.isAuthenticated && redirectLogin();
@@ -20,7 +22,7 @@ export default function View() {
                 <div className={cx('container-fluid')}>
                     <section className={cx('content-header')}>
                         <h1>
-                            Bảng lương <small id="name"></small>
+                        {t('common.Salary Table')} <small id="name"></small>
                         </h1>
                     </section>
                     <TableSalary isFlag={true}/>

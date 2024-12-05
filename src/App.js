@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { registerLicense } from '@syncfusion/ej2-base';
 import { jwtDecode } from 'jwt-decode';
 
+import '../src/config/config_translation.js';
 import styles from './App.module.scss';
 import Header from '../src/component/layout/header/header';
 import Error from './component/layout/404/404.js';

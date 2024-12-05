@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -11,6 +12,7 @@ const cx = classNames.bind(styles);
 
 function Bank() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [user, setUser] = useState([]);
 
     const path = window.location.pathname.replace('/users/bank_account/edit/', '');
@@ -82,7 +84,7 @@ function Bank() {
         }
     };
 
-    const handleSaveUpdateUser = async (method, query, nameBank, owner, numberBank, nameUser, prioritize, message) => {
+    const handleSaveUpdateUser = async (method, query, nameBank, owner, numberBank, nameUser, priority, message) => {
         try {
             const response = await fetch(`${BASE_URL}bank_accounts${query}`, {
                 method: method,
@@ -91,10 +93,10 @@ function Bank() {
                     Authorization: `Bearer ${state.user}`,
                 },
                 body: JSON.stringify({
-                    nameBank: nameBank,
-                    owner: owner,
-                    numberBank: numberBank,
-                    priority: prioritize,
+                    nameBank,
+                    owner,
+                    numberBank,
+                    priority,
                     employeeId: +nameUser,
                 }),
             });
@@ -130,23 +132,23 @@ function Bank() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Tài khoản ngân hàng <small>Thêm mới</small>
+                                {t('common.Bank Account')}{' '}
+                                <small>{path.includes('/users/bank_account/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Họ tên<span className={cx('text-red')}> *</span>
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
@@ -161,7 +163,8 @@ function Bank() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Tên ngân hàng<span className={cx('text-red')}> *</span>
+                                                    {t('common.Bank Name')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" id="bank_name" placeholder="Vietcombank" />
@@ -169,7 +172,8 @@ function Bank() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Chủ tài khoản<span className={cx('text-red')}> *</span>
+                                                    {t('common.Owner')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" id="bank_account" placeholder="NGUYEN VAN A" />
@@ -177,7 +181,8 @@ function Bank() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Số tài khoản<span className={cx('text-red')}> *</span>
+                                                    {t('common.Bank Number')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" id="bank_number" placeholder="012345678910JQKÁT" />
@@ -185,7 +190,8 @@ function Bank() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Độ ưu tiên<span className={cx('text-red')}> *</span>
+                                                    {t('common.Prioritize')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="prioritize" className={cx('form-control', 'select')}>
@@ -208,19 +214,19 @@ function Bank() {
                                             <div className={cx('text-center')}>
                                                 {path.includes('/bank_account') ? (
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={saveBank}>
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </button>
                                                 ) : (
                                                     <button name="redirect" className={cx('btn', 'btn-info')} onClick={saveBank}>
-                                                        Lưu lại
+                                                        {t('common.button.save')}
                                                     </button>
                                                 )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                    Nhập lại
+                                                    {t('common.button.confluent')}
                                                 </button>
                                                 <a href={routes.userBank}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

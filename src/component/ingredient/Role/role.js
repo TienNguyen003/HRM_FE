@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 function Role() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [roles, setRoles] = useState([]);
     const [page, setPage] = useState([]);
@@ -91,7 +93,7 @@ function Role() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Phân quyền <small>Danh sách</small>
+                                {t('common.Decentralization')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -107,7 +109,7 @@ function Role() {
                                                                 <input
                                                                     type="text"
                                                                     className={cx('form-control', 'form-control-sm')}
-                                                                    placeholder="Thuộc module"
+                                                                    placeholder={t('common.Belonging to module')}
                                                                     name="name"
                                                                     value={nameParam}
                                                                     onChange={(e) => setNameParam(e.target.value.toUpperCase())}
@@ -115,7 +117,7 @@ function Role() {
                                                             </div>
                                                             <div className={cx('pc-2')}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -124,7 +126,7 @@ function Role() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a className={cx('btn')} href={routes.roleCreate}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -135,10 +137,10 @@ function Role() {
                                             <tbody>
                                                 <tr className={cx('non-bg')}>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Thuộc module</th>
-                                                    <th className={cx('text-center')}>Mô tả</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xóa</th>
+                                                    <th className={cx('text-center')}>{t('common.Belonging to module')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Describe')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Edit')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Delete')}</th>
                                                 </tr>
                                                 {roles.map((item, index) => (
                                                     <tr
@@ -168,7 +170,7 @@ function Role() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

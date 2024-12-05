@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ const cx = classNames.bind(styles);
 
 function Holidays() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [holiday, setHoliday] = useState([]);
     const [page, setPage] = useState([]);
     const location = useLocation();
@@ -82,7 +84,7 @@ function Holidays() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Danh mục nghỉ <small>Danh sách</small>
+                                {t('common.Holiday Categories')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -100,19 +102,19 @@ function Holidays() {
                                                                     className={cx('form-control')}
                                                                     name="name"
                                                                     id="name"
-                                                                    placeholder="Tên danh mục nghỉ"
+                                                                    placeholder={`${t('common.name')} ${t('common.Holiday Categories')}`}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="status" id="status">
-                                                                    <option value="">-- Trạng thái --</option>
-                                                                    <option value="1">Hoạt động</option>
-                                                                    <option value="0">Không hoạt động</option>
+                                                                    <option value="">-- {t('common.Status')} --</option>
+                                                                    <option value="0">{t('common.No Active')}</option>
+                                                                    <option value="1">{t('common.Active')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -121,7 +123,7 @@ function Holidays() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.holidayDayOffCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -132,11 +134,17 @@ function Holidays() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên danh mục nghỉ</th>
-                                                    <th className={cx('text-center')}>Số lượng giờ nghỉ</th>
-                                                    <th className={cx('text-center')}>Cập nhật</th>
-                                                    <th className={cx('text-center')}>Trạng thái</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.name')} {t('common.Holiday Categories')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Total')} {t('common.Time')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Time')} {t('common.Update')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>{t('common.Status')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Edit')}</th>
                                                 </tr>
                                                 {holiday.map((item, index) => (
                                                     <tr key={index}>
@@ -165,7 +173,7 @@ function Holidays() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

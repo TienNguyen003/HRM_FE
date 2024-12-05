@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 export default function Categories() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
@@ -86,7 +88,7 @@ export default function Categories() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Danh mục lương <small>Danh sách</small>
+                                {t('common.Salary Categories')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -104,7 +106,7 @@ export default function Categories() {
                                                                     className={cx('form-control')}
                                                                     name="name"
                                                                     id="name"
-                                                                    placeholder="Tên loại lương"
+                                                                    placeholder={t('common.name')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
@@ -113,19 +115,19 @@ export default function Categories() {
                                                                     className={cx('form-control')}
                                                                     name="symbol"
                                                                     id="symbol"
-                                                                    placeholder="Ký hiệu"
+                                                                    placeholder={t('common.Symbol')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="type" id="type">
-                                                                    <option value="">-- Loại lương --</option>
-                                                                    <option value="Lương cố định">Lương cố định</option>
-                                                                    <option value="Lương theo tháng">Lương theo tháng</option>
+                                                                    <option value="">-- {t('common.Salary Type')} --</option>
+                                                                    <option value="Lương cố định">{t('common.Fixed Salary')}</option>
+                                                                    <option value="Lương theo tháng">{t('common.Monthly Salary')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2', 'm-5', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -134,7 +136,7 @@ export default function Categories() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.salaryCategoriesCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -145,11 +147,13 @@ export default function Categories() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên loại lương</th>
-                                                    <th className={cx('text-center')}>Ký hiệu</th>
-                                                    <th className={cx('text-center')}>Loại lương</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xóa</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.name')} {t('common.Salary Type')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>{t('common.Symbol')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Salary Type')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Edit')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Delete')}</th>
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
@@ -174,7 +178,7 @@ export default function Categories() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

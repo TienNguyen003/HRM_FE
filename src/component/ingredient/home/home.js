@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { ScheduleComponent, Day, Week, Month, Inject, ViewsDirective, ViewDirective } from '@syncfusion/ej2-react-schedule';
 
@@ -15,6 +16,7 @@ const cx = classNames.bind(styles);
 
 function Home() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [dayOff, setDayOff] = useState([]);
     const [totalTime, setTime] = useState(0);
     const [leave, setLeave] = useState([]);
@@ -123,7 +125,7 @@ function Home() {
                             <div className={cx('pc-9', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <h3 className={cx('card-title')}> Danh sách đơn</h3>
+                                        <h3 className={cx('card-title')}> {t('common.Leave Request List')}</h3>
                                     </div>
 
                                     <div className={cx('card-body', 'pc-12')}>
@@ -132,11 +134,11 @@ function Home() {
                                                 <tbody>
                                                     <tr>
                                                         <th></th>
-                                                        <th>Họ tên</th>
-                                                        <th>Loại nghỉ</th>
-                                                        <th>Thời gian bắt đầu</th>
-                                                        <th>Thời gian kết thúc</th>
-                                                        <th>Trạng thái</th>
+                                                        <th>{t('common.Name')}</th>
+                                                        <th>{t('common.Leave Type')}</th>
+                                                        <th>{t('common.Time')} {t('common.Start')}</th>
+                                                        <th>{t('common.Time')} {t('common.End')}</th>
+                                                        <th>{t('common.Status')}</th>
                                                     </tr>
                                                     {leave.slice(-1).map((item) => (
                                                         <tr key={item.id}>
@@ -158,7 +160,7 @@ function Home() {
 
                                         <div className={cx('clearfix')}>
                                             <a href={routesConfig.leaveApprovals} className={cx('float-right')}>
-                                                Xem tất cả
+                                                {t('common.View all')}
                                             </a>
                                         </div>
                                     </div>
@@ -172,11 +174,15 @@ function Home() {
                                     <div className={cx('info-box-content')}>
                                         <h5>
                                             <a href={routesConfig.leaveHs} className={cx('info-box-number', 'name-category')}>
-                                                Nghỉ phép
+                                                {t('common.Leave')}
                                             </a>
                                         </h5>
-                                        <span className={cx('info-box-text')}>Đã dùng: {state.account && state.account.employee.hourOff} giờ</span>
-                                        <span className={cx('info-box-text')}>Còn lại: {state.account && state.account.employee.vacationHours} giờ</span>
+                                        <span className={cx('info-box-text')}>
+                                            {t('common.Used')}: {state.account && state.account.employee.hourOff} {t('common.Hours')}
+                                        </span>
+                                        <span className={cx('info-box-text')}>
+                                            {t('common.Remaining')}: {state.account && state.account.employee.vacationHours} {t('common.Hours')}
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -186,21 +192,23 @@ function Home() {
                                 <div className={cx('sticky-top', 'pc-12', 't-12')}>
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
-                                            <h4 className={cx('card-title', 'text-center')}>Thông tin tháng {month + ' - ' + year} (giờ)</h4>
+                                            <h4 className={cx('card-title', 'text-center')}>
+                                                {t('common.Hourly Information', {time: month + ' - ' + year})}
+                                            </h4>
                                         </div>
                                         <div>
                                             <table className={cx('table')}>
                                                 <tbody>
                                                     <tr>
-                                                        <td>Giờ cần làm việc</td>
-                                                        <td className={cx('text-right')}>{state.account && state.account.employee.vacationTime}</td>
+                                                        <td>{t('common.Hours')} {t('common.Need')} {t('common.Work')}</td>
+                                                        <td className={cx('text-right')}>{state.account && state.account.employee.vacationTime.toFixed(2)}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Giờ cần chấm công</td>
+                                                        <td>{t('common.Hours')} {t('common.Need')} {t('common.Check in')}</td>
                                                         <td className={cx('text-right')}>{state.account && state.account.employee.timekeeping}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Giờ nghỉ lễ</td>
+                                                        <td>{t('common.Hours')} {t('common.Holiday')}</td>
                                                         <td className={cx('text-right')}>{totalTime}</td>
                                                     </tr>
                                                     {dayOff.map((item) => (
@@ -210,11 +218,11 @@ function Home() {
                                                         </tr>
                                                     ))}
                                                     <tr>
-                                                        <td>Số lần đi muộn</td>
+                                                        <td>{t('common.Number of Times')} {t('common.Late')}</td>
                                                         <td className={cx('text-right')}>{state.account && state.account.employee.lateness}</td>
                                                     </tr>
                                                     <tr>
-                                                        <td>Số lần quên chấm công</td>
+                                                        <td>{t('common.Number of Times')} {t('common.Forgot')} {t('common.Check in')}</td>
                                                         <td className={cx('text-right')}>0</td>
                                                     </tr>
                                                 </tbody>
@@ -223,15 +231,18 @@ function Home() {
                                     </div>
                                     <div className={cx('card')}>
                                         <div className={cx('card-body', 'note')}>
-                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-green')}>Chấm công (vào)</div>
-                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-yellow')}>Chấm công (ra)</div>
-                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-blue')}>Nghỉ lễ</div>
-                                            <div className={cx('text-center', 'note-item')} style={{ display: 'flex', justifyContent: 'space-between', padding: '0' }}>
+                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-green')}>{t('common.Check in')} ({t('common.In')})</div>
+                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-yellow')}>{t('common.Check in')} ({t('common.Out')})</div>
+                                            <div className={cx('alert', 'text-center', 'note-item', 'bg-blue')}>{t('common.Holiday')}</div>
+                                            <div
+                                                className={cx('text-center', 'note-item')}
+                                                style={{ display: 'flex', justifyContent: 'space-between', padding: '0' }}
+                                            >
                                                 <p
                                                     style={{ flex: '0 0 50%', height: '100%', padding: '0.48rem 1.25rem', borderRadius: '0.25rem 0 0 0.25rem' }}
                                                     className={cx('bg-grey')}
                                                 >
-                                                    Xin nghỉ
+                                                    {t('common.Leave')}
                                                 </p>
                                                 <p
                                                     style={{
@@ -242,7 +253,7 @@ function Home() {
                                                         backgroundColor: '#88C273',
                                                     }}
                                                 >
-                                                    Xin nghỉ (Duyệt)
+                                                    {t('common.Approval')}
                                                 </p>
                                             </div>
                                         </div>

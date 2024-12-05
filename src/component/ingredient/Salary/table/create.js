@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [bank, setBank] = useState([]);
     const [recipe, setRecipe] = useState('');
     const [time, setTime] = useState('');
@@ -57,6 +59,8 @@ export default function Create() {
         const month = document.querySelector('#month').value;
         const year = document.querySelector('#year').value;
 
+        console.log(bank);
+
         getBank(name.value);
 
         setRecipe(dataFormula);
@@ -67,7 +71,7 @@ export default function Create() {
 
         const salaryTable = document.querySelector('#salaryTable');
         salaryTable.classList.remove(`${cx('hidden')}`);
-        if (name.value == '') {
+        if (name.value == '' || bank == '') {
             salaryTable.classList.add(`${cx('hidden')}`);
             setBank([]);
         }
@@ -84,27 +88,27 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Bảng lương <small>Thêm mới</small>
+                                {t('common.Salary Table')}
+                                <small>{t('common.button.create')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Edit')}</p>
                                     </div>
 
                                     <form onSubmit={(e) => handleSubmitForm(e)}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Họ tên<span className={cx('text-red')}> *</span>
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_name" className={cx('form-control', 'select')} onChange={saveSalaryTable}>
-                                                        <option value="">--Chọn nhân viên--</option>
+                                                        <option value="">--{t('common.Employees')}--</option>
                                                         {user.map((item) => (
                                                             <option
                                                                 key={item.id}
@@ -120,11 +124,12 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Ngân hàng<span className={cx('text-red')}> *</span>
+                                                    {t('common.Bank Account')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="bank" className={cx('form-control', 'select')} onChange={saveSalaryTable}>
-                                                        <option value="">--Chọn ngân hàng--</option>
+                                                        <option value="">-- {t('common.Bank Account')} --</option>
                                                         {bank.map((item) => (
                                                             <option key={item.id} value={item.id}>
                                                                 {item.nameBank + ' - ' + item.numberBank}
@@ -135,7 +140,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Tháng/Năm<span className={cx('text-red')}> *</span>
+                                                    {t('common.Month')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')} style={{ display: 'flex' }}>
                                                     <select
@@ -167,7 +173,7 @@ export default function Create() {
                                             <div className={cx('text-center')}>
                                                 <a href={routes.salaryTable}>
                                                     <button type="button" className={cx('btn', 'btn-danger')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

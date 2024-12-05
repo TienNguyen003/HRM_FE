@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -8,41 +9,53 @@ import { BASE_URL } from '../../../../config/config';
 import { Page } from '../../../layout/pagination/pagination';
 import { Status } from '../../../layout/status/status';
 import { useAuth } from '../../../../untils/AuthContext';
+import { WebSocketService } from '../../../../untils/WebSocketService';
 
 const cx = classNames.bind(styles);
 
 function Bank() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [bank, setBank] = useState([]);
     const [page, setPage] = useState([]);
+    const [sortOrder, setSortOrder] = useState({
+        name: 'desc',
+        nameBank: 'desc',
+        owner: 'desc',
+        numberBank: 'desc',
+        priority: 'desc',
+    });
     const location = useLocation();
 
     //lấy thông tin ngân hàng
-    async function fetchData(id) {
+    const fetchData = async (id = '', sort = 'id', desc = 'asc') => {
         const urlParams = new URLSearchParams(window.location.search);
-        const page = urlParams.get('page') || 1;
-        const name = urlParams.get('name') || '';
-        const prioritize = urlParams.get('priority') || '';
-        const bank = urlParams.get('nameBank') || '';
-        const status = urlParams.get('status') || '';
 
-        document.querySelector('#name').value = name;
-        document.querySelector('#bank').value = bank;
-        document.querySelector('#status').querySelector('option[value="' + status + '"]').selected = true;
-        document.querySelector('#prioritize').querySelector('option[value="' + prioritize + '"]').selected = true;
+        const params = {
+            pageNumber: urlParams.get('page') || 1,
+            name: urlParams.get('name') || '',
+            priority: urlParams.get('priority') || '',
+            nameBank: urlParams.get('nameBank') || '',
+            status: urlParams.get('status') || '',
+            id,
+            sort,
+            desc,
+        };
+
+        document.querySelector('#name').value = params.name;
+        document.querySelector('#bank').value = params.nameBank;
+        document.querySelector('#status').querySelector(`option[value="${params.status}"]`).selected = true;
+        document.querySelector('#prioritize').querySelector(`option[value="${params.priority}"]`).selected = true;
 
         try {
-            const response = await fetch(
-                `${BASE_URL}bank_accounts?pageNumber=${page}&name=${name}&priority=${prioritize}&nameBank=${bank}&status=${status}&id=${id}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        Authorization: `Bearer ${state.user}`,
-                    },
+            const response = await fetch(`${BASE_URL}bank_accounts?${new URLSearchParams(params)}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${state.user}`,
                 },
-            );
+            });
 
             const data = await response.json();
             if (data.code === 303) {
@@ -50,18 +63,31 @@ function Bank() {
                 setPage(data.page);
             }
         } catch (error) {
-            console.error('Error fetching roles:', error.message);
+            console.error('Error fetching data:', error.message);
         }
-    }
+    };
 
     useEffect(() => {
-        !state.isAuthenticated && redirectLogin();
-        (async function () {
-            await checkRole(state.account.role.permissions, 'BANK_VIEW', true);
-            await new Promise((resolve) => setTimeout(resolve, 1));
-            if (checkRole(state.account.role.name, 'NHÂN VIÊN')) await fetchData(state.account.employee.id);
-            else await fetchData('');
-        })();
+        if (!state.isAuthenticated) redirectLogin();
+        else {
+            let id = checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '';
+            (async function () {
+                await checkRole(state.account.role.permissions, 'BANK_VIEW', true);
+                await new Promise((resolve) => setTimeout(resolve, 1));
+                await fetchData(id);
+            })();
+
+            const handleWebSocketMessage = () => {
+                fetchData(id);
+            };
+
+            const cleanup = WebSocketService({
+                urlWs: 'bank',
+                callback: handleWebSocketMessage,
+            });
+
+            return cleanup;
+        }
     }, [tableData, state.isAuthenticated, state.loading, location]);
 
     // ấn xóa tài khoản ngân hàng
@@ -113,6 +139,16 @@ function Bank() {
         }
     };
 
+    const handleSort = (value, desc) => {
+        setSortOrder((prev) => {
+            const newSortOrder = { ...prev, [value]: desc };
+            return newSortOrder;
+        });
+        let id = checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '';
+        let sort = value == 'name' ? 'employee.name' : value;
+        fetchData(id, sort, desc);
+    };
+
     return (
         <>
             <div className={cx('content-wrapper')}>
@@ -120,7 +156,7 @@ function Bank() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Tài khoản ngân hàng <small>Danh sách</small>
+                                {t('common.Bank Account')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -128,12 +164,18 @@ function Bank() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <div className={cx('row', 'no-gutters')}>
-                                            <div className={cx('pc-10', 'm-12')}>
+                                            <div className={cx('pc-10', 'm-12', 't-10')}>
                                                 <div id="search">
                                                     <form>
                                                         <div className={cx('row', 'no-gutters', 'form-group')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="text" id="name" className={cx('form-control')} name="name" placeholder="Họ tên" />
+                                                                <input
+                                                                    type="text"
+                                                                    id="name"
+                                                                    className={cx('form-control')}
+                                                                    name="name"
+                                                                    placeholder={t('common.Name')}
+                                                                />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
@@ -141,12 +183,12 @@ function Bank() {
                                                                     id="bank"
                                                                     className={cx('form-control')}
                                                                     name="nameBank"
-                                                                    placeholder="Tên ngân hàng"
+                                                                    placeholder={t('common.Bank Name')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} id="prioritize" name="priority">
-                                                                    <option value="">-- Độ ưu tiên --</option>
+                                                                    <option value="">-- {t('common.Prioritize')} --</option>
                                                                     <option value="1">1</option>
                                                                     <option value="2">2</option>
                                                                     <option value="3">3</option>
@@ -156,14 +198,14 @@ function Bank() {
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select id="status" className={cx('form-control', 'select')} name="status">
-                                                                    <option value="">-- Trạng thái --</option>
-                                                                    <option value="0">Không hoạt động</option>
-                                                                    <option value="1">Hoạt động</option>
+                                                                    <option value="">-- {t('common.Status')} --</option>
+                                                                    <option value="0">{t('common.No Active')}</option>
+                                                                    <option value="1">{t('common.Active')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -174,7 +216,7 @@ function Bank() {
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.userBankCreate} className={cx('btn')}>
                                                         <i className={cx('fa fa-plus')}></i>
-                                                        &nbsp;Thêm mới
+                                                        &nbsp;{t('common.button.create')}
                                                     </a>
                                                 </div>
                                             )}
@@ -186,18 +228,74 @@ function Bank() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center')}>Tên ngân hàng</th>
-                                                    <th className={cx('text-center', 'm-0')}>Chủ tài khoản</th>
-                                                    <th className={cx('text-center', 'm-0')}>Số tài khoản</th>
-                                                    <th className={cx('text-center', 'm-0')}>Độ ưu tiên</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Name')} &nbsp;
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-up', { hidden: sortOrder.name === 'desc' })}
+                                                            onClick={() => handleSort('name', 'desc')}
+                                                        ></i>
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-down', { hidden: sortOrder.name === 'asc' })}
+                                                            onClick={() => handleSort('name', 'asc')}
+                                                        ></i>
+                                                    </th>
+
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Bank Name')} &nbsp;
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-up', { hidden: sortOrder.nameBank === 'desc' })}
+                                                            onClick={() => handleSort('nameBank', 'desc')}
+                                                        ></i>
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-down', { hidden: sortOrder.nameBank === 'asc' })}
+                                                            onClick={() => handleSort('nameBank', 'asc')}
+                                                        ></i>
+                                                    </th>
+
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Owner')} &nbsp;
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-up', { hidden: sortOrder.owner === 'desc' })}
+                                                            onClick={() => handleSort('owner', 'desc')}
+                                                        ></i>
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-down', { hidden: sortOrder.owner === 'asc' })}
+                                                            onClick={() => handleSort('owner', 'asc')}
+                                                        ></i>
+                                                    </th>
+
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Bank Number')} &nbsp;
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-up', { hidden: sortOrder.numberBank === 'desc' })}
+                                                            onClick={() => handleSort('numberBank', 'desc')}
+                                                        ></i>
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-down', { hidden: sortOrder.numberBank === 'asc' })}
+                                                            onClick={() => handleSort('numberBank', 'asc')}
+                                                        ></i>
+                                                    </th>
+
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Prioritize')} &nbsp;
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-up', { hidden: sortOrder.priority === 'desc' })}
+                                                            onClick={() => handleSort('priority', 'desc')}
+                                                        ></i>
+                                                        <i
+                                                            className={cx('fa-solid fa-chevron-down', { hidden: sortOrder.priority === 'asc' })}
+                                                            onClick={() => handleSort('priority', 'asc')}
+                                                        ></i>
+                                                    </th>
                                                     {checkRole(state.account.role.permissions, 'BANK_EDIT') && (
                                                         <>
-                                                            <th className={cx('text-center')}>Trạng thái</th>
-                                                            <th className={cx('text-center')}>Sửa</th>
+                                                            <th className={cx('text-center')}>{t('common.Status')}</th>
+                                                            <th className={cx('text-center')}>{t('common.Edit')}</th>
                                                         </>
                                                     )}
-                                                    {checkRole(state.account.role.permissions, 'BANK_DELETE') && <th className={cx('text-center')}>Xoá</th>}
+                                                    {checkRole(state.account.role.permissions, 'BANK_DELETE') && (
+                                                        <th className={cx('text-center')}>{t('common.Delete')}</th>
+                                                    )}
                                                 </tr>
                                                 {bank.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
@@ -233,7 +331,7 @@ function Bank() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

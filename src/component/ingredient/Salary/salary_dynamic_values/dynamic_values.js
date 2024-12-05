@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 function Static_values() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [salary, setSalary] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
@@ -91,7 +93,7 @@ function Static_values() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Lương theo tháng <small>Danh sách</small>
+                            {t('common.Monthly Salary')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -104,14 +106,14 @@ function Static_values() {
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
+                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder={t('common.Name')} />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="text" className={cx('form-control')} name="time" id="time" placeholder="Tháng" />
+                                                                <input type="text" className={cx('form-control')} name="time" id="time" placeholder={t('common.Month')} />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="category_id" id="category_id">
-                                                                    <option value="">-- Danh mục lương --</option>
+                                                                    <option value="">-- {t('common.Salary Categories')} --</option>
                                                                     {salaryCate.map((item) => (
                                                                         <option key={item.id} value={item.id}>
                                                                             {item.name}
@@ -121,7 +123,7 @@ function Static_values() {
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -131,7 +133,7 @@ function Static_values() {
                                             {checkRole(state.account.role.permissions, 'SAUP_ADD') && (
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.salaryDynamiCreate} className={cx('btn')}>
-                                                        <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                        <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                     </a>
                                                 </div>
                                             )}
@@ -143,12 +145,12 @@ function Static_values() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center')}>Tháng</th>
-                                                    <th className={cx('text-center')}>Danh mục lương</th>
-                                                    <th className={cx('text-center')}>Giá trị</th>
-                                                    {checkRole(state.account.role.permissions, 'SAUP_EDIT') && <th className={cx('text-center')}>Sửa</th>}
-                                                    {checkRole(state.account.role.permissions, 'SAUP_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Month')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Salary Categories')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Month')}</th>
+                                                    {checkRole(state.account.role.permissions, 'SAUP_EDIT') && <th className={cx('text-center')}>{t('common.Edit')}</th>}
+                                                    {checkRole(state.account.role.permissions, 'SAUP_DELETE') && <th className={cx('text-center')}>{t('common.Delete')}</th>}
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
@@ -181,7 +183,7 @@ function Static_values() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

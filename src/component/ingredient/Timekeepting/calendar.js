@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
-import { ScheduleComponent, Day, Week, Month, Inject, ViewsDirective, ViewDirective } from '@syncfusion/ej2-react-schedule';
+import { useTranslation } from 'react-i18next';
+import { ScheduleComponent, Month, Inject, ViewsDirective, ViewDirective } from '@syncfusion/ej2-react-schedule';
 
 import styles from '../create.module.scss';
 import { BASE_URL } from '../../../config/config';
@@ -11,6 +12,7 @@ const cx = classNames.bind(styles);
 
 export default function Calendar() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [dataField, setDataField] = useState([]);
     const [user, setUser] = useState([]);
 
@@ -147,7 +149,8 @@ export default function Calendar() {
                             <div className={cx('card-body')}>
                                 <div className={cx('form-group', 'row', 'no-gutters')}>
                                     <label className={cx('pc-2', 'm-3')}>
-                                        Họ tên<span className={cx('text-red')}> *</span>
+                                        {t('common.Name')}
+                                        <span className={cx('text-red')}> *</span>
                                     </label>
                                     <div className={cx('pc-8', 'm-8')}>
                                         <select id="user_id" className={cx('form-control', 'select')} onChange={(e) => handleChangeEmployee(e)}>

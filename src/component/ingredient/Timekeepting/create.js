@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [user, setUser] = useState([]);
     const path = window.location.pathname.replace('/checks/edit/', '');
 
@@ -125,7 +127,8 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Chấm công <small>Thêm mới</small>
+                                {t('common.Check in')}
+                                <small>{path.includes('/checks/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -133,7 +136,7 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
+                                        {t('common.Required field')}
                                         </p>
                                     </div>
 
@@ -141,7 +144,7 @@ export default function Create() {
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Họ tên<span className={cx('text-red')}> *</span>
+                                                {t('common.Name')}<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
@@ -155,7 +158,7 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Thời gian<span className={cx('text-red')}> *</span>{' '}
+                                                {t('common.Time')}<span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
@@ -169,7 +172,7 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4')}>Ghi chú</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>{t('common.Note')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
@@ -185,20 +188,20 @@ export default function Create() {
                                             <div className={cx('text-center')}>
                                                 {path.includes('/day_off_letters/create') ? (
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </button>
                                                 ) : (
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
-                                                        Lưu
+                                                        {t('common.button.save')}
                                                     </button>
                                                 )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                    Nhập lại
+                                                {t('common.button.confluent')}
                                                 </button>
 
                                                 <a href={routes.checks}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                    {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

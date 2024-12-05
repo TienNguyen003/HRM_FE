@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useReducer } from 'react';
 import { introspect, getMyInfo, refreshToken } from '../component/globalstyle/checkToken';
 import { toast } from 'react-toastify';
 import Load from '../component/globalstyle/Loading/load';
+import { WebSocketService } from './WebSocketService';
 
 export const AuthContext = createContext();
 
@@ -43,6 +44,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('authorizationData');
+        dispatch({ type: 'SET_LOADING', payload: true });
         dispatch({ type: 'LOGOUT' });
         redirectLogin();
     };
@@ -55,9 +57,14 @@ export const AuthProvider = ({ children }) => {
     };
 
     const getInfo = async (token) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
         try {
             const getAcc = await getMyInfo(token);
+            if (getAcc?.status === 0) {
+                toast.error('Your account has been locked. Please contact support.');
+                logout();
+                dispatch({ type: 'SET_LOADING', payload: true });
+                return;
+            }
             dispatch({ type: 'SET_ACCOUNT', payload: getAcc });
         } catch (error) {
             console.log('Error fetching data:', error);
@@ -90,10 +97,10 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
+        const token = localStorage.getItem('authorizationData');
         const checkLoginStatus = async () => {
             await new Promise((resolve) => setTimeout(resolve, 1000));
             dispatch({ type: 'SET_LOADING', payload: true });
-            const token = localStorage.getItem('authorizationData');
             if (token) {
                 try {
                     const validToken = await introspect(token);
@@ -112,6 +119,16 @@ export const AuthProvider = ({ children }) => {
         };
 
         checkLoginStatus();
+
+        const handleWebSocketMessage = async () => {
+            await getInfo(token);
+        };
+        const cleanup = WebSocketService({
+            urlWs: 'updateStt',
+            callback: handleWebSocketMessage,
+        });
+
+        return cleanup;
     }, []);
 
     if (state.loading) {

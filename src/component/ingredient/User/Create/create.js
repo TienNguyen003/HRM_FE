@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 function Role() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
     const [formula, setFormula] = useState([]);
@@ -189,7 +191,7 @@ function Role() {
             email: document.querySelector('#email'),
             fullname: document.querySelector('#fullname'),
             phone: document.querySelector('#phone'),
-            address: document.querySelector('#address'),
+            // address: document.querySelector('#address'),
             birthday: document.querySelector('#birthday'),
             joined_date: document.querySelector('#joined_date'),
             structure_id: document.querySelector('#structure_id'),
@@ -223,10 +225,11 @@ function Role() {
         else if (specialRegex.test(form.phone.value)) handleAlert('alert-danger', 'Số điện thoại không dược chứa ký tự đặc biệt');
         else if (form.phone.value.includes(' ')) handleAlert('alert-danger', 'Số điện thoại không được chứa khoảng trắng');
         else if (form.phone.value.length !== 10) handleAlert('alert-danger', 'Số điện thoại phải có 10 chữ số');
-        else if (form.address.value === '') handleAlert('alert-danger', 'Địa chỉ không được để trống');
+        // else if (form.address.value === '') handleAlert('alert-danger', 'Địa chỉ không được để trống');
         else if (form.birthday.value === '') handleAlert('alert-danger', 'Ngày sinh không được để trống');
         else if (form.joined_date.value === '') handleAlert('alert-danger', 'Ngày tham gia không được để trống');
         else if (form.timekeeper_id.value === '') handleAlert('alert-danger', 'Số giờ cần làm không được để trống');
+        else if (form.timekeeper_id.value <= 0) handleAlert('alert-danger', 'Số giờ cần làm phải lớn hơn 0');
         else if (!numberRegex.test(form.timekeeper_id.value)) handleAlert('alert-danger', 'Số giờ cần làm chỉ được chứa số ');
         else if (specialRegex.test(form.timekeeper_id.value)) handleAlert('alert-danger', 'Số giờ cần làm không được chứa ký tự đặc biệt');
         else if (form.timekeeper_id.value.includes(' ')) handleAlert('alert-danger', 'Số giờ cần làm không được chứa khoảng trắng');
@@ -339,7 +342,8 @@ function Role() {
                         <div className={cx('container-fluid')}>
                             <section className={cx('content-header')}>
                                 <h1>
-                                    Người dùng hệ thống <small>{path.includes('/users/create') ? 'Thêm mới' : 'Sửa thông tin'}</small>
+                                    {t('common.Employees')}{' '}
+                                    <small>{path.includes('/users/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                                 </h1>
                             </section>
                         </div>
@@ -347,16 +351,15 @@ function Role() {
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <div className={cx('form-horizontal')}>
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
-                                                    Tên đăng nhập<span className={cx('text-red')}> *</span>
+                                                    {t('common.username')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input
@@ -375,33 +378,35 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Họ tên</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Name')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" placeholder="Nguyen Van A" id="fullname" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Số điện thoại</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Phone Number')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" placeholder="0123456789" id="phone" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Ngày sinh</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Birthday')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="birthday" />
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className={cx('form-group', 'row', 'no-gutters')}>
+                                            {/* <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Địa chỉ</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" placeholder="Berlin" id="address" />
                                                 </div>
-                                            </div>
+                                            </div> */}
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Ngày gia nhập</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Date')} {t('common.Join')}
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="joined_date" placeholder="12/07/2024" />
@@ -409,7 +414,7 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Văn phòng làm việc</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Department')}c</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="structure_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
@@ -423,7 +428,8 @@ function Role() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
-                                                    Số giờ cần làm<span className={cx('text-red')}> *</span>
+                                                    {t('common.Hours')} {t('common.Need')} {t('common.Work')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input
@@ -436,13 +442,15 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Số giờ nghỉ phép</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Hours')} {t('common.Holiday')}
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" name="sabbatical" id="sabbatical" defaultValue="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Công thức lương</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Salary Formulas')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="salary_formula_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
@@ -454,72 +462,83 @@ function Role() {
                                                     </select>
                                                 </div>
                                             </div>
-                                            <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
-                                                    Mật khẩu<span className={cx('text-red')}> *</span>
-                                                </label>
-                                                <div className={cx('pc-8', 'm-8', 't-8')}>
-                                                    <div className={cx('input-group', 'row', 'no-gutters')}>
-                                                        <div
-                                                            className={cx('pc-10', 'm-12', 't-9', 'input-10')}
-                                                            style={{
-                                                                border: '1px solid #ced4da',
-                                                                display: 'flex',
-                                                                alignItems: 'center',
-                                                                textAlign: 'center',
-                                                                cursor: 'pointer',
-                                                            }}
-                                                        >
-                                                            <input
-                                                                type="password"
-                                                                className={cx('form-control', 'pc-11', 'm-11', 'input-10')}
-                                                                id="password"
-                                                                placeholder="Nhập mật khẩu hoặc dùng tính năng tạo tự động"
-                                                                onChange={(e) => changePassword(e)}
-                                                                style={{ marginBottom: 0, border: 'unset' }}
-                                                            />
-                                                            <i className={cx('fa-solid fa-eye', 'pc-1')} id="iconShow" onClick={() => tooglePass(true)}></i>
-                                                            <i
-                                                                className={cx('fa-solid fa-eye-slash', 'pc-1', 'hidden')}
-                                                                id="iconHidden"
-                                                                onClick={() => tooglePass(false)}
-                                                            ></i>
+                                            {path.includes('/users/create') && (
+                                                <>
+                                                    <div className={cx('form-group', 'row', 'no-gutters')}>
+                                                        <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                            {t('common.password')}
+                                                            <span className={cx('text-red')}> *</span>
+                                                        </label>
+
+                                                        <div className={cx('pc-8', 'm-8', 't-8')}>
+                                                            <div className={cx('input-group', 'row', 'no-gutters')}>
+                                                                <div
+                                                                    className={cx('pc-10', 'm-12', 't-9', 'input-10')}
+                                                                    style={{
+                                                                        border: '1px solid #ced4da',
+                                                                        display: 'flex',
+                                                                        alignItems: 'center',
+                                                                        textAlign: 'center',
+                                                                        cursor: 'pointer',
+                                                                    }}
+                                                                >
+                                                                    <input
+                                                                        type="password"
+                                                                        className={cx('form-control', 'pc-11', 'm-11', 'input-10')}
+                                                                        id="password"
+                                                                        placeholder="Nhập mật khẩu hoặc dùng tính năng tạo tự động"
+                                                                        onChange={(e) => changePassword(e)}
+                                                                        style={{ marginBottom: 0, border: 'unset' }}
+                                                                    />
+                                                                    <i
+                                                                        className={cx('fa-solid fa-eye', 'pc-1')}
+                                                                        id="iconShow"
+                                                                        onClick={() => tooglePass(true)}
+                                                                    ></i>
+                                                                    <i
+                                                                        className={cx('fa-solid fa-eye-slash', 'pc-1', 'hidden')}
+                                                                        id="iconHidden"
+                                                                        onClick={() => tooglePass(false)}
+                                                                    ></i>
+                                                                </div>
+                                                                <span className={cx('input-group-btn', 'pc-2')}>
+                                                                    <button onClick={clickAutoPassword} className={cx('btn', 'btn-primary', 'button-2')}>
+                                                                        {t('common.auto generate')}
+                                                                    </button>
+                                                                </span>
+                                                            </div>
+                                                            <div id="strength">
+                                                                <span className={cx('result')}></span>
+                                                                <span className={cx('str-box')}>
+                                                                    <div className={cx('strong-pass')}></div>
+                                                                </span>
+                                                                <span className={cx('str-box')}>
+                                                                    <div className={cx('strong-pass')}></div>
+                                                                </span>
+                                                                <span className={cx('str-box')}>
+                                                                    <div className={cx('strong-pass')}></div>
+                                                                </span>
+                                                                <span className={cx('str-box')}>
+                                                                    <div className={cx('strong-pass')}></div>
+                                                                </span>
+                                                                <span className={cx('str-box')}>
+                                                                    <div className={cx('strong-pass')}></div>
+                                                                </span>
+                                                            </div>
                                                         </div>
-                                                        <span className={cx('input-group-btn', 'pc-2')}>
-                                                            <button onClick={clickAutoPassword} className={cx('btn', 'btn-primary', 'button-2')}>
-                                                                Tạo tự động
-                                                            </button>
-                                                        </span>
                                                     </div>
-                                                    <div id="strength">
-                                                        <span className={cx('result')}></span>
-                                                        <span className={cx('str-box')}>
-                                                            <div className={cx('strong-pass')}></div>
-                                                        </span>
-                                                        <span className={cx('str-box')}>
-                                                            <div className={cx('strong-pass')}></div>
-                                                        </span>
-                                                        <span className={cx('str-box')}>
-                                                            <div className={cx('strong-pass')}></div>
-                                                        </span>
-                                                        <span className={cx('str-box')}>
-                                                            <div className={cx('strong-pass')}></div>
-                                                        </span>
-                                                        <span className={cx('str-box')}>
-                                                            <div className={cx('strong-pass')}></div>
-                                                        </span>
+                                                    <div className={cx('form-group', 'row', 'no-gutters')}>
+                                                        <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.re-password')}</label>
+                                                        <div className={cx('pc-8', 'm-8', 't-8')}>
+                                                            <input className={cx('form-control')} type="password" readOnly id="comfirm_password" />
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            </div>
-                                            <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Nhập lại mật khẩu</label>
-                                                <div className={cx('pc-8', 'm-8', 't-8')}>
-                                                    <input className={cx('form-control')} type="password" readOnly id="comfirm_password" />
-                                                </div>
-                                            </div>
+                                                </>
+                                            )}
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
-                                                    Phân quyền<span className={cx('text-red')}> *</span>
+                                                    {t('common.Decentralization')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="role_id" className={cx('form-control', 'select')}>
@@ -542,11 +561,11 @@ function Role() {
                                             </div>
                                             <div className={cx('text-center')}>
                                                 <button type="submit" className={cx('btn', 'btn-success')} onClick={handleClickAddUser}>
-                                                    Lưu
+                                                    {t('common.button.save')}
                                                 </button>
                                                 <a href={routes.user}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

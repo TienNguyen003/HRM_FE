@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ const cx = classNames.bind(styles);
 
 export default function Formulas() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [formula, setFormula] = useState([]);
     const [page, setPage] = useState([]);
@@ -104,7 +106,7 @@ export default function Formulas() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Công thức tính lương <small>Danh sách</small>
+                                {t('common.Salary Formulas')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -122,19 +124,19 @@ export default function Formulas() {
                                                                     className={cx('form-control')}
                                                                     name="name"
                                                                     id="name"
-                                                                    placeholder="Tên loại lương"
+                                                                    placeholder={`${t('common.name')} ${t('common.Salary Type')}`}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="status" id="status">
-                                                                    <option value="">-- Trạng thái --</option>
-                                                                    <option value="1">Hoạt động</option>
-                                                                    <option value="0">Không hoạt động</option>
+                                                                    <option value="">-- {t('common.Status')} --</option>
+                                                                    <option value="0">{t('common.No Active')}</option>
+                                                                    <option value="1">{t('common.Active')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2', 'm-5', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -144,7 +146,7 @@ export default function Formulas() {
                                             {checkRole(state.account.role.permissions, 'CALC_ADD') && (
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.salaryFormulasCreate} className={cx('btn')}>
-                                                        <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                        <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                     </a>
                                                 </div>
                                             )}
@@ -156,15 +158,19 @@ export default function Formulas() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên công thức</th>
-                                                    <th className={cx('text-center', 'm-0')}>Công thức tính</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.name')} {t('common.Salary Type')}
+                                                    </th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Salary Formulas')}</th>
                                                     {checkRole(state.account.role.permissions, 'CALC_EDIT') && (
                                                         <>
-                                                            <th className={cx('text-center')}>Trạng thái</th>
-                                                            <th className={cx('text-center')}>Sửa</th>
+                                                            <th className={cx('text-center')}>{t('common.Status')}</th>
+                                                            <th className={cx('text-center')}>{t('common.Edit')}</th>
                                                         </>
                                                     )}
-                                                    {checkRole(state.account.role.permissions, 'CALC_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'CALC_DELETE') && (
+                                                        <th className={cx('text-center')}>{t('common.Delete')}</th>
+                                                    )}
                                                 </tr>
                                                 {formula.map((item, index) => (
                                                     <tr key={index}>
@@ -201,7 +207,7 @@ export default function Formulas() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

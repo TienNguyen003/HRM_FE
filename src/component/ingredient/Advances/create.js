@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../create.module.scss';
@@ -14,6 +15,7 @@ function Create() {
     const numberRegex = /[0-9]/;
 
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [isStatus, setIsStatus] = useState(0);
     const [user, setUser] = useState([]);
     const path = window.location.pathname.replace('/advances/edit/', '');
@@ -99,23 +101,23 @@ function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Ứng lương <small>Thêm mới</small>
+                                {t('common.Salary Advance')}
+                                <small>{path.includes('/advances/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <div className={cx('card-body')}>
                                         <form onSubmit={(e) => submitForm(e)} id="formReset">
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Họ tên<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
@@ -129,14 +131,15 @@ function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Số tiền<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Money')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} id="price" placeholder="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4')}>Ghi chú</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>{t('common.Note')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6"></textarea>
                                                 </div>
@@ -152,19 +155,19 @@ function Create() {
                                             <div className={cx('box-footer', 'text-center')}>
                                                 {path.includes('/advances/create') ? (
                                                     <button className={cx('btn', 'btn-success')} onClick={saveAdvances}>
-                                                        Thêm
+                                                        {t('common.button.create')}
                                                     </button>
                                                 ) : (
                                                     <button className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={saveAdvances}>
-                                                        Lưu
+                                                        {t('common.button.save')}
                                                     </button>
                                                 )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                    Nhập lại
+                                                    {t('common.button.confluent')}
                                                 </button>
                                                 <a href={routes.advances}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

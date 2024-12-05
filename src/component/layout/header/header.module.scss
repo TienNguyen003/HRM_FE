@@ -398,7 +398,7 @@ body {
 }
 
 .user {
-    width: 340px;
+    min-width: 340px;
 
     a:hover {
         background-color: transparent;
@@ -422,6 +422,7 @@ body {
     padding: 1.5rem !important;
 
     .pull-bottom a {
+        margin: 0 5px;
         padding: 0.5rem 1rem;
         color: #fff;
     }

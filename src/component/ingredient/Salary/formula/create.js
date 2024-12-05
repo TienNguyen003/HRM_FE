@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [dayOff, setDayOff] = useState([]);
     const [salaryDefault, setSalaryD] = useState([]);
     const [salaryMonth, setSalaryM] = useState([]);
@@ -105,16 +107,15 @@ export default function Create() {
                 <div className={cx('container-fluid')}>
                     <section className={cx('content-header')}>
                         <h1>
-                            Công thức tính lương <small>Thêm mới</small>
+                            {t('common.Salary Formulas')}
+                            <small>{path.includes('/salary/formulas/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                         </h1>
                     </section>
                     <div className={cx('row', 'no-gutters')}>
                         <div className={cx('pc-12', 't-12', 'm-12')}>
                             <div className={cx('card')}>
                                 <div className={cx('card-header')}>
-                                    <p className={cx('card-title')}>
-                                        Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                    </p>
+                                    <p className={cx('card-title')}>{t('common.Required field')}</p>
                                 </div>
                                 <div className={cx('row', 'no-gutters')}>
                                     <div className={cx('pc-4', 't-5', 'm-12')}>
@@ -122,7 +123,7 @@ export default function Create() {
                                             <div className={cx('list_formula_categories')}>
                                                 <div className={cx('formula_categories')}>
                                                     <span className={cx('title')}>
-                                                        <b>LƯƠNG CỐ ĐỊNH</b>
+                                                        <b>{t('common.Fixed Salary')}</b>
                                                     </span>
                                                     <hr />
                                                     <div className={cx('body')}>
@@ -135,7 +136,7 @@ export default function Create() {
                                                 </div>
                                                 <div className={cx('formula_categories')}>
                                                     <span className={cx('title')}>
-                                                        <b>LƯƠNG CẬP NHẬT TRONG THÁNG</b>
+                                                        <b>{t('common.Monthly Salary')}</b>
                                                     </span>
                                                     <hr />
                                                     <div className={cx('body')}>
@@ -148,7 +149,9 @@ export default function Create() {
                                                 </div>
                                                 <div className={cx('formula_categories')}>
                                                     <span className={cx('title')}>
-                                                        <b>DANH SÁCH LIÊN QUAN</b>
+                                                        <b>
+                                                            {t('common.List')} {t('common.Relate')}
+                                                        </b>
                                                     </span>
                                                     <hr />
                                                     <div className={cx('body')}>
@@ -181,13 +184,14 @@ export default function Create() {
                                                     <div className={cx('card-body')}>
                                                         <div className={cx('form-group')}>
                                                             <label>
-                                                                Tên công thức<span className={cx('text-red')}> *</span>
+                                                                {t('common.name')} {t('common.Formulas')}
+                                                                <span className={cx('text-red')}> *</span>
                                                             </label>
                                                             <input type="text" className={cx('form-control')} id="name" placeholder="Nhập tên công thức..." />
                                                         </div>
                                                         <div className={cx('form-group')}>
                                                             <label>
-                                                                Công thức tính lương
+                                                                {t('common.Salary Formulas')}
                                                                 <span className={cx('text-red')}> *</span>
                                                             </label>
                                                             <textarea
@@ -207,14 +211,14 @@ export default function Create() {
                                                         </div>
                                                         <div className={cx('text-center')}>
                                                             <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAdd}>
-                                                                Thêm mới
+                                                                {t('common.button.create')}
                                                             </button>
                                                             <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                                Nhập lại
+                                                                {t('common.button.confluent')}
                                                             </button>
                                                             <a href={routes.salaryFormulas}>
                                                                 <button type="button" className={cx('btn', 'btn-default')}>
-                                                                    Thoát
+                                                                    {t('common.button.exit')}
                                                                 </button>
                                                             </a>
                                                         </div>

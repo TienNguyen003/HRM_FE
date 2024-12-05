@@ -1,10 +1,10 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
 import routes from '../../../../config/routes';
 import { BASE_URL } from '../../../../config/config';
-import { checkRole } from '../../../globalstyle/checkToken';
 import { getDayOffCate, getAllUser, handleAlert, getUser } from '../../ingredient';
 import { useAuth } from '../../../../untils/AuthContext';
 
@@ -12,6 +12,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [isStatus, setIsStatus] = useState(0);
     const [user, setUser] = useState([]);
     const [dayOff, setDayOff] = useState([]);
@@ -158,16 +159,15 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Đơn xin nghỉ <small>Thêm mới</small>
+                                {t('common.Application for leave')}
+                                <small>{path.includes('/day_off_letters/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
@@ -179,7 +179,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Họ tên<span className={cx('text-red')}> *</span>
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
@@ -193,7 +194,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Loại nghỉ<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Leave Type')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="day_off_category_id" className={cx('form-control', 'select')}>
@@ -207,7 +209,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Thời gian bắt đầu<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Time')} {t('common.Start')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
@@ -222,7 +225,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                    Thời gian kết thúc<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Time')} {t('common.End')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
@@ -236,7 +240,7 @@ export default function Create() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4')}>Lý do</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4')}>{t('common.Reason')}</label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6" placeholder=""></textarea>
                                                 </div>
@@ -252,20 +256,20 @@ export default function Create() {
                                             <div className={cx('text-center')}>
                                                 {path.includes('/day_off_letters/create') ? (
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddLeave}>
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </button>
                                                 ) : (
                                                     <button type="submit" className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={updateLeave}>
-                                                        Lưu
+                                                        {t('common.button.save')}
                                                     </button>
                                                 )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                    Nhập lại
+                                                    {t('common.button.confluent')}
                                                 </button>
 
                                                 <a href={routes.leave}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

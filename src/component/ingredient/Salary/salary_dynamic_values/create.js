@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [user, setUser] = useState([]);
     const [salaryCate, setSalaryCate] = useState([]);
     const path = window.location.pathname.replace('/salary/dynamic_values/edit/', '');
@@ -139,7 +141,8 @@ export default function Create() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Lương cố định <small>Thêm mới</small>
+                                {t('common.Monthly Salary')}
+                                <small>{path.includes('/dynamic_values/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -147,13 +150,14 @@ export default function Create() {
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
                                         <p className={cx('card-title')}>
-                                            Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
+                                            <p className={cx('card-title')}>{t('common.Required field')}</p>
                                         </p>
                                     </div>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                Họ tên<span className={cx('text-red')}> *</span>{' '}
+                                                {t('common.Name')}
+                                                <span className={cx('text-red')}> *</span>{' '}
                                             </label>
                                             <div className={cx('pc-8', 'm-8', 't-8')}>
                                                 <select id="user_id" className={cx('form-control', 'select')} onChange={handleChangeSelect}>
@@ -167,7 +171,8 @@ export default function Create() {
                                         </div>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                Tháng/Năm<span className={cx('text-red')}> *</span>
+                                                {t('common.Month')}
+                                                <span className={cx('text-red')}> *</span>
                                             </label>
                                             <div className={cx('pc-8', 'm-8', 't-8')} style={{ display: 'flex' }}>
                                                 <select
@@ -197,7 +202,7 @@ export default function Create() {
                                             </div>
                                         </div>
                                         <h4 className={cx('title', 'text-center')}>
-                                            <b>Các khoản lương cố định trong tháng</b>
+                                            <b>{t('common.Monthly Salary')}</b>
                                         </h4>
                                         <div className={cx('row', 'no-gutters', 'text-center')} style={{ justifyContent: 'center' }}>
                                             <div className={cx('pc-8', 't-12', 'm-12')}>
@@ -205,8 +210,8 @@ export default function Create() {
                                                     <tbody id="table-salary">
                                                         <tr>
                                                             <th>STT</th>
-                                                            <th>Danh mục lương</th>
-                                                            <th>Giá trị</th>
+                                                            <th>{t('common.Salary Categories')}</th>
+                                                            <th>{t('common.Money')}</th>
                                                         </tr>
                                                         {salaryCate.map((item, index) => (
                                                             <tr key={index} data-value={item.id}>
@@ -237,11 +242,11 @@ export default function Create() {
                                         </div>
                                         <div className={cx('text-center')}>
                                             <button type="submit" className={cx('btn', 'btn-success')} onClick={saveSalary}>
-                                                Cập nhật
+                                                {t('common.button.save')}
                                             </button>
                                             <a href={routes.salaryDynamic}>
                                                 <button type="button" className={cx('btn', 'btn-default')}>
-                                                    Thoát
+                                                    {t('common.button.exit')}
                                                 </button>
                                             </a>
                                         </div>

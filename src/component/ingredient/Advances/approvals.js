@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 function Approvals() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [isStatus, setIsStatus] = useState(0);
     const [advances, setAdvances] = useState([]);
     const path = window.location.pathname.replace('/advances/approvals/edit/', '');
@@ -60,7 +62,7 @@ function Approvals() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Ứng lương <small>Duyệt yêu cầu</small>
+                                {t('common.Salary Advance')} <small>{t('common.Approval')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -69,16 +71,16 @@ function Approvals() {
                                     <div key={item.id} className={cx('card')}>
                                         <div className={cx('card-header', 'row', 'no-gutters')}>
                                             <p className={cx('card-title', 'pc-10', 'm-9')}>
-                                                Trạng thái: <Status status={item.status} />
+                                                {t('common.Status')}: <Status status={item.status} />
                                                 <br />
-                                                Người thực hiện: <strong>{item.approvedBy}</strong>
+                                                {t('common.Approval')} {t('common.By')}: <strong>{item.approvedBy}</strong>
                                             </p>
                                             {isStatus === 0 ? (
                                                 <div className={cx('pc-2', 'm-3')}>
                                                     <select className={cx('form-control', 'select')} id="status">
-                                                        <option value="1">Phê duyệt</option>
-                                                        <option value="2">Từ chối</option>
-                                                        <option value="3">Huỷ</option>
+                                                        <option value="1">{t('common.Approval')}</option>
+                                                        <option value="2">{t('common.Rejected')}</option>
+                                                        <option value="3">{t('common.Cancelled')}</option>
                                                     </select>
                                                 </div>
                                             ) : (
@@ -87,19 +89,19 @@ function Approvals() {
                                         </div>
                                         <div className={cx('card-body')}>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2', 'm-3')}>Họ tên:</label>
+                                                <label className={cx('pc-2', 'm-3')}>{t('common.Name')}:</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <p>{item.employee.name}</p>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2', 'm-3')}>Số tiền:</label>
+                                                <label className={cx('pc-2', 'm-3')}>{t('common.Money')}:</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <p>{formatter.format(item.money)}</p>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2', 'm-3')}>Ghi chú:</label>
+                                                <label className={cx('pc-2', 'm-3')}>{t('common.Note')}:</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <p>
                                                         <i>{item.note}</i>
@@ -107,7 +109,7 @@ function Approvals() {
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2', 'm-3')}>Bình luận:</label>
+                                                <label className={cx('pc-2', 'm-3')}>{t('common.Comment')}:</label>
                                                 <div className={cx('pc-8', 'm-8')}>
                                                     <textarea className={cx('form-control', 'message')} rows="6"></textarea>
                                                 </div>
@@ -124,11 +126,11 @@ function Approvals() {
                                                     disabled={isStatus !== 0}
                                                     onClick={updateSttAdvances}
                                                 >
-                                                    Lưu
+                                                    {t('common.button.save')}
                                                 </button>
                                                 <a href={routes.advanceApprovals}>
                                                     <button type="submit" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

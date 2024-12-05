@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 function Holidays() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [holiday, setHoliday] = useState([]);
     const [page, setPage] = useState([]);
@@ -82,7 +84,7 @@ function Holidays() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Nghỉ lễ <small>Danh sách</small>
+                                {t('common.Holiday')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -100,12 +102,12 @@ function Holidays() {
                                                                     className={cx('form-control')}
                                                                     name="name"
                                                                     id="name"
-                                                                    placeholder="Tên ngày nghỉ"
+                                                                    placeholder={`${t('common.name')} ${t('common.Holiday')}`}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-2', 'post-form')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -114,7 +116,7 @@ function Holidays() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.holidaysCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -125,12 +127,20 @@ function Holidays() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên loại lương</th>
-                                                    <th className={cx('text-center')}>Ngày bắt đầu nghỉ</th>
-                                                    <th className={cx('text-center')}>Ngày kết thúc nghỉ</th>
-                                                    <th className={cx('text-center', 'm-0')}>Tổng số giờ nghỉ</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xóa</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.name')} {t('common.Holiday')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Date')} {t('common.Start')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Date')} {t('common.End')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Total')} {t('common.Time')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>{t('common.Edit')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Delete')}</th>
                                                 </tr>
                                                 {holiday.map((item, index) => (
                                                     <tr key={index}>
@@ -156,7 +166,7 @@ function Holidays() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

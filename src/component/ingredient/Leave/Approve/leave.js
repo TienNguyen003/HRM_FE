@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 
 import styles from '../../create.module.scss';
@@ -11,6 +12,7 @@ const cx = classNames.bind(styles);
 
 function Leave() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [isStatus, setIsStatus] = useState(0);
     const [leave, setLeave] = useState([]);
     const path = window.location.pathname.replace('/day_off_letters/approval/', '');
@@ -119,7 +121,7 @@ function Leave() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Đơn xin nghỉ <small>Phê duyệt</small>
+                                {t('common.Application for leave')} <small>{t('common.Approval')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -128,19 +130,19 @@ function Leave() {
                                     <div key={item.id} className={cx('card')}>
                                         <div className={cx('card-header', 'row', 'no-gutters')}>
                                             <p className={cx('card-title', 'pc-10', 'm-9')}>
-                                                Trạng thái:{' '}
+                                                {t('common.Status')}:{' '}
                                                 <span className={cx('badge', 'badge-success')}>
                                                     <Status status={item.status} />
                                                 </span>
                                                 <br />
-                                                Người thực hiện: <strong>{item.approved}</strong>
+                                                {t('common.Approval')} {t('common.By')}: <strong>{item.approved}</strong>
                                             </p>
                                             {isStatus === 0 ? (
                                                 <div className={cx('pc-2', 'm-3')}>
                                                     <select className={cx('form-control', 'select')} id="status">
-                                                        <option value="1">Phê duyệt</option>
-                                                        <option value="2">Từ chối</option>
-                                                        <option value="3">Huỷ</option>
+                                                        <option value="1">{t('common.Approval')}</option>
+                                                        <option value="2">{t('common.Rejected')}</option>
+                                                        <option value="3">{t('common.Cancelled')}</option>
                                                     </select>
                                                 </div>
                                             ) : (
@@ -151,7 +153,7 @@ function Leave() {
                                             <div className={cx('row', 'no-gutters')}>
                                                 <div className={cx('pc-5', 'm-12')}>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Họ tên:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>{t('common.Name')}:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p id="employeeId" data-employee={item.employee.id} data-remaining={item.employee.vacationHours}>
                                                                 {item.employee.name}
@@ -159,13 +161,13 @@ function Leave() {
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Văn phòng làm việc:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>{t('common.Department')}:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.employee.department.name}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Loại nghỉ:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>{t('common.Leave Type')}:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.dayOffCategories.nameDay}</p>
                                                         </div>
@@ -173,33 +175,41 @@ function Leave() {
                                                 </div>
                                                 <div className={cx('pc-7', 'm-12')}>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Thời gian tạo:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>{t('common.Time')}:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p>{new Date(item.creationTime).toISOString().replace('T', ' ').slice(0, 16)}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Thời gian bắt đầu:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>
+                                                            {t('common.Time')} {t('common.Start')}:
+                                                        </label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.startTime}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Thời gian kết thúc:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>
+                                                            {t('common.Time')} {t('common.End')}:
+                                                        </label>
                                                         <div className={cx('pc-7', 'm-7')}>
                                                             <p>{item.endTime}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                        <label className={cx('pc-5', 'm-4')}>Tổng thời gian xin nghỉ:</label>
+                                                        <label className={cx('pc-5', 'm-4')}>
+                                                            {t('common.Total')} {t('common.Time')}:
+                                                        </label>
                                                         <div className={cx('pc-7', 'm-7')}>
-                                                            <p id="timeTotal">{item.totalTime} giờ</p>
+                                                            <p id="timeTotal">
+                                                                {item.totalTime} {t('common.Hours')}
+                                                            </p>
                                                         </div>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Lý do:</label>
+                                                <label className={cx('pc-2')}>{t('common.Reason')}:</label>
                                                 <div className={cx('pc-10')}>
                                                     <p>
                                                         <i>{item.reason}</i>
@@ -207,16 +217,16 @@ function Leave() {
                                                 </div>
                                             </div>
                                             <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                <label className={cx('pc-2')}>Bình luận</label>
+                                                <label className={cx('pc-2')}>{t('common.Comment')}</label>
                                                 <textarea className={cx('form-control', 'message', 'pc-8')} rows="6"></textarea>
                                             </div>
                                             <div className={cx('text-center')}>
                                                 <button disabled={isStatus !== 0} className={cx('btn', 'btn-default')} onClick={updateStatusLeave}>
-                                                    Lưu
+                                                    {t('common.button.save')}
                                                 </button>
                                                 <a href={routes.leaveApprovals}>
                                                     <button type="submit" className={cx('btn', 'btn-default')}>
-                                                        Thoát
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

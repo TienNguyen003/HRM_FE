@@ -1,5 +1,6 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
 import styles from '../../create.module.scss';
@@ -12,6 +13,7 @@ const cx = classNames.bind(styles);
 
 export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const path = window.location.pathname.replace('/salary/categories/edit/', '');
 
     const getSalaCate = async () => {
@@ -103,7 +105,8 @@ export default function Create() {
                         <div className={cx('container-fluid')}>
                             <section className={cx('content-header')}>
                                 <h1>
-                                    Danh mục lương <small>Sửa</small>
+                                    {t('common.Fixed Salary')}
+                                    <small>{path.includes('/salary/categories/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                                 </h1>
                             </section>
                             <div className={cx('row', 'no-gutters')}>
@@ -111,7 +114,7 @@ export default function Create() {
                                     <div className={cx('card')}>
                                         <div className={cx('card-header')}>
                                             <p className={cx('card-title')}>
-                                                Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
+                                            {t('common.Required field')}
                                             </p>
                                         </div>
 
@@ -119,26 +122,26 @@ export default function Create() {
                                             <div className={cx('card-body')}>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
                                                     <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                        Tên loại lương<span className={cx('text-red')}> *</span>
+                                                    {t('common.name')} {t('common.Salary Type')}<span className={cx('text-red')}> *</span>
                                                     </label>
                                                     <div className={cx('pc-8', 'm-8', 't-8')}>
-                                                        <input className={cx('form-control')} type="text" id="name" />
+                                                        <input className={cx('form-control')} type="text" id="name" placeholder={t('common.Fixed Salary')}/>
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
                                                     <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                        Ký hiệu<span className={cx('text-red')}> *</span>
+                                                    {t('common.Symbol')}<span className={cx('text-red')}> *</span>
                                                     </label>
                                                     <div className={cx('pc-8', 'm-8', 't-8')}>
-                                                        <input className={cx('form-control')} type="text" id="symbol" />
+                                                        <input className={cx('form-control')} type="text" id="symbol" placeholder='ABCD'/>
                                                     </div>
                                                 </div>
                                                 <div className={cx('row', 'no-gutters', 'form-group')}>
-                                                    <label className={cx('pc-2', 'm-3', 't-4')}>Loại lương</label>
+                                                    <label className={cx('pc-2', 'm-3', 't-4')}>{t('common.Salary Type')}</label>
                                                     <div className={cx('pc-8', 'm-8', 't-8')}>
                                                         <select id="type" className={cx('form-control', 'select')}>
-                                                            <option value="Lương cố định">Lương cố định</option>
-                                                            <option value="Lương theo tháng">Lương theo tháng</option>
+                                                            <option value="Lương cố định">{t('common.Fixed Salary')}</option>
+                                                            <option value="Lương theo tháng">{t('common.Monthly Salary')}</option>
                                                         </select>
                                                     </div>
                                                 </div>
@@ -152,14 +155,14 @@ export default function Create() {
                                                 </div>
                                                 <div className={cx('text-center')}>
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={saveCateSalary}>
-                                                        Lưu
+                                                    {t('common.button.save')}
                                                     </button>
                                                     <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                        Nhập lại
+                                                    {t('common.button.confluent')}
                                                     </button>
                                                     <a href={routes.salaryCategories}>
                                                         <button type="button" className={cx('btn', 'btn-default')}>
-                                                            Thoát
+                                                        {t('common.button.exit')}
                                                         </button>
                                                     </a>
                                                 </div>

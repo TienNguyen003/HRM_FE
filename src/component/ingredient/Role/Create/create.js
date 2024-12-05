@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect } from 'react';
 
 import styles from './create.module.scss';
@@ -10,6 +11,7 @@ const cx = classNames.bind(styles);
 
 function Role() {
     const { state, redirectLogin, refresh, checkRole } = useAuth();
+    const { t } = useTranslation();
     const path = window.location.pathname.replace('/roles/edit/', '');
 
     const handleClickRole = (isCheck) => {
@@ -170,23 +172,22 @@ function Role() {
                 <section className={cx('content')}>
                     <section className={cx('content-header')}>
                         <h1>
-                            Phân quyền <small>Thêm mới</small>
+                            {t('common.Decentralization')} <small>{t('common.button.create')}</small>
                         </h1>
                     </section>
                     <div className={cx('row', 'no-gutters')}>
                         <div className={cx('pc-12', 'm-12', 't-12')}>
                             <div className={cx('card')}>
                                 <div className={cx('card-header', 'with-border')}>
-                                    <p className={cx('card-title')}>
-                                        Những trường đánh dấu (<span className={cx('text-red')}>*</span>) là bắt buộc
-                                    </p>
+                                    <p className={cx('card-title')}>{t('common.Required field')}</p>
                                 </div>
 
                                 <form id="formReset" onSubmit={(e) => handleSubmitForm(e)}>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
                                             <label className={cx('pc-2', 'm-4', 't-4', 'control-label')}>
-                                                Tên quyền<span className={cx('text-red')}> *</span>
+                                                {t('common.Role Name')}
+                                                <span className={cx('text-red')}> *</span>
                                             </label>
                                             <div className={cx('pc-8', 'm-8', 't-8')}>
                                                 <input className={cx('form-control')} id="name-role" type="text" name="name" placeholder="VD: Quản lý" />
@@ -203,86 +204,86 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Bảng lương</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Salary Table')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="sala_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="sala_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="sala_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="sala_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Cài đặt chung</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Settings')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="set_set" />
-                                                        cài đặt
+                                                        {t('common.Settings')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Cấu trúc công ty</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Company Structure')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="comp_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="comp_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="comp_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="comp_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Chấm công</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Check in')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     {/* &emsp;
                                                     <label className={cx('fl')}>
@@ -296,252 +297,254 @@ function Role() {
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_viewTime" />
-                                                        Bảng thời gian
+                                                        {t('common.Time Table')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="attd_approvals" />
-                                                        Duyệt chấm công
+                                                        {t('common.Approval')} {t('common.Check in')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Công thức tính lương</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Salary Formulas')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="calc_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="calc_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="calc_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="calc_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Danh mục lương</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Salary Categories')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="catg_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="catg_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="catg_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="catg_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Danh mục nghỉ</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Holiday Categories')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="leav_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="leav_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="leav_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="leav_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Đơn xin nghỉ</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Application for leave')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="req_approvals" />
-                                                        Duyệt đơn xin nghỉ
+                                                        {t('common.Approval')} {t('common.Application for leave')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Hợp đồng</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Contract Info')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="cont_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="cont_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="cont_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="cont_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lịch sử nghỉ phép</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>
+                                                    {t('common.History')} {t('common.Leave')}
+                                                </label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="hist_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lương cập nhật theo tháng</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Monthly Salary')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="saup_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="saup_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="saup_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="saup_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Lương cố định</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Fixed Salary')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="safi_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="safi_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="safi_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="safi_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Nghỉ lễ</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Holiday')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="holi_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="holi_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="holi_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="holi_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Người dùng hệ thống</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Employees')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="user_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="user_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="user_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="user_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
@@ -552,106 +555,106 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Phân quyền</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Decentralization')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="perm_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="perm_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="perm_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="perm_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Tài khoản ngân hàng</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Bank Account')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="bank_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="bank_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="bank_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="bank_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Ứng lương</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Salary Advance')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="adv_approvals" />
-                                                        Duyệt ứng lương
+                                                        {t('common.Approval')} {t('common.Salary Advance')}
                                                     </label>
                                                     &emsp;
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>Văn phòng</label>
+                                                <label className={cx('control-label', 'pc-2', 'm-4', 't-4')}>{t('common.Department')}</label>
                                                 <div className={cx('controls', 'pc-10', 'm-8', 't-8', 'list-role')}>
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="off_view" />
-                                                        Danh sách
+                                                        {t('common.List')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="off_add" />
-                                                        Thêm mới
+                                                        {t('common.button.create')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="off_edit" />
-                                                        Sửa
+                                                        {t('common.Edit')}
                                                     </label>
                                                     &emsp;
                                                     <label className={cx('fl')}>
                                                         <input type="checkbox" name="authorizations[]" value="off_delete" />
-                                                        Xoá
+                                                        {t('common.Delete')}
                                                     </label>
                                                     &emsp;
                                                 </div>
@@ -668,19 +671,19 @@ function Role() {
                                         <div className={cx('text-center')}>
                                             {path.includes('/roles') ? (
                                                 <button className={cx('btn', 'btn-success')} onClick={handleClickAdd}>
-                                                    Thêm mới
+                                                    {t('common.button.create')}
                                                 </button>
                                             ) : (
                                                 <button className={cx('btn', 'btn-info')} onClick={clickUpdate}>
-                                                    Lưu lại
+                                                    {t('common.button.save')}
                                                 </button>
                                             )}
                                             <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                Nhập lại
+                                                {t('common.button.confluent')}
                                             </button>
                                             <a href={routes.role}>
                                                 <button type="button" className={cx('btn', 'btn-default')}>
-                                                    Thoát
+                                                    {t('common.button.exit')}
                                                 </button>
                                             </a>
                                         </div>

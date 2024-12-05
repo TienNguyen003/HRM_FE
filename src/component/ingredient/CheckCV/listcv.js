@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 
 import styles from '../list.module.scss';
+import Status from '../../globalstyle/Status/status';
 import { useAuth } from '../../../untils/AuthContext';
 import { BASE_URL } from '../../../config/config';
 
@@ -9,6 +11,7 @@ const cx = classNames.bind(styles);
 
 export default function Listcv() {
     const { state } = useAuth();
+    const { t } = useTranslation();
     const [disqualified, setDisqualified] = useState([]);
 
     const getDisqualified = async () => {
@@ -42,7 +45,7 @@ export default function Listcv() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Danh sách CV đã loại <small>Danh sách</small>
+                                {t('common.List')} CV<small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -63,12 +66,12 @@ export default function Listcv() {
                                                                     id="phone"
                                                                     className={cx('form-control')}
                                                                     name="phone"
-                                                                    placeholder="Số điện thoại"
+                                                                    placeholder={t('common.Phone Number')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -84,17 +87,21 @@ export default function Listcv() {
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
                                                     <th className={cx('text-center')}>Email</th>
-                                                    <th className={cx('text-center')}>Số điện thoại</th>
-                                                    <th className={cx('text-center', 'm-0')}>Ngày sinh</th>
-                                                    <th className={cx('text-center', 'm-0')}>Link file</th>
+                                                    <th className={cx('text-center')}>{t('common.Phone Number')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Birthday')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Status')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>Link File</th>
                                                 </tr>
                                                 {disqualified.map((item, index) => (
                                                     <tr className={cx('record-data')} key={index}>
                                                         <td className={cx('text-center')}>{index + 1}</td>
                                                         <td className={cx('text-center')}>{item.email}</td>
                                                         <td className={cx('text-center')}>{item.phone}</td>
-                                                        <td className={cx('text-center', 'm-0')}>{item.dob}</td>
-                                                        <td className={cx('text-center', 'm-0')}>
+                                                        <td className={cx('text-center')}>{item.dob}</td>
+                                                        <td className={cx('text-center')}>
+                                                            <Status status={item.status} />
+                                                        </td>
+                                                        <td className={cx('text-center')}>
                                                             <a target="blank" href={item.linkFile}>
                                                                 Link
                                                             </a>

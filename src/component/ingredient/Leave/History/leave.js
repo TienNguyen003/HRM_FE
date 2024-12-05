@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -11,6 +12,7 @@ const cx = classNames.bind(styles);
 
 function Leave() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [logs, setLogs] = useState([]);
     const [page, setPage] = useState([]);
     const location = useLocation();
@@ -57,7 +59,7 @@ function Leave() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Lịch sử nghỉ phép <small>Danh sách</small>
+                                {t('common.History')} {t('common.Leave')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -71,11 +73,17 @@ function Leave() {
                                                         <input type="hidden" name="search" value="1" />
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
+                                                                <input
+                                                                    type="text"
+                                                                    className={cx('form-control')}
+                                                                    name="name"
+                                                                    id="name"
+                                                                    placeholder={t('common.Name')}
+                                                                />
                                                             </div>
                                                             <div className={cx('pc-3')}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -90,11 +98,15 @@ function Leave() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center', 'm-0')}>Thời gian cập nhật</th>
-                                                    <th className={cx('text-center', 'm-0')}>Thời gian biến động</th>
-                                                    <th className={cx('text-center')}>Thời gian còn lại</th>
-                                                    <th className={cx('text-center')}>Nội dung</th>
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Time')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Total')} {t('common.Time')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Time')} {t('common.Remaining')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>{t('common.Content')}</th>
                                                 </tr>
                                                 {logs.map((item, index) => (
                                                     <tr key={index} className={cx('record-data')}>
@@ -113,7 +125,7 @@ function Leave() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

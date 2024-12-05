@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 function Checks() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [time, setTime] = useState([]);
     const [structures, setStructures] = useState([]);
@@ -99,7 +101,7 @@ function Checks() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Chấm công <small>Danh sách</small>
+                            {t('common.Check in')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -112,14 +114,14 @@ function Checks() {
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
+                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder={t('common.Name')} />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <input type="date" className={cx('form-control')} name="date" id="date" placeholder="Ngày" />
+                                                                <input type="date" className={cx('form-control')} name="date" id="date" />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="department" id="department">
-                                                                    <option value="">-- Phòng ban --</option>
+                                                                    <option value="">-- {t('common.Department')} --</option>
                                                                     {structures.map((item, index) => (
                                                                         <option key={index} value={item.name + ' - ' + item.officeI.name}>
                                                                             {item.name} - {item.officeI.name}
@@ -129,7 +131,7 @@ function Checks() {
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -138,7 +140,7 @@ function Checks() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a href={routes.checkCreate} className={cx('btn')}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -149,12 +151,12 @@ function Checks() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center', 'm-0')}>Văn phòng</th>
-                                                    <th className={cx('text-center')}>Ngày</th>
-                                                    <th className={cx('text-center')}>Giờ</th>
-                                                    {checkRole(state.account.role.permissions, 'ATTD_EDIT') && <th className={cx('text-center')}>Sửa</th>}
-                                                    {checkRole(state.account.role.permissions, 'ATTD_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Department')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Date')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Hours')}</th>
+                                                    {checkRole(state.account.role.permissions, 'ATTD_EDIT') && <th className={cx('text-center')}>{t('common.Edit')}</th>}
+                                                    {checkRole(state.account.role.permissions, 'ATTD_DELETE') && <th className={cx('text-center')}>{t('common.Delete')}</th>}
                                                 </tr>
                                                 {time.map((item, index) => (
                                                     <tr key={index}>
@@ -186,7 +188,7 @@ function Checks() {
                                         <div className={cx('pagination', 'pc-12', 'm-12', 't-12')}>
                                             <div className={cx('pc-7', 'm-4', 't-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5', 'm-8', 't-5')}>

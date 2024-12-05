@@ -1,11 +1,11 @@
 import React from 'react';
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import styles from '../../list.module.scss';
 import routes from '../../../../config/routes';
-import Load from '../../../globalstyle/Loading/load';
 import { BASE_URL } from '../../../../config/config';
 import { formatter } from '../../ingredient';
 import { Page } from '../../../layout/pagination/pagination';
@@ -16,6 +16,7 @@ const cx = classNames.bind(styles);
 
 export default function Salary() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [checkStt, setCheck] = useState(false);
     const [salary, setSalary] = useState([]);
     const [page, setPage] = useState([]);
@@ -276,7 +277,7 @@ export default function Salary() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Bảng lương <small>Danh sách</small>
+                                {t('common.Salary Table')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -289,7 +290,13 @@ export default function Salary() {
                                                     <form>
                                                         <div className={cx('row', 'form-group', 'no-gutters')}>
                                                             <div className={cx('pc-3', 'm-5', 'm-5', 'post-form')}>
-                                                                <input type="text" className={cx('form-control')} name="name" id="name" placeholder="Họ tên" />
+                                                                <input
+                                                                    type="text"
+                                                                    className={cx('form-control')}
+                                                                    name="name"
+                                                                    id="name"
+                                                                    placeholder={t('common.Name')}
+                                                                />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <input
@@ -297,19 +304,19 @@ export default function Salary() {
                                                                     className={cx('form-control')}
                                                                     name="time"
                                                                     id="time"
-                                                                    placeholder="Lương tháng"
+                                                                    placeholder={t('common.Salary Month')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select className={cx('form-control', 'select')} name="status" id="status">
-                                                                    <option value="">-- Trạng thái --</option>
-                                                                    <option value="0">Chưa khoá</option>
-                                                                    <option value="1">Đã khoá</option>
+                                                                    <option value="">-- {t('common.Status')} --</option>
+                                                                    <option value="0">{t('common.Pending')}</option>
+                                                                    <option value="1">{t('common.Approval')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -318,11 +325,11 @@ export default function Salary() {
                                             </div>
                                             <div className={cx('pc-3', 'm-6', 'text-right')}>
                                                 <button className={cx('btn', 'btn-success')} onClick={handleExportExcel}>
-                                                    <i className={cx('fas fa-download')}></i> Xuất excel
+                                                    <i className={cx('fas fa-download')}></i> {t('common.Export Excel')}
                                                 </button>
                                                 {checkRole(state.account.role.permissions, 'SALA_ADD') && (
                                                     <a style={{ marginLeft: '5px' }} href={routes.salaryTableCreate} className={cx('btn')}>
-                                                        <i className={cx('fa fa-plus')}></i> Tạo Bảng Lương
+                                                        <i className={cx('fa fa-plus')}></i> {t('common.button.create')} {t('common.Salary Table')}
                                                     </a>
                                                 )}
                                             </div>
@@ -333,11 +340,11 @@ export default function Salary() {
                                         {checkRole(state.account.role.permissions, 'SALA_EDIT') && (
                                             <>
                                                 <button disabled={checkStt} className={cx('btn', 'salary-locked', 'btn-default')} onClick={clickCottar}>
-                                                    <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;Chốt lương
+                                                    <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;{t('common.Approval')}
                                                 </button>
                                                 &ensp;
                                                 <button className={cx('btn', 'send-mail', 'btn-success')} onClick={clickSendMail}>
-                                                    <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;Gửi mail
+                                                    <i className={cx('fas fa-lock', 'text-danger')}></i>&ensp;{t('common.Send')} mail
                                                 </button>
                                             </>
                                         )}
@@ -347,23 +354,23 @@ export default function Salary() {
                                                     <div className={cx('modal-body')}>
                                                         <div className={cx('row', 'no-gutters')}>
                                                             <div className={cx('pc-5')}>
-                                                                <p className={cx('pc-6')}>Tên ngân hàng:</p>
+                                                                <p className={cx('pc-6')}>{t('common.Bank Name')}:</p>
                                                                 <p>
                                                                     <b id="bank_name"></b>
                                                                 </p>
-                                                                <p className={cx('pc-6')}>Số tài khoản:</p>
+                                                                <p className={cx('pc-6')}>{t('common.Bank Number')}:</p>
                                                                 <p>
                                                                     <b id="bank_number"></b>
                                                                 </p>
-                                                                <p className={cx('pc-6')}>Chủ tài khoản:</p>
+                                                                <p className={cx('pc-6')}>{t('common.Owner')}:</p>
                                                                 <p>
                                                                     <b id="bank_account"></b>
                                                                 </p>
-                                                                <p className={cx('pc-6')}>Số tiền:</p>
+                                                                <p className={cx('pc-6')}>{t('common.Money')}:</p>
                                                                 <p>
                                                                     <b id="price"></b>
                                                                 </p>
-                                                                <p className={cx('pc-6')}>Nội dung:</p>
+                                                                <p className={cx('pc-6')}>{t('common.Content')}:</p>
                                                                 <p>
                                                                     <b id="content"></b>
                                                                 </p>
@@ -371,7 +378,7 @@ export default function Salary() {
                                                             <div className={cx('pc-7', 'text-center')}>
                                                                 <img src="" className={cx('image-vietqr')} id="image-vietqr" />
                                                                 <button className={cx('btn', 'btn-success')} id="btnConfirm" onClick={(e) => submitConfirm(e)}>
-                                                                    Gửi mail xác nhận đã chuyển
+                                                                    {t('common.Send')} mail {t('common.Confirmed Transfer')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -389,13 +396,15 @@ export default function Salary() {
                                                     <th className={cx('text-center')}>
                                                         <input type="checkbox" id="check_all" onClick={(e) => checkAllInput(e)} />
                                                     </th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center', 'm-0')}>Phòng ban</th>
-                                                    <th className={cx('text-center')}>Lương tháng</th>
-                                                    <th className={cx('text-center')}>Tổng lương</th>
-                                                    <th className={cx('text-center', 'm-0')}>Trạng thái</th>
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Department')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Salary Month')}</th>
+                                                    <th className={cx('text-center')}>
+                                                        {t('common.Total')} {t('common.Money')}
+                                                    </th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Status')}</th>
                                                     {checkRole(state.account.role.permissions, 'SALA_EDIT') && <th className={cx('text-center')}>VietQR</th>}
-                                                    <th className={cx('text-center')}>Xem</th>
+                                                    <th className={cx('text-center')}>{t('common.View')}</th>
                                                 </tr>
                                                 {salary.map((item, index) => (
                                                     <tr key={index}>
@@ -456,8 +465,7 @@ export default function Salary() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> dòng / tổng
-                                                    <b> {page.totalItems}</b>
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> /<b> {page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

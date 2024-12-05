@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -14,6 +15,7 @@ const cx = classNames.bind(styles);
 
 function User() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [structures, setStructures] = useState([]);
     const [roles, setRoles] = useState([]);
@@ -132,7 +134,7 @@ function User() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Người dùng hệ thống <small>Danh sách</small>
+                                {t('common.Employees')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -150,7 +152,7 @@ function User() {
                                                                     type="text"
                                                                     id="name"
                                                                     className={cx('form-control', 'form-control-sm')}
-                                                                    placeholder="Họ tên"
+                                                                    placeholder={t('common.Name')}
                                                                     name="name"
                                                                 />
                                                             </div>
@@ -159,13 +161,13 @@ function User() {
                                                                     type="text"
                                                                     id="username"
                                                                     className={cx('form-control', 'form-control-sm')}
-                                                                    placeholder="Tên đăng nhập"
+                                                                    placeholder={t('common.username')}
                                                                     name="username"
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select id="structure_id" name="department" className={cx('form-control', 'select')}>
-                                                                    <option value="">-- Phòng ban --</option>
+                                                                    <option value="">-- {t('common.Department')} --</option>
                                                                     {structures.map((item, index) => (
                                                                         <option key={index} value={item.name + ' - ' + item.officeI.name}>
                                                                             {item.name} - {item.officeI.name}
@@ -175,7 +177,7 @@ function User() {
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
                                                                 <select id="role_id" name="role" className={cx('form-control', 'select')}>
-                                                                    <option value="">-- Phân quyền --</option>
+                                                                    <option value="">-- {t('common.Decentralization')} --</option>
                                                                     {roles.map((item) => (
                                                                         <option key={item.name} value={item.name}>
                                                                             {item.name}
@@ -185,7 +187,7 @@ function User() {
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -194,7 +196,7 @@ function User() {
                                             </div>
                                             <div className={cx('pc-2', 'text-right')}>
                                                 <a className={cx('btn')} href={routes.userCreate}>
-                                                    <i className={cx('fa fa-plus')}></i> Thêm mới
+                                                    <i className={cx('fa fa-plus')}></i> {t('common.button.create')}
                                                 </a>
                                             </div>
                                         </div>
@@ -205,14 +207,14 @@ function User() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center', 'm-0')}>Tên đăng nhập</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center', 'm-0')}>Phân quyền</th>
-                                                    <th className={cx('text-center', 'm-0')}>Phòng ban</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.username')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Decentralization')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>{t('common.Department')}</th>
                                                     <th className={cx('text-center')}>Reset password</th>
-                                                    <th className={cx('text-center')}>Trạng thái</th>
-                                                    <th className={cx('text-center')}>Sửa</th>
-                                                    <th className={cx('text-center')}>Xóa</th>
+                                                    <th className={cx('text-center')}>{t('common.Status')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Edit')}</th>
+                                                    <th className={cx('text-center')}>{t('common.Delete')}</th>
                                                 </tr>
                                                 {user.map((item, index) => (
                                                     <tr key={item.id} id={`record-${item.id}`}>
@@ -250,7 +252,7 @@ function User() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{pages.totalItemsPerPage}</b> / <b>{pages.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{pages.totalItemsPerPage}</b> / <b>{pages.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>

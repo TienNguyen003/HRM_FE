@@ -1,4 +1,5 @@
 import classNames from 'classnames/bind';
+import { useTranslation } from 'react-i18next';
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -13,6 +14,7 @@ const cx = classNames.bind(styles);
 
 function Contract() {
     const { state, redirectLogin, checkRole } = useAuth();
+    const { t } = useTranslation();
     const [tableData, setTableData] = useState([]);
     const [contracts, setContracts] = useState([]);
     const [page, setPage] = useState([]);
@@ -114,7 +116,7 @@ function Contract() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Hợp đồng <small>Danh sách</small>
+                                {t('common.Contract Info')} <small>{t('common.List')}</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -133,19 +135,19 @@ function Contract() {
                                                                     className={cx('form-control')}
                                                                     id="user_name"
                                                                     name="name"
-                                                                    placeholder="Họ tên"
+                                                                    placeholder={t('common.Name')}
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
-                                                                <select className={cx('form-control', 'select')} id="status" name="status">
-                                                                    <option value="">-- Trạng thái --</option>
-                                                                    <option value="0">Không hoạt động</option>
-                                                                    <option value="1">Hoạt động</option>
+                                                                <select id="status" className={cx('form-control', 'select')} name="status">
+                                                                    <option value="">-- {t('common.Status')} --</option>
+                                                                    <option value="0">{t('common.No Active')}</option>
+                                                                    <option value="1">{t('common.Active')}</option>
                                                                 </select>
                                                             </div>
                                                             <div className={cx('pc-2')} style={{ height: '36.6px' }}>
                                                                 <button type="submit" className={cx('btn')}>
-                                                                    <i className={cx('fa fa-search')}></i> Tìm kiếm
+                                                                    <i className={cx('fa fa-search')}></i> {t('common.Search')}
                                                                 </button>
                                                             </div>
                                                         </div>
@@ -156,7 +158,7 @@ function Contract() {
                                                 <div className={cx('pc-2', 'text-right')}>
                                                     <a href={routes.userContractsCreate} className={cx('btn')}>
                                                         <i className={cx('fa fa-plus')}></i>
-                                                        &nbsp;Thêm mới
+                                                        &nbsp;{t('common.button.create')}
                                                     </a>
                                                 </div>
                                             )}
@@ -168,17 +170,23 @@ function Contract() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Họ tên</th>
-                                                    <th className={cx('text-center', 'm-0')}>Ngày bắt đầu</th>
-                                                    <th className={cx('text-center', 'm-0')}>Ngày kết thúc</th>
-                                                    <th className={cx('text-center')}>Tệp đính kèm</th>
+                                                    <th className={cx('text-center')}>{t('common.Name')}</th>
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Time')} {t('common.Start')}
+                                                    </th>
+                                                    <th className={cx('text-center', 'm-0')}>
+                                                        {t('common.Time')} {t('common.End')}
+                                                    </th>
+                                                    <th className={cx('text-center')}>{t('common.Attachment')}</th>
                                                     {checkRole(state.account.role.permissions, 'CONT_EDIT') && (
                                                         <>
-                                                            <th className={cx('text-center')}>Trạng thái</th>
-                                                            <th className={cx('text-center')}>Sửa</th>
+                                                            <th className={cx('text-center')}>{t('common.Status')}</th>
+                                                            <th className={cx('text-center')}>{t('common.Edit')}</th>
                                                         </>
                                                     )}
-                                                    {checkRole(state.account.role.permissions, 'CONT_DELETE') && <th className={cx('text-center')}>Xóa</th>}
+                                                    {checkRole(state.account.role.permissions, 'CONT_DELETE') && (
+                                                        <th className={cx('text-center')}>{t('common.Delete')}</th>
+                                                    )}
                                                 </tr>
                                                 {contracts.map((item, index) => (
                                                     <tr className={cx('record-data')} key={item.id}>
@@ -222,7 +230,7 @@ function Contract() {
                                         <div className={cx('pagination', 'pc-12')}>
                                             <div className={cx('pc-7')}>
                                                 <p>
-                                                    Hiển thị <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> dòng
+                                                    {t('common.Show')} <b>{page.totalItemsPerPage}</b> / <b>{page.totalItems}</b> {t('common.Row')}
                                                 </p>
                                             </div>
                                             <div className={cx('pc-5')}>
