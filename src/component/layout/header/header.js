@@ -231,7 +231,7 @@ function Header({ onClick }) {
 
                     <li className={cx('user-menu')}>
                         <a className={cx('dropdown-toggle')} onClick={clickUser}>
-                            <img src="https://demo.hrm.one/img/no-avatar.jpg" className={cx('user-image')} alt="User Image" />
+                            <img src="https://res.cloudinary.com/dwn20guz0/image/upload/v1733380783/avatarUser/avatar.jpg" className={cx('user-image')} alt="User Image" />
                             <span className={cx('hidden-xs')}></span>
                         </a>
                         <ul className={cx('dropdown-menu', 'user')}>
