@@ -241,6 +241,8 @@ function Header({ onClick }) {
                                 </a>
                             </li>
 
+                            <li className={cx('user-header')}>{state.account && state.account.employee.name}</li>
+
                             <li className={cx('user-footer')}>
                                 <div className={cx('pull-bottom')}>
                                     <a href={routes.userEdit.replace(':name', state.account && state.account.id)} className={cx('btn-success', 'btn')}>

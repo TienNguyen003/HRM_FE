@@ -15,6 +15,9 @@ export default function Create() {
     const { state, redirectLogin, checkRole } = useAuth();
     const { t } = useTranslation();
     const [user, setUser] = useState([]);
+    const [location, setLocation] = useState({ latitude: null, longitude: null });
+    const [error, setError] = useState(null);
+
     const path = window.location.pathname.replace('/checks/edit/', '');
 
     const date = new Date();
@@ -59,6 +62,20 @@ export default function Create() {
             await new Promise((resolve) => setTimeout(resolve, 1));
             await getTimeKeeping();
         })();
+
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setLocation({ latitude, longitude });
+                },
+                (err) => {
+                    setError(err.message);
+                },
+            );
+        } else {
+            setError('Geolocation is not supported by this browser.');
+        }
     }, [state.isAuthenticated, state.loading]);
 
     const saveTimeKeeping = async (employeeId, date, time, reason, method) => {
@@ -102,8 +119,10 @@ export default function Create() {
         const time = date.toLocaleTimeString('vi-VN');
         const message = document.querySelector(`.${cx('message')}`).value;
 
-        if (path.includes('/checks/create')) saveTimeKeeping(user, day, time, message, 'POST');
-        else saveTimeKeeping(user, day, time, message, 'PUT');
+        const method = path.includes('/checks/create') ? 'POST' : 'PUT';
+        if (location.latitude === 21.233664 && location.longitude === 105.938944) {
+            saveTimeKeeping(user, day, time, message, method);
+        }
     };
 
     const clickAddTimeKeeping = async () => {
@@ -135,16 +154,15 @@ export default function Create() {
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>
-                                        {t('common.Required field')}
-                                        </p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <form onSubmit={(e) => handleSubmitForm(e)} id="formReset">
                                         <div className={cx('card-body')}>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                {t('common.Name')}<span className={cx('text-red')}> *</span>
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="user_id" className={cx('form-control', 'select')}>
@@ -158,7 +176,8 @@ export default function Create() {
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4')}>
-                                                {t('common.Time')}<span className={cx('text-red')}> *</span>{' '}
+                                                    {t('common.Time')}
+                                                    <span className={cx('text-red')}> *</span>{' '}
                                                 </label>
                                                 <div className={cx('pc-5', 'm-5', 't-5')}>
                                                     <div className={cx('input-group')}>
@@ -186,22 +205,22 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                {path.includes('/day_off_letters/create') ? (
+                                                {path.includes('/checks/create') ? (
                                                     <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
                                                         {t('common.button.create')}
                                                     </button>
                                                 ) : (
-                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAddTimeKeeping}>
+                                                    <button type="submit" className={cx('btn', 'btn-info')} onClick={clickAddTimeKeeping}>
                                                         {t('common.button.save')}
                                                     </button>
                                                 )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
-                                                {t('common.button.confluent')}
+                                                    {t('common.button.confluent')}
                                                 </button>
 
                                                 <a href={routes.checks}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
-                                                    {t('common.button.exit')}
+                                                        {t('common.button.exit')}
                                                     </button>
                                                 </a>
                                             </div>

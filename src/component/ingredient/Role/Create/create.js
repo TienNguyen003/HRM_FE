@@ -172,7 +172,8 @@ function Role() {
                 <section className={cx('content')}>
                     <section className={cx('content-header')}>
                         <h1>
-                            {t('common.Decentralization')} <small>{t('common.button.create')}</small>
+                            {t('common.Decentralization')} 
+                            <small>{path.includes('/roles/create') ? `${t('common.button.create')}` : `${t('common.Edit')}`}</small>
                         </h1>
                     </section>
                     <div className={cx('row', 'no-gutters')}>

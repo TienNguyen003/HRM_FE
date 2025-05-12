@@ -197,9 +197,15 @@ export default function Create() {
                                             </button>
                                         </div>
                                         <div className={cx('text-center')}>
-                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={saveSalary}>
-                                                {t('common.button.save')}
-                                            </button>
+                                            {path.includes('/salary/create') ? (
+                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveSalary}>
+                                                    {t('common.button.create')}
+                                                </button>
+                                            ) : (
+                                                <button type="submit" className={cx('btn', 'btn-info')} onClick={saveSalary}>
+                                                    {t('common.button.save')}
+                                                </button>
+                                            )}
                                             <a href={routes.salary}>
                                                 <button type="button" className={cx('btn', 'btn-default')}>
                                                     {t('common.button.exit')}

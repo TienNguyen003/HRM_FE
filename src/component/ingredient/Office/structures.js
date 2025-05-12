@@ -106,7 +106,7 @@ function Structures() {
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
                             <h1>
-                                Tên văn phòng <small>Danh sách</small>
+                                Phòng ban <small>Danh sách</small>
                             </h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
@@ -124,7 +124,7 @@ function Structures() {
                                                                     className={cx('form-control')}
                                                                     name="name"
                                                                     id="name"
-                                                                    placeholder="Tên văn phòng"
+                                                                    placeholder="Tên phòng"
                                                                 />
                                                             </div>
                                                             <div className={cx('pc-3', 'm-5', 'post-form')}>
@@ -165,7 +165,7 @@ function Structures() {
                                             <tbody>
                                                 <tr>
                                                     <th className={cx('text-center')}>STT</th>
-                                                    <th className={cx('text-center')}>Tên cấu trúc</th>
+                                                    <th className={cx('text-center')}>Tên    phòng</th>
                                                     <th className={cx('text-center', 'm-0')}>Tên ngắn</th>
                                                     <th className={cx('text-center')}>Thuộc cấp cha</th>
                                                     <th className={cx('text-center')}>Trạng thái</th>

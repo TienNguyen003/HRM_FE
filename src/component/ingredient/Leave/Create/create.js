@@ -259,7 +259,7 @@ export default function Create() {
                                                         {t('common.button.create')}
                                                     </button>
                                                 ) : (
-                                                    <button type="submit" className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={updateLeave}>
+                                                    <button type="submit" className={cx('btn', 'btn-info')} disabled={isStatus !== 0} onClick={updateLeave}>
                                                         {t('common.button.save')}
                                                     </button>
                                                 )}

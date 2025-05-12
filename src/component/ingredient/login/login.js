@@ -116,13 +116,13 @@ function Login() {
                             </div>
                         </div>
                         <div className={cx('row')}>
-                            <div className={cx('pc-8', 't-10', 'm-10')}>
+                            <div className={cx('pc-8', 't-8', 'm-8')}>
                                 <div className={cx('icheck-primary')}>
                                     <input type="checkbox" id="remember" name="remember" />
                                     <label htmlFor="remember">{t('common.remember password')}</label>
                                 </div>
                             </div>
-                            <div className={cx('pc-4', 't-2', 'm-2')}>
+                            <div className={cx('pc-4', 't-4', 'm-4')}>
                                 <button type="button" onClick={handleLogin} className={cx('button', 'button-login')}>
                                     {t('common.button.login')}
                                 </button>

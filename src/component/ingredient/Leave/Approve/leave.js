@@ -163,7 +163,7 @@ function Leave() {
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
                                                         <label className={cx('pc-5', 'm-4')}>{t('common.Department')}:</label>
                                                         <div className={cx('pc-7', 'm-7')}>
-                                                            <p>{item.employee.department.name}</p>
+                                                            <p>{item.employee.department.name + " - " + item.employee.department.officeI.name}</p>
                                                         </div>
                                                     </div>
                                                     <div className={cx('row', 'no-gutters', 'form-group')}>
@@ -221,7 +221,7 @@ function Leave() {
                                                 <textarea className={cx('form-control', 'message', 'pc-8')} rows="6"></textarea>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button disabled={isStatus !== 0} className={cx('btn', 'btn-default')} onClick={updateStatusLeave}>
+                                                <button disabled={isStatus !== 0} className={cx('btn', 'btn-info')} onClick={updateStatusLeave}>
                                                     {t('common.button.save')}
                                                 </button>
                                                 <a href={routes.leaveApprovals}>

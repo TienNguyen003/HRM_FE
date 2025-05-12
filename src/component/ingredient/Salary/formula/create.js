@@ -205,14 +205,21 @@ export default function Create() {
                                                             <ul className={cx('pc-11', 't-11', 'm-11')}>
                                                                 <li className={cx('alert-content')}>Tên không được để trống.</li>
                                                             </ul>
-                                                            <button type="button" className={cx('close', 'pc-2')} onClick={clickClose}>
+                                                            <button type="button" className={cx('close', 'pc-1')} onClick={clickClose}>
                                                                 ×
                                                             </button>
                                                         </div>
                                                         <div className={cx('text-center')}>
-                                                            <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAdd}>
-                                                                {t('common.button.create')}
-                                                            </button>
+                                                            {path.includes('/salary/formulas/create') ? (
+                                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={clickAdd}>
+                                                                    {t('common.button.create')}
+                                                                </button>
+                                                            ) : (
+                                                                <button type="submit" className={cx('btn', 'btn-info')} onClick={clickAdd}>
+                                                                    {t('common.button.save')}
+                                                                </button>
+                                                            )}
+
                                                             <button type="reset" className={cx('btn', 'btn-danger')}>
                                                                 {t('common.button.confluent')}
                                                             </button>

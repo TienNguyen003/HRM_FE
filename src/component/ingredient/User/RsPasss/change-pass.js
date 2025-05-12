@@ -84,7 +84,7 @@ export default function ChangePass() {
                                     </div>
                                     <div className={cx('card-body')}>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2', 'control-label')}>Mật khẩu cũ</label>
+                                            <label className={cx('pc-2', 'control-label')}>Mật khẩu cũ<span className={cx('text-red')}> *</span></label>
                                             <div className={cx('pc-8')}>
                                                 <input className={cx('form-control')} type="password" id="old_pass" />
                                             </div>
@@ -147,7 +147,7 @@ export default function ChangePass() {
                                             </div>
                                         </div>
                                         <div className={cx('form-group', 'row', 'no-gutters')}>
-                                            <label className={cx('pc-2', 'control-label')}>Nhập lại mật khẩu</label>
+                                            <label className={cx('pc-2', 'control-label')}>Nhập lại mật khẩu<span className={cx('text-red')}> *</span></label>
                                             <div className={cx('pc-8')}>
                                                 <input className={cx('form-control')} type="password" id="comfirm_pass" />
                                             </div>

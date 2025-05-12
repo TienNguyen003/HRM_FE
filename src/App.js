@@ -90,7 +90,7 @@ function App() {
         };
     }, [userActive]);
 
-    console.log('cài đặt, message, jira, toi uu code');
+    console.log('cài đặt, jira, chấm công (dựa trên location), phân quyền (chỉ được xem người có quyền thấp hơn ngang quyền ko xem được nhau), lọc cv');
 
     return (
         <AuthProvider>

@@ -124,7 +124,7 @@ export default function Create() {
                                                     Tên ngày nghỉ<span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
-                                                    <input className={cx('form-control')} type="text" id="name" />
+                                                    <input className={cx('form-control')} type="text" id="name" placeholder='Nghỉ Tết thôi em êiiiii'/>
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
@@ -156,9 +156,15 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
-                                                    Lưu lại
-                                                </button>
+                                                {path.includes('/holidays/create') ? (
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
+                                                        Thêm mới
+                                                    </button>
+                                                ) : (
+                                                    <button type="submit" className={cx('btn', 'btn-info')} onClick={saveHoliday}>
+                                                        Lưu lại
+                                                    </button>
+                                                )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
                                                     Nhập lại
                                                 </button>

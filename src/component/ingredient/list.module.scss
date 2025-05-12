@@ -278,3 +278,8 @@
     z-index: 10;
     right: 0;
 }
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}

@@ -11,6 +11,7 @@ import { formatter } from '../../ingredient';
 import { Page } from '../../../layout/pagination/pagination';
 import { exportExcel } from '../../../layout/excel/excel';
 import { useAuth } from '../../../../untils/AuthContext';
+import Load from '../../../globalstyle/Loading/load';
 
 const cx = classNames.bind(styles);
 
@@ -130,6 +131,8 @@ export default function Salary() {
     const clickCottar = async () => {
         const ipPayroll = document.querySelectorAll(`.${cx('minimal')}`);
         let arrIp = [];
+        const load = document.querySelector('#load');
+        load.classList.toggle(`${cx('hidden')}`);
         ipPayroll.forEach(function (i) {
             if (i.checked) arrIp.push(i.value);
         });
@@ -145,7 +148,11 @@ export default function Salary() {
             });
 
             const data = await response.json();
-            if (data.code === 303) alert(data.result);
+            if (data.code === 303) {
+                alert(data.result);
+                getSalary(checkRole(state.account.role.name, 'NHÂN VIÊN') ? state.account.employee.id : '');
+            }
+            load.classList.toggle(`${cx('hidden')}`);
         } catch (error) {
             console.log(error);
         }
@@ -160,6 +167,8 @@ export default function Salary() {
                 const name = parent.querySelector('#name').textContent;
                 const salary = parent.querySelector('#salary').textContent;
                 const time = parent.querySelector('#des').textContent;
+                const bankNanme = document.querySelector('#vietqr').getAttribute('bank_name');
+                const bankAccount = document.querySelector('#vietqr').getAttribute('bank_number');
 
                 const content = `<html lang="vi">
                     <head>
@@ -220,7 +229,7 @@ export default function Salary() {
                                 <p>Chúng tôi xin thông báo về việc thanh toán lương tháng <strong>${time}</strong> của bạn như sau:</p>
                                 <p><strong>Mức lương:</strong> <span style="color: red">${salary}</span></p>
                                 <p><strong>Thời gian thanh toán:</strong> ${formattedDate}</p>
-                                <p>Lương của bạn sẽ được chuyển khoản vào tài khoản ngân hàng đã đăng ký.</p>
+                                <p>Lương của bạn sẽ được chuyển khoản vào tài khoản ngân hàng ${bankNanme} - ${bankAccount}.</p>
                                 <p>Xin vui lòng kiểm tra tài khoản của bạn để xác nhận việc nhận lương.</p>
                                 <p>Nếu bạn có bất kỳ câu hỏi nào liên quan đến lương tháng này, vui lòng liên hệ với bộ phận nhân sự qua email <a href="mailto:dinhtien17082003@gmail.com">dinhtien17082003@gmail.com</a> hoặc điện thoại <strong>0123456789</strong>.</p>
                                 <p>Cảm ơn bạn vì sự đóng góp và cống hiến không ngừng cho công ty. Chúc bạn có một tháng mới làm việc hiệu quả và thành công!</p>
@@ -242,6 +251,8 @@ export default function Salary() {
     };
 
     const handleSendEmail = async (arrIp) => {
+        const load = document.querySelector('#load');
+        load.classList.toggle(`${cx('hidden')}`);
         try {
             const response = await fetch(`${BASE_URL}salary_tables/email`, {
                 method: 'PUT',
@@ -253,9 +264,8 @@ export default function Salary() {
             });
 
             const data = await response.json();
-            if (data.code === 303) {
-                alert(data.result);
-            }
+            if (data.code === 303) alert(data.result);
+            load.classList.toggle(`${cx('hidden')}`);
         } catch (error) {
             console.log(error);
         }
@@ -271,7 +281,7 @@ export default function Salary() {
 
     return (
         <>
-            {/* <Load className={cx('hidden')} id="load" /> */}
+            <Load className={cx('hidden')} id="load" />
             <div className={cx('content-wrapper')}>
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
@@ -415,6 +425,7 @@ export default function Salary() {
                                                                 value={item.id}
                                                                 type="checkbox"
                                                                 disabled={item.status !== 0}
+                                                                checked={item.status !== 0}
                                                                 className={cx('minimal')}
                                                                 id="minimal"
                                                             />

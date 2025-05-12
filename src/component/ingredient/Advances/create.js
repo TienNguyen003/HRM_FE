@@ -158,7 +158,7 @@ function Create() {
                                                         {t('common.button.create')}
                                                     </button>
                                                 ) : (
-                                                    <button className={cx('btn', 'btn-success')} disabled={isStatus !== 0} onClick={saveAdvances}>
+                                                    <button className={cx('btn', 'btn-info')} disabled={isStatus !== 0} onClick={saveAdvances}>
                                                         {t('common.button.save')}
                                                     </button>
                                                 )}

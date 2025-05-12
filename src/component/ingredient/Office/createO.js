@@ -152,9 +152,15 @@ export default function Create() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
-                                                    Lưu lại
-                                                </button>
+                                                {path.includes('/offices/create') ? (
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={saveHoliday}>
+                                                        Thêm mới
+                                                    </button>
+                                                ) : (
+                                                    <button type="submit" className={cx('btn', 'btn-info')} onClick={saveHoliday}>
+                                                        Lưu lại
+                                                    </button>
+                                                )}
                                                 <button type="reset" className={cx('btn', 'btn-danger')}>
                                                     Nhập lại
                                                 </button>

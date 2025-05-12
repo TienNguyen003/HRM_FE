@@ -124,8 +124,11 @@ function Role() {
 
             const data = await response.json();
             if (data.code === 303) {
-                handleAlert('alert-success', 'Thêm dữ liệu thành công');
-                if (method == 'POST') reloadAfterDelay(500);
+                handleAlert('alert-success', 'Cập nhật dữ liệu thành công');
+                if (method == 'POST') {
+                    handleAlert('alert-success', 'Thêm dữ liệu thành công');
+                    reloadAfterDelay(500);
+                }
                 return data.result.employee;
             } else {
                 handleAlert('alert-danger', data.message);
@@ -372,25 +375,36 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>Email</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    Email<span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="email" id="email" placeholder="example@xxx.yyy" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Name')}</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Name')}
+                                                    <span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="text" placeholder="Nguyen Van A" id="fullname" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Phone Number')}</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Phone Number')}
+                                                    <span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" placeholder="0123456789" id="phone" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Birthday')}</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Birthday')}
+                                                    <span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
                                                         <input type="date" className={cx('form-control')} id="birthday" />
@@ -406,6 +420,7 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     {t('common.Date')} {t('common.Join')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <div className={cx('input-group')}>
@@ -414,7 +429,10 @@ function Role() {
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Department')}c</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Department')}
+                                                    <span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="structure_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
@@ -444,13 +462,17 @@ function Role() {
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
                                                 <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
                                                     {t('common.Hours')} {t('common.Holiday')}
+                                                    <span className={cx('text-red')}> *</span>
                                                 </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <input className={cx('form-control')} type="number" name="sabbatical" id="sabbatical" defaultValue="0" />
                                                 </div>
                                             </div>
                                             <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.Salary Formulas')}</label>
+                                                <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                    {t('common.Salary Formulas')}
+                                                    <span className={cx('text-red')}> *</span>
+                                                </label>
                                                 <div className={cx('pc-8', 'm-8', 't-8')}>
                                                     <select id="salary_formula_id" className={cx('form-control', 'select')}>
                                                         {!checkRole(state.account.role.name, 'NHÂN VIÊN') &&
@@ -528,7 +550,10 @@ function Role() {
                                                         </div>
                                                     </div>
                                                     <div className={cx('form-group', 'row', 'no-gutters')}>
-                                                        <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>{t('common.re-password')}</label>
+                                                        <label className={cx('pc-2', 'm-3', 't-4', 'control-label')}>
+                                                            {t('common.re-password')}
+                                                            <span className={cx('text-red')}> *</span>
+                                                        </label>
                                                         <div className={cx('pc-8', 'm-8', 't-8')}>
                                                             <input className={cx('form-control')} type="password" readOnly id="comfirm_password" />
                                                         </div>
@@ -560,9 +585,15 @@ function Role() {
                                                 </button>
                                             </div>
                                             <div className={cx('text-center')}>
-                                                <button type="submit" className={cx('btn', 'btn-success')} onClick={handleClickAddUser}>
-                                                    {t('common.button.save')}
-                                                </button>
+                                                {path.includes('/users/create') ? (
+                                                    <button type="submit" className={cx('btn', 'btn-success')} onClick={handleClickAddUser}>
+                                                        {t('common.button.create')}
+                                                    </button>
+                                                ) : (
+                                                    <button type="submit" className={cx('btn', 'btn-info')} onClick={handleClickAddUser}>
+                                                        {t('common.button.save')}
+                                                    </button>
+                                                )}
                                                 <a href={routes.user}>
                                                     <button type="button" className={cx('btn', 'btn-default')}>
                                                         {t('common.button.exit')}

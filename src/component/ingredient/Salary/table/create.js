@@ -96,7 +96,7 @@ export default function Create() {
                             <div className={cx('pc-12', 'm-12', 't-12')}>
                                 <div className={cx('card')}>
                                     <div className={cx('card-header')}>
-                                        <p className={cx('card-title')}>{t('common.Edit')}</p>
+                                        <p className={cx('card-title')}>{t('common.Required field')}</p>
                                     </div>
 
                                     <form onSubmit={(e) => handleSubmitForm(e)}>

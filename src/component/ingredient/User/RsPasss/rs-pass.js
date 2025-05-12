@@ -124,7 +124,7 @@ function RsPass() {
                 <section className={cx('content')}>
                     <div className={cx('container-fluid')}>
                         <section className={cx('content-header')}>
-                            <h1>Thay đổi mật khẩu</h1>
+                            <h1>Quên mật khẩu</h1>
                         </section>
                         <div className={cx('row', 'no-gutters')}>
                             <div className={cx('pc-12')}>
